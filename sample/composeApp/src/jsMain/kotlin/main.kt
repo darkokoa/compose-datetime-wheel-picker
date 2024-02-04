@@ -5,9 +5,9 @@ import org.jetbrains.skiko.wasm.onWasmReady
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    onWasmReady {
-        CanvasBasedWindow("chrono-wheel-picker") {
-            App()
-        }
+  onWasmReady {
+    CanvasBasedWindow("chrono-wheel-picker") {
+      App()
     }
+  }
 }

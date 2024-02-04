@@ -6,12 +6,12 @@ import java.awt.Dimension
 import dev.darkokoa.chronowheelpicker.App
 
 fun main() = application {
-    Window(
-        title = "chrono-wheel-picker",
-        state = rememberWindowState(width = 800.dp, height = 600.dp),
-        onCloseRequest = ::exitApplication,
-    ) {
-        window.minimumSize = Dimension(350, 600)
-        App()
-    }
+  Window(
+    title = "chrono-wheel-picker",
+    state = rememberWindowState(width = 800.dp, height = 600.dp),
+    onCloseRequest = ::exitApplication,
+  ) {
+    window.minimumSize = Dimension(350, 600)
+    App()
+  }
 }
