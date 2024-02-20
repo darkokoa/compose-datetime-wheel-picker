@@ -78,12 +78,7 @@ android {
   compileSdk = 34
 
   defaultConfig {
-    minSdk = 24
-//        targetSdk = 34
-
-//        applicationId = "dev.darkokoa.chronowheelpicker.androidApp"
-//        versionCode = 1
-//        versionName = "1.0.0"
+    minSdk = 21
   }
   sourceSets["main"].apply {
     manifest.srcFile("src/androidMain/AndroidManifest.xml")
