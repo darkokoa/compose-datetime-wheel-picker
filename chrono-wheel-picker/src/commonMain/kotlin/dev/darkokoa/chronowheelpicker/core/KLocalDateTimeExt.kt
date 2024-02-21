@@ -83,5 +83,6 @@ internal fun LocalDateTime.truncatedTo(unit: DurationUnit): LocalDateTime {
     MINUTES -> LocalDateTime(year, month, dayOfMonth, hour, minute)
     HOURS -> LocalDateTime(year, month, dayOfMonth, hour, 0)
     DAYS -> LocalDateTime(year, month, dayOfMonth, 0, 0)
+    else -> throw IllegalArgumentException("The value `else` does not match any of the patterns.")
   }
 }
