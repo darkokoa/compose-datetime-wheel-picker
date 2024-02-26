@@ -36,7 +36,7 @@ internal fun DefaultWheelDatePicker(
   var dayOfMonths = calculateDayOfMonths(snappedDate.month.number, snappedDate.year)
 
   val months = (1..12).map {
-    val monthName = Month(it).name
+    val monthName = Month(it).name.lowercase().replaceFirstChar { char -> char.titlecase() }
 
     Month(
       text = if (size.width / 3 < 55.dp) {
