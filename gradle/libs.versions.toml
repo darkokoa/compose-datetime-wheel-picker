@@ -1,10 +1,10 @@
 [versions]
 
-kotlin = "1.9.21"
-compose = "1.5.11"
-agp = "8.2.0"
+kotlin = "1.9.22"
+compose = "1.5.12"
+agp = "8.2.2"
 androidx-appcompat = "1.6.1"
-androidx-activityCompose = "1.8.1"
+androidx-activityCompose = "1.8.2"
 compose-uitooling = "1.5.4"
 kotlinx-datetime = "0.5.0"
 
