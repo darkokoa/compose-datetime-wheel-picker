@@ -19,3 +19,5 @@ Pods/
 /build
 /captures
 *.focus
+/secret
+*.gpg

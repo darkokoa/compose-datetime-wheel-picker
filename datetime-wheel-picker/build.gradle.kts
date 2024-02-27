@@ -4,10 +4,15 @@ plugins {
   alias(libs.plugins.multiplatform)
   alias(libs.plugins.compose)
   alias(libs.plugins.android.library)
+  alias(libs.plugins.maven.publish)
 }
 
 kotlin {
+  applyDefaultHierarchyTemplate()
+
   androidTarget {
+    publishLibraryVariants("release")
+
     compilations.all {
       kotlinOptions {
         jvmTarget = "17"
@@ -111,4 +116,9 @@ compose.desktop {
 
 compose.experimental {
   web.application {}
+}
+
+mavenPublishing {
+  publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.S01, automaticRelease = true)
+  signAllPublications()
 }
