@@ -1,12 +1,12 @@
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.CanvasBasedWindow
-import dev.darkokoa.chronowheelpicker.App
+import dev.darkokoa.datetimewheelpicker.App
 import org.jetbrains.skiko.wasm.onWasmReady
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
   onWasmReady {
-    CanvasBasedWindow("chrono-wheel-picker") {
+    CanvasBasedWindow("datetime-wheel-picker") {
       App()
     }
   }

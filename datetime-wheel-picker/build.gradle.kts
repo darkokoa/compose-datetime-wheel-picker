@@ -3,7 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
   alias(libs.plugins.multiplatform)
   alias(libs.plugins.compose)
-  alias(libs.plugins.android.application)
+  alias(libs.plugins.android.library)
 }
 
 kotlin {
@@ -40,8 +40,6 @@ kotlin {
       }
     }
     commonMain.dependencies {
-      implementation(project(":datetime-wheel-picker"))
-
       implementation(compose.runtime)
       implementation(compose.material3)
       implementation(compose.materialIconsExtended)
@@ -80,12 +78,7 @@ android {
   compileSdk = 34
 
   defaultConfig {
-    minSdk = 24
-    targetSdk = 34
-
-    applicationId = "dev.darkokoa.datetimewheelpicker.androidApp"
-    versionCode = 1
-    versionName = "1.0.0"
+    minSdk = 21
   }
   sourceSets["main"].apply {
     manifest.srcFile("src/androidMain/AndroidManifest.xml")

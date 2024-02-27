@@ -3,11 +3,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import java.awt.Dimension
-import dev.darkokoa.chronowheelpicker.App
+import dev.darkokoa.datetimewheelpicker.App
 
 fun main() = application {
   Window(
-    title = "chrono-wheel-picker",
+    title = "datetime-wheel-picker",
     state = rememberWindowState(width = 800.dp, height = 600.dp),
     onCloseRequest = ::exitApplication,
   ) {

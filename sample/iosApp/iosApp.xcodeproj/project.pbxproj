@@ -13,7 +13,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-        A93A953729CC810C00F8E227 /* chrono-wheel-picker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "chrono-wheel-picker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+        A93A953729CC810C00F8E227 /* datetime-wheel-picker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "datetime-wheel-picker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A93A953A29CC810C00F8E227 /* iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosApp.swift; sourceTree = "<group>"; };
 		A93A953E29CC810D00F8E227 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A93A954129CC810D00F8E227 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -42,7 +42,7 @@
 		A93A953829CC810C00F8E227 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A93A953729CC810C00F8E227 /* chrono-wheel-picker.app */,
+				A93A953729CC810C00F8E227 /* datetime-wheel-picker.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,7 +90,7 @@
 			);
 			name = iosApp;
 			productName = iosApp;
-			productReference = A93A953729CC810C00F8E227 /* chrono-wheel-picker.app */;
+			productReference = A93A953729CC810C00F8E227 /* datetime-wheel-picker.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -312,8 +312,8 @@
        	"-framework",
        	ComposeApp,
        );
-				PRODUCT_BUNDLE_IDENTIFIER = dev.darkokoa.chronowheelpicker.iosApp;
-				PRODUCT_NAME = "chrono-wheel-picker";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.darkokoa.datetimewheelpicker.iosApp;
+				PRODUCT_NAME = "datetime-wheel-picker";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -349,8 +349,8 @@
        	"-framework",
        	ComposeApp,
        );
-				PRODUCT_BUNDLE_IDENTIFIER = dev.darkokoa.chronowheelpicker.iosApp;
-				PRODUCT_NAME = "chrono-wheel-picker";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.darkokoa.datetimewheelpicker.iosApp;
+				PRODUCT_NAME = "datetime-wheel-picker";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

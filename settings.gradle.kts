@@ -1,6 +1,6 @@
-rootProject.name = "chrono-wheel-picker"
+rootProject.name = "datetime-wheel-picker"
 include(":sample:composeApp")
-include(":chrono-wheel-picker")
+include(":datetime-wheel-picker")
 
 pluginManagement {
   repositories {
