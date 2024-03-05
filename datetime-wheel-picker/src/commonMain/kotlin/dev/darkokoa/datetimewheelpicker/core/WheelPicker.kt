@@ -24,7 +24,7 @@ import kotlin.math.abs
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun WheelPicker(
+fun WheelPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   count: Int,
