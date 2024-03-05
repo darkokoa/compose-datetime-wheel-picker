@@ -68,11 +68,6 @@ internal fun WheelPicker(
       flingBehavior = flingBehavior
     ) {
       items(count) { index ->
-        val rotationX = calculateAnimatedRotationX(
-          lazyListState = lazyListState,
-          index = index,
-          rowCount = rowCount
-        )
         Box(
           modifier = Modifier
             .height(size.height / rowCount)
@@ -85,7 +80,11 @@ internal fun WheelPicker(
               )
             )
             .graphicsLayer {
-              this.rotationX = rotationX
+              rotationX = calculateAnimatedRotationX(
+                lazyListState = lazyListState,
+                index = index,
+                rowCount = rowCount
+              )
             },
           contentAlignment = Alignment.Center
         ) {
@@ -150,13 +149,9 @@ private fun calculateAnimatedRotationX(
 
   val distanceToCenterIndex = index - centerIndex
 
-  val distanceToIndexSnap = abs(distanceToCenterIndex) * singleViewPortHeight.toInt() - when {
-    distanceToCenterIndex > 0 -> centerIndexOffset
-    distanceToCenterIndex <= 0 -> -centerIndexOffset
-    else -> 0
-  }
+  val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeight.toInt() - centerIndexOffset
 
-  val animatedRotationX = -20f * (distanceToIndexSnap / singleViewPortHeight)
+  val animatedRotationX = -22 * (distanceToIndexSnap / singleViewPortHeight)
 
   return if (animatedRotationX.isNaN()) {
     0f
