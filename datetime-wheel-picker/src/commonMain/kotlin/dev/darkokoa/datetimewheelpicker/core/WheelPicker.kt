@@ -68,24 +68,19 @@ internal fun WheelPicker(
       flingBehavior = flingBehavior
     ) {
       items(count) { index ->
-        val rotationX = calculateAnimatedRotationX(
+        val (newAlpha, newRotationX) = calculateAnimatedAlphaAndRotationX(
           lazyListState = lazyListState,
           index = index,
           rowCount = rowCount
         )
+
         Box(
           modifier = Modifier
             .height(size.height / rowCount)
             .width(size.width)
-            .alpha(
-              calculateAnimatedAlpha(
-                lazyListState = lazyListState,
-                index = index,
-                rowCount = rowCount
-              )
-            )
+            .alpha(newAlpha)
             .graphicsLayer {
-              this.rotationX = rotationX
+              rotationX = newRotationX
             },
           contentAlignment = Alignment.Center
         ) {
@@ -106,11 +101,11 @@ private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
 }
 
 @Composable
-private fun calculateAnimatedAlpha(
+private fun calculateAnimatedAlphaAndRotationX(
   lazyListState: LazyListState,
   index: Int,
   rowCount: Int
-): Float {
+): Pair<Float, Float> {
 
   val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
   val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
@@ -121,48 +116,18 @@ private fun calculateAnimatedAlpha(
 
   val distanceToCenterIndex = index - centerIndex
 
-  val distanceToIndexSnap = abs(distanceToCenterIndex) * singleViewPortHeight.toInt() - when {
-    distanceToCenterIndex > 0 -> centerIndexOffset
-    distanceToCenterIndex <= 0 -> -centerIndexOffset
-    else -> 0
-  }
+  val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeight.toInt() - centerIndexOffset
+  val distanceToIndexSnapAbs = abs(distanceToIndexSnap)
 
-  return if (distanceToIndexSnap in 0..singleViewPortHeight.toInt()) {
-    1.2f - (distanceToIndexSnap / singleViewPortHeight)
+  val animatedAlpha = if (abs(distanceToIndexSnap) in 0..singleViewPortHeight.toInt()) {
+    1.2f - (distanceToIndexSnapAbs / singleViewPortHeight)
   } else {
     0.2f
   }
-}
 
-@Composable
-private fun calculateAnimatedRotationX(
-  lazyListState: LazyListState,
-  index: Int,
-  rowCount: Int
-): Float {
+  val animatedRotationX = (-22 * (distanceToIndexSnap / singleViewPortHeight)).takeUnless { it.isNaN() } ?: 0f
 
-  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-  val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
-  val singleViewPortHeight = viewPortHeight / rowCount
-
-  val centerIndex = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }.value
-  val centerIndexOffset = remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }.value
-
-  val distanceToCenterIndex = index - centerIndex
-
-  val distanceToIndexSnap = abs(distanceToCenterIndex) * singleViewPortHeight.toInt() - when {
-    distanceToCenterIndex > 0 -> centerIndexOffset
-    distanceToCenterIndex <= 0 -> -centerIndexOffset
-    else -> 0
-  }
-
-  val animatedRotationX = -20f * (distanceToIndexSnap / singleViewPortHeight)
-
-  return if (animatedRotationX.isNaN()) {
-    0f
-  } else {
-    animatedRotationX
-  }
+  return animatedAlpha to animatedRotationX
 }
 
 object WheelPickerDefaults {
