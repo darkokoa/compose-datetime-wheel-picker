@@ -55,9 +55,7 @@ kotlin {
     }
 
     androidMain.dependencies {
-      implementation(libs.androidx.appcompat)
       implementation(libs.androidx.activityCompose)
-      implementation(libs.compose.uitooling)
     }
 
     jvmMain.dependencies {
@@ -95,12 +93,6 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-  }
-  buildFeatures {
-    compose = true
-  }
-  composeOptions {
-    kotlinCompilerExtensionVersion = "1.5.10"
   }
 }
 
