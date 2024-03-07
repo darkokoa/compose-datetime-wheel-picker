@@ -125,7 +125,7 @@ private fun calculateAnimatedAlphaAndRotationX(
     0.2f
   }
 
-  val animatedRotationX = (-22 * (distanceToIndexSnap / singleViewPortHeight)).takeUnless { it.isNaN() } ?: 0f
+  val animatedRotationX = (-20 * (distanceToIndexSnap / singleViewPortHeight)).takeUnless { it.isNaN() } ?: 0f
 
   return animatedAlpha to animatedRotationX
 }
