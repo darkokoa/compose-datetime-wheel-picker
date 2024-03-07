@@ -41,15 +41,15 @@ kotlin {
   sourceSets {
     all {
       languageSettings {
-        optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+//        optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
       }
     }
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.material3)
       implementation(compose.materialIconsExtended)
-      @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-      implementation(compose.components.resources)
+//      @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+//      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
     }
 
