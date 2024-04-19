@@ -44,7 +44,6 @@ kotlin {
 
       implementation(compose.runtime)
       implementation(compose.material3)
-      implementation(compose.materialIconsExtended)
 //      @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 //      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
@@ -59,7 +58,7 @@ kotlin {
     }
 
     jvmMain.dependencies {
-      implementation(compose.desktop.common)
+//      implementation(compose.desktop.common)
       implementation(compose.desktop.currentOs)
     }
 
