@@ -12,7 +12,7 @@ local.properties
 xcuserdata/
 Pods/
 *.jks
-*yarn.lock
+#*yarn.lock
 
 /.idea
 /local.properties
