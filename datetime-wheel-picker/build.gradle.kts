@@ -47,7 +47,6 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.material3)
-      implementation(compose.materialIconsExtended)
 //      @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 //      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
@@ -58,16 +57,12 @@ kotlin {
     }
 
     androidMain.dependencies {
-      implementation(libs.androidx.activityCompose)
     }
 
     jvmMain.dependencies {
-      implementation(compose.desktop.common)
-      implementation(compose.desktop.currentOs)
     }
 
     jsMain.dependencies {
-      implementation(compose.html.core)
     }
 
     iosMain.dependencies {
@@ -92,22 +87,6 @@ android {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
   }
-}
-
-compose.desktop {
-  application {
-    mainClass = "MainKt"
-
-    nativeDistributions {
-      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-      packageName = "dev.darkokoa.datetimewheelpicker.desktopApp"
-      packageVersion = "1.0.0"
-    }
-  }
-}
-
-compose.experimental {
-  web.application {}
 }
 
 mavenPublishing {
