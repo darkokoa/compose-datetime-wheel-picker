@@ -22,6 +22,17 @@ kotlin {
     binaries.executable()
   }
 
+  @OptIn(org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl::class)
+  wasmJs {
+    browser {
+      commonWebpackConfig {
+        outputFileName = "composeApp.js"
+      }
+    }
+
+    binaries.executable()
+  }
+
   listOf(
     iosX64(),
     iosArm64(),
@@ -64,6 +75,9 @@ kotlin {
 
     jsMain.dependencies {
       implementation(compose.html.core)
+    }
+
+    named("wasmJsMain").dependencies {
     }
 
     iosMain.dependencies {
