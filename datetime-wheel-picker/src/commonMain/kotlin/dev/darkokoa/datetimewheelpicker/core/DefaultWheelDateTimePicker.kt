@@ -22,7 +22,7 @@ internal fun DefaultWheelDateTimePicker(
   modifier: Modifier = Modifier,
   startDateTime: LocalDateTime = LocalDateTime.now(),
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
-  maxDateTime: LocalDateTime = LocalDateTime.CYBER_ERA,
+  maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
   timeFormat: TimeFormat = TimeFormat.HOUR_24,
   size: DpSize = DpSize(256.dp, 128.dp),

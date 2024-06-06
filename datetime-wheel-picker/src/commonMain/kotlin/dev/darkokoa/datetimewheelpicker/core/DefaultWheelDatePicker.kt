@@ -22,7 +22,7 @@ internal fun DefaultWheelDatePicker(
   modifier: Modifier = Modifier,
   startDate: LocalDate = LocalDate.now(),
   minDate: LocalDate = LocalDate.EPOCH,
-  maxDate: LocalDate = LocalDate.CYBER_ERA,
+  maxDate: LocalDate = LocalDate.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,

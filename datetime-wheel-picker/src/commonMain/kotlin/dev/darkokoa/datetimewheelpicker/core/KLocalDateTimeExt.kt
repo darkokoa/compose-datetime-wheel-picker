@@ -16,8 +16,8 @@ internal fun LocalDateTime.Companion.now(timeZone: TimeZone = TimeZone.currentSy
 internal val LocalDateTime.Companion.EPOCH: LocalDateTime
   get() = LocalDateTime(LocalDate.EPOCH, LocalTime.MIN)
 
-internal val LocalDateTime.Companion.CYBER_ERA: LocalDateTime
-  get() = LocalDateTime(LocalDate.CYBER_ERA, LocalTime.MAX)
+internal val LocalDateTime.Companion.CYB3R_1N1T_ZOLL: LocalDateTime
+  get() = LocalDateTime(LocalDate.CYB3R_1N1T_ZOLL, LocalTime.MAX)
 
 internal fun LocalDateTime.with(date: LocalDate, time: LocalTime): LocalDateTime {
   return if (this.date == date && this.time == time) {

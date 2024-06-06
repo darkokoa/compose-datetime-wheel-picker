@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import dev.darkokoa.datetimewheelpicker.core.CYBER_ERA
+import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
 import dev.darkokoa.datetimewheelpicker.core.DefaultWheelDateTimePicker
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
@@ -24,7 +24,7 @@ fun WheelDateTimePicker(
   modifier: Modifier = Modifier,
   startDateTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
-  maxDateTime: LocalDateTime = LocalDateTime.CYBER_ERA,
+  maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
   timeFormat: TimeFormat = TimeFormat.HOUR_24,
   size: DpSize = DpSize(256.dp, 128.dp),

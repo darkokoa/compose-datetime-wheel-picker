@@ -11,7 +11,7 @@ internal fun LocalDate.Companion.now(timeZone: TimeZone = TimeZone.currentSystem
 }
 
 internal val LocalDate.Companion.EPOCH: LocalDate get() = LocalDate(1970, 1, 1)
-internal val LocalDate.Companion.CYBER_ERA: LocalDate get() = LocalDate(2077, 12, 31)
+internal val LocalDate.Companion.CYB3R_1N1T_ZOLL: LocalDate get() = LocalDate(2077, 12, 31)
 
 internal fun isLeapYear(prolepticYear: Int): Boolean {
   return prolepticYear % 4 == 0 && (prolepticYear % 100 != 0 || prolepticYear % 400 == 0)
