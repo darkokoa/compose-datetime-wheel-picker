@@ -82,7 +82,7 @@ kotlin {
   sourceSets {
     val commonMain by getting {
       dependencies {
-        implementation("io.github.darkokoa:datetime-wheel-picker:1.0.0-beta01")
+        implementation("io.github.darkokoa:datetime-wheel-picker:1.0.0")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
       }
     }
@@ -96,7 +96,7 @@ kotlin {
 
 ```kotlin
 dependencies {
-  implementation("io.github.darkokoa:datetime-wheel-picker:1.0.0-beta01")
+  implementation("io.github.darkokoa:datetime-wheel-picker:1.0.0")
   implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
 }
 ```
