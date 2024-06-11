@@ -1,9 +1,11 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
   alias(libs.plugins.multiplatform)
   alias(libs.plugins.compose)
+  alias(libs.plugins.compose.compiler)
   alias(libs.plugins.android.library)
   alias(libs.plugins.maven.publish)
 }
@@ -15,8 +17,10 @@ kotlin {
     publishLibraryVariants("release")
 
     compilations.all {
-      kotlinOptions {
-        jvmTarget = "17"
+      compileTaskProvider.configure {
+        compilerOptions {
+          jvmTarget.set(JvmTarget.JVM_17)
+        }
       }
     }
   }
@@ -69,6 +73,9 @@ kotlin {
     }
 
     jsMain.dependencies {
+    }
+
+    wasmJsMain.dependencies {
     }
 
     iosMain.dependencies {

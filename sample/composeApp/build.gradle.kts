@@ -1,16 +1,20 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.multiplatform)
   alias(libs.plugins.compose)
+  alias(libs.plugins.compose.compiler)
   alias(libs.plugins.android.application)
 }
 
 kotlin {
   androidTarget {
     compilations.all {
-      kotlinOptions {
-        jvmTarget = "17"
+      compileTaskProvider.configure {
+        compilerOptions {
+          jvmTarget.set(JvmTarget.JVM_17)
+        }
       }
     }
   }
@@ -77,7 +81,7 @@ kotlin {
       implementation(compose.html.core)
     }
 
-    named("wasmJsMain").dependencies {
+    wasmJsMain.dependencies {
     }
 
     iosMain.dependencies {
@@ -119,8 +123,4 @@ compose.desktop {
       packageVersion = "1.0.0"
     }
   }
-}
-
-compose.experimental {
-  web.application {}
 }

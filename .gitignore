@@ -21,3 +21,4 @@ Pods/
 *.focus
 /secret
 *.gpg
+/.kotlin
