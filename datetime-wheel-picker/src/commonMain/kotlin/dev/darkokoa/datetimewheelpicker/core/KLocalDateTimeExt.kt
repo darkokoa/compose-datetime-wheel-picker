@@ -6,7 +6,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.DurationUnit
 import kotlin.time.DurationUnit.*
 
 internal fun LocalDateTime.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime {
@@ -55,7 +54,7 @@ internal fun LocalDateTime.isAfter(other: LocalDateTime): Boolean {
   return compareTo(other) > 0
 }
 
-internal fun LocalDateTime.truncatedTo(unit: DurationUnit): LocalDateTime {
+internal fun LocalDateTime.truncatedTo(unit: ChronoUnit): LocalDateTime {
   return when (unit) {
     NANOSECONDS -> this
 
