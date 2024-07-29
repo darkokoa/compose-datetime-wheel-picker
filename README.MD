@@ -101,7 +101,7 @@ dependencies {
 }
 ```
 
-- If your target Android platform's API level (targetSdk) < 26, please
+- If your minimum Android platform's API level (minSdk) < 26, please
   enable [Desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) like this:
 
 ```kotlin
