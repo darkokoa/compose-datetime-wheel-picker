@@ -7,11 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
-import dev.darkokoa.datetimewheelpicker.core.WheelPicker
-import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 
 @Composable
 fun WheelTextPicker(
@@ -38,7 +36,8 @@ fun WheelTextPicker(
       text = texts[index],
       style = style,
       color = color,
-      maxLines = 1
+      maxLines = 1,
+      textAlign = TextAlign.Center
     )
   }
 }
