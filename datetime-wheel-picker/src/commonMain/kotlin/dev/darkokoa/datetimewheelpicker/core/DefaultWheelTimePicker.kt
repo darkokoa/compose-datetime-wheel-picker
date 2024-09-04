@@ -1,17 +1,22 @@
 package dev.darkokoa.datetimewheelpicker.core
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalTime
@@ -30,6 +35,9 @@ internal fun DefaultWheelTimePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
+
+  val itemCount = if (timeFormat == TimeFormat.AM_PM) 3 else 2
+  val itemWidth = size.width / itemCount
 
   var snappedTime by remember { mutableStateOf(LocalTime(startTime.hour, startTime.minute)) }
 
@@ -88,7 +96,7 @@ internal fun DefaultWheelTimePicker(
       //Hour
       WheelTextPicker(
         size = DpSize(
-          width = size.width / if (timeFormat == TimeFormat.HOUR_24) 2 else 3,
+          width = itemWidth,
           height = size.height
         ),
         texts = if (timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
@@ -145,10 +153,17 @@ internal fun DefaultWheelTimePicker(
           }
         }
       )
+
+      //Colon
+      TimeSeparator(
+        modifier = Modifier.align(Alignment.CenterVertically).width(0.dp),
+        textStyle = textStyle.copy(color = textColor),
+      )
+
       //Minute
       WheelTextPicker(
         size = DpSize(
-          width = size.width / if (timeFormat == TimeFormat.HOUR_24) 2 else 3,
+          width = itemWidth,
           height = size.height
         ),
         texts = minutes.map { it.text },
@@ -202,7 +217,7 @@ internal fun DefaultWheelTimePicker(
       if (timeFormat == TimeFormat.AM_PM) {
         WheelTextPicker(
           size = DpSize(
-            width = size.width / 3,
+            width = itemWidth,
             height = size.height
           ),
           texts = amPms.map { it.text },
@@ -260,28 +275,68 @@ internal fun DefaultWheelTimePicker(
         )
       }
     }
-    Box(
-      modifier = Modifier
-        .size(
-          width = if (timeFormat == TimeFormat.HOUR_24) {
-            size.width
-          } else size.width * 2 / 3,
-          height = size.height / 3
-        )
-        .align(
-          alignment = if (timeFormat == TimeFormat.HOUR_24) {
-            Alignment.Center
-          } else Alignment.CenterStart
-        ),
-      contentAlignment = Alignment.Center
+  }
+}
+
+@Composable
+fun TimeSeparator(
+  modifier: Modifier = Modifier,
+  textStyle: TextStyle = TextStyle.Default,
+  dotSizeRatio: Float = 0.135f,
+  spacingRatio: Float = 0.25f
+) {
+  val density = LocalDensity.current
+
+  val fontSize = textStyle.fontSize
+  val fontWeight = textStyle.fontWeight ?: FontWeight.Normal
+  val color = textStyle.color
+
+  val fontSizePx = with(density) { fontSize.toPx() }
+  val baseDotSizePx = fontSizePx * dotSizeRatio
+
+  val weightFactor = when (fontWeight) {
+    FontWeight.Thin -> 0.7f
+    FontWeight.ExtraLight -> 0.8f
+    FontWeight.Light -> 0.9f
+    FontWeight.Normal -> 1.0f
+    FontWeight.Medium -> 1.1f
+    FontWeight.SemiBold -> 1.2f
+    FontWeight.Bold -> 1.3f
+    FontWeight.ExtraBold -> 1.4f
+    FontWeight.Black -> 1.5f
+    else -> 1.0f
+  }
+
+  val dotSizePx = baseDotSizePx * weightFactor
+  val spacingPx = fontSizePx * spacingRatio
+  val totalHeightPx = dotSizePx * 2 + spacingPx
+
+  Box(
+    modifier = modifier,
+    contentAlignment = Alignment.Center
+  ) {
+    Canvas(
+      modifier = Modifier.size(
+        width = with(density) { dotSizePx.toDp() },
+        height = with(density) { totalHeightPx.toDp() }
+      )
     ) {
-      Text(
-        text = ":",
-        style = textStyle,
-        color = textColor
+      drawCircle(
+        color = color,
+        radius = dotSizePx / 2,
+        center = Offset(size.width / 2, dotSizePx / 2),
+        style = Fill
+      )
+
+      drawCircle(
+        color = color,
+        radius = dotSizePx / 2,
+        center = Offset(size.width / 2, totalHeightPx - dotSizePx / 2),
+        style = Fill
       )
     }
   }
+
 }
 
 enum class TimeFormat {

@@ -31,6 +31,9 @@ internal fun DefaultWheelDatePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null }
 ) {
+  val itemCount = if (yearsRange == null) 2 else 3
+  val itemWidth = size.width / itemCount
+
   var snappedDate by remember { mutableStateOf(startDate) }
 
   var dayOfMonths = calculateDayOfMonths(snappedDate.month.number, snappedDate.year)
@@ -69,7 +72,7 @@ internal fun DefaultWheelDatePicker(
       //Day of Month
       WheelTextPicker(
         size = DpSize(
-          width = if (yearsRange == null) size.width / 2 else size.width / 3,
+          width = itemWidth,
           height = size.height
         ),
         texts = dayOfMonths.map { it.text },
@@ -109,7 +112,7 @@ internal fun DefaultWheelDatePicker(
       //Month
       WheelTextPicker(
         size = DpSize(
-          width = if (yearsRange == null) size.width / 2 else size.width / 3,
+          width = itemWidth,
           height = size.height
         ),
         texts = months.map { it.text },
@@ -154,7 +157,7 @@ internal fun DefaultWheelDatePicker(
       years?.let { years ->
         WheelTextPicker(
           size = DpSize(
-            width = size.width / 3,
+            width = itemWidth,
             height = size.height
           ),
           texts = years.map { it.text },
