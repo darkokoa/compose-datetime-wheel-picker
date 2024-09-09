@@ -66,10 +66,10 @@ WheelDateTimePicker(
 ## Setup
 datetime-wheel-picker has multiple active versions. The higher one uses the latest versions for Compose, while the others use only stable versions. Choose the one that matches your Compose version, considering this table:
 
-| Compose Version   |                                                         datetime-wheel-picker Version                                                          |
-|-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------:|
-| Compose 1.3 - 1.6 |                 [![badge-version-main]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.0.0)                  |
-| Compose 1.7       | [![badge-version-compose1.7-alpha01]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.0.0-compose1.7-alpha01) |
+| Compose Version   |                                                     datetime-wheel-picker Version                                                      |
+|-------------------|:--------------------------------------------------------------------------------------------------------------------------------------:|
+| Compose 1.3 - 1.6 |             [![badge-version-main]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.0.0)              |
+| Compose 1.7       | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.0.0-compose1.7-alpha01) |
 
 - Add the Maven Central repository if it is not already there:
 
@@ -87,7 +87,7 @@ kotlin {
     val commonMain by getting {
       dependencies {
         implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
       }
     }
   }
@@ -101,7 +101,7 @@ kotlin {
 ```kotlin
 dependencies {
   implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
 }
 ```
 
@@ -128,9 +128,9 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 
 [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose)
 
-[badge-version-main]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=1.0.0&style=flat
+[badge-version-main]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=1.0.1&style=flat
 
-[badge-version-compose1.7-alpha01]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7-alpha01&style=flat
+[badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7-beta01&style=flat
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
