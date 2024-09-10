@@ -23,7 +23,7 @@ internal fun DefaultWheelDateTimePicker(
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
-  timeFormat: TimeFormat = TimeFormat.HOUR_24,
+  is24Hour: Boolean = true,
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -102,7 +102,7 @@ internal fun DefaultWheelDateTimePicker(
       //Time
       DefaultWheelTimePicker(
         startTime = startDateTime.time,
-        timeFormat = timeFormat,
+        is24Hour = is24Hour,
         size = DpSize(
           width = if (yearsRange == null) size.width * 3 / 6 else size.width * 2 / 5,
           height = size.height
@@ -113,7 +113,7 @@ internal fun DefaultWheelDateTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
-        onSnappedTime = { snappedTime, timeFormat ->
+        onSnappedTime = { snappedTime, is24Hour ->
 
           val newDateTime = when (snappedTime) {
             is SnappedTime.Hour -> {
@@ -122,6 +122,10 @@ internal fun DefaultWheelDateTimePicker(
 
             is SnappedTime.Minute -> {
               snappedDateTime.withMinute(snappedTime.snappedLocalTime.minute)
+            }
+
+            is SnappedTime.Second -> {
+              snappedDateTime.withSecond(snappedTime.snappedLocalTime.minute)
             }
           }
 
@@ -132,12 +136,17 @@ internal fun DefaultWheelDateTimePicker(
           return@DefaultWheelTimePicker when (snappedTime) {
             is SnappedTime.Hour -> {
               onSnappedDateTime(SnappedDateTime.Hour(snappedDateTime, snappedDateTime.hour))
-              if (timeFormat == TimeFormat.HOUR_24) snappedDateTime.hour else
+              if (is24Hour) snappedDateTime.hour else
                 localTimeToAmPmHour(snappedDateTime.time) - 1
             }
 
             is SnappedTime.Minute -> {
               onSnappedDateTime(SnappedDateTime.Minute(snappedDateTime, snappedDateTime.minute))
+              snappedDateTime.minute
+            }
+
+            is SnappedTime.Second -> {
+              onSnappedDateTime(SnappedDateTime.Second(snappedDateTime, snappedDateTime.second))
               snappedDateTime.minute
             }
           }

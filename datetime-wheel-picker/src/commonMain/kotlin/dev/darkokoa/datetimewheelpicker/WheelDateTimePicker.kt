@@ -12,7 +12,6 @@ import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
 import dev.darkokoa.datetimewheelpicker.core.DefaultWheelDateTimePicker
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
-import dev.darkokoa.datetimewheelpicker.core.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -26,7 +25,7 @@ fun WheelDateTimePicker(
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
-  timeFormat: TimeFormat = TimeFormat.HOUR_24,
+  is24Hour: Boolean = true,
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -40,7 +39,7 @@ fun WheelDateTimePicker(
     minDateTime,
     maxDateTime,
     yearsRange,
-    timeFormat,
+    is24Hour,
     size,
     rowCount,
     textStyle,

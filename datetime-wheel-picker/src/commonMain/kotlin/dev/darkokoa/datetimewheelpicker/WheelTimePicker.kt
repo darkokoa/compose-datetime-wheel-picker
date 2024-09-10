@@ -12,7 +12,7 @@ import dev.darkokoa.datetimewheelpicker.core.DefaultWheelTimePicker
 import dev.darkokoa.datetimewheelpicker.core.MAX
 import dev.darkokoa.datetimewheelpicker.core.MIN
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
-import dev.darkokoa.datetimewheelpicker.core.TimeFormat
+import dev.darkokoa.datetimewheelpicker.core.TimeComponents
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.now
 import kotlinx.datetime.LocalTime
@@ -23,8 +23,18 @@ fun WheelTimePicker(
   startTime: LocalTime = LocalTime.now(),
   minTime: LocalTime = LocalTime.MIN,
   maxTime: LocalTime = LocalTime.MAX,
-  timeFormat: TimeFormat = TimeFormat.HOUR_24,
-  size: DpSize = DpSize(128.dp, 128.dp),
+  timeComponents: TimeComponents = TimeComponents.HOUR_MINUTE,
+  is24Hour: Boolean = true,
+  size: DpSize = DpSize(
+    width = when {
+      timeComponents == TimeComponents.HOUR_MINUTE_SECOND && !is24Hour -> 256.dp
+      timeComponents == TimeComponents.HOUR_MINUTE_SECOND && is24Hour -> 192.dp
+      timeComponents == TimeComponents.HOUR_MINUTE && !is24Hour -> 192.dp
+      timeComponents == TimeComponents.HOUR_MINUTE && is24Hour -> 128.dp
+      else -> 128.dp
+    },
+    height = 128.dp
+  ),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
@@ -36,7 +46,8 @@ fun WheelTimePicker(
     startTime,
     minTime,
     maxTime,
-    timeFormat,
+    timeComponents,
+    is24Hour,
     size,
     rowCount,
     textStyle,

@@ -46,6 +46,10 @@ internal fun LocalDateTime.withMinute(minute: Int): LocalDateTime {
   return with(date, time.withMinute(minute))
 }
 
+internal fun LocalDateTime.withSecond(minute: Int): LocalDateTime {
+  return with(date, time.withSecond(minute))
+}
+
 internal fun LocalDateTime.isBefore(other: LocalDateTime): Boolean {
   return compareTo(other) < 0
 }

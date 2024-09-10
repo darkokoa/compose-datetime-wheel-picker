@@ -11,6 +11,7 @@ internal sealed class SnappedDateTime(val snappedLocalDateTime: LocalDateTime, v
   data class Year(val localDateTime: LocalDateTime, val index: Int) : SnappedDateTime(localDateTime, index)
   data class Hour(val localDateTime: LocalDateTime, val index: Int) : SnappedDateTime(localDateTime, index)
   data class Minute(val localDateTime: LocalDateTime, val index: Int) : SnappedDateTime(localDateTime, index)
+  data class Second(val localDateTime: LocalDateTime, val index: Int) : SnappedDateTime(localDateTime, index)
 }
 
 internal sealed class SnappedDate(val snappedLocalDate: LocalDate, val snappedIndex: Int) {
@@ -22,4 +23,5 @@ internal sealed class SnappedDate(val snappedLocalDate: LocalDate, val snappedIn
 internal sealed class SnappedTime(val snappedLocalTime: LocalTime, val snappedIndex: Int) {
   data class Hour(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
   data class Minute(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
+  data class Second(val localTime: LocalTime, val index: Int) : SnappedTime(localTime, index)
 }
