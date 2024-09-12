@@ -92,12 +92,16 @@ internal fun WheelPicker(
 }
 
 private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
-  var currentItemIndex = lazyListState.firstVisibleItemIndex
+  val currentItemIndex = lazyListState.firstVisibleItemIndex
+  val itemCount = lazyListState.layoutInfo.totalItemsCount
+  val offset = lazyListState.firstVisibleItemScrollOffset
+  val itemHeight = lazyListState.layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: return currentItemIndex
 
-  if (lazyListState.firstVisibleItemScrollOffset != 0) {
-    currentItemIndex++
+  return if (offset > itemHeight / 2 && currentItemIndex < itemCount - 1) {
+    currentItemIndex + 1
+  } else {
+    currentItemIndex
   }
-  return currentItemIndex
 }
 
 @Composable
