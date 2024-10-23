@@ -5,7 +5,7 @@ compose = "1.6.11"
 agp = "8.6.0"
 androidx-activityCompose = "1.9.3"
 kotlinx-datetime = "0.6.1"
-maven-publish = "0.29.0"
+maven-publish = "0.30.0"
 
 [libraries]
 
