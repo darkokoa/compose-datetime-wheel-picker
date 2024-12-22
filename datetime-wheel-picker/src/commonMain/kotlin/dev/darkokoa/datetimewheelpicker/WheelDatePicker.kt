@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
 import dev.darkokoa.datetimewheelpicker.core.DefaultWheelDatePicker
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
+import dev.darkokoa.datetimewheelpicker.core.MonthRepresentation
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.now
@@ -28,6 +29,7 @@ fun WheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  monthRepresentation: MonthRepresentation = MonthRepresentation.Default,
   onSnappedDate: (snappedDate: LocalDate) -> Unit = {}
 ) {
   DefaultWheelDatePicker(
@@ -41,6 +43,7 @@ fun WheelDatePicker(
     textStyle,
     textColor,
     selectorProperties,
+    monthRepresentation = monthRepresentation,
     onSnappedDate = { snappedDate ->
       onSnappedDate(snappedDate.snappedLocalDate)
       snappedDate.snappedIndex

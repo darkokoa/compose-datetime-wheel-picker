@@ -29,6 +29,7 @@ internal fun DefaultWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  monthRepresentation: MonthRepresentation,
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null }
 ) {
   val itemCount = if (yearsRange == null) 2 else 3
@@ -39,12 +40,13 @@ internal fun DefaultWheelDatePicker(
   var dayOfMonths = calculateDayOfMonths(snappedDate.month.number, snappedDate.year)
 
   val months = (1..12).map {
-    val monthName = Month(it).name.lowercase().replaceFirstChar { char -> char.titlecase() }
+    val monthName = monthRepresentation.toMonthName(
+      month = Month(it),
+      dpWidthSize = size.width
+    )
 
     Month(
-      text = if (size.width / 3 < 55.dp) {
-        monthName.substring(0, 3)
-      } else monthName,
+      text = monthName,
       value = it,
       index = it - 1
     )
