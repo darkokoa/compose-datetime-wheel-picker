@@ -29,6 +29,7 @@ internal fun DefaultWheelDateTimePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  monthRepresentation: MonthRepresentation,
   onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null }
 ) {
 
@@ -61,6 +62,7 @@ internal fun DefaultWheelDateTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        monthRepresentation = monthRepresentation,
         onSnappedDate = { snappedDate ->
 
           val newDateTime = when (snappedDate) {
