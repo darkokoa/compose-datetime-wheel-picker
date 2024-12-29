@@ -1,22 +1,19 @@
 # datetime-wheel-picker (work-in-progress 👷🔧️👷‍♀️⛏)
 
-> 🌐 Check out the latest version with i18n support -> [i18n branch](https://github.com/darkokoa/compose-datetime-wheel-picker/tree/feat/dkk/i18n) (WIP 👷🔧️👷‍♀️⛏)
-
-[![badge-version-main]](https://search.maven.org/search?q=g:io.github.darkokoa%20a:datetime-wheel-picker*)
 ![badge-android][badge-android]
 ![badge-jvm][badge-jvm]
 ![badge-ios][badge-ios]
 ![badge-js][badge-js]
 ![badge-wasm][badge-wasm]
 
-Compose Multiplatform implementation of [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose).
+[Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) datetime picker implementation featuring customizable wheel pickers for date, time, and datetime selection.
 
-| Picker                                                                                                                                     | Usage                                                                   |
-|--------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | ```WheelDateTimePicker { snappedDateTime -> }```                        |
-| <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | ```WheelDatePicker { snappedDate -> }```                                |
-| <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | ```WheelTimePicker { snappedTime -> }```                                |
-| <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | ```WheelTimePicker(timeFormat = TimeFormat.AM_PM) { snappedTime -> }``` |
+| Picker                                                                                                                                     | Usage                                                                                                  |
+|--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | ```WheelDateTimePicker { snappedDateTime -> }```                                                       |
+| <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | ```WheelDatePicker { snappedDate -> }```                                                               |
+| <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | ```WheelTimePicker { snappedTime -> }```                                                               |
+| <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | ```WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }``` |
 
 ## Features
 
@@ -43,7 +40,13 @@ WheelDateTimePicker(
     hour = 5,
     minute = 30
   ),
-  timeFormat = TimeFormat.AM_PM,
+  dateFormatter = dateFormatter(
+    locale = Locale.current, 
+    monthDisplayStyle = MonthDisplayStyle.SHORT
+  ),
+  timeFormatter = timeFormatter(
+    timeFormat = TimeFormat.HOUR_24
+  ),
   size = DpSize(200.dp, 100.dp),
   rowCount = 5,
   textStyle = MaterialTheme.typography.titleSmall,
@@ -69,10 +72,10 @@ WheelDateTimePicker(
 ## Setup
 datetime-wheel-picker has multiple active versions. The higher one uses the latest versions for Compose, while the others use only stable versions. Choose the one that matches your Compose version, considering this table:
 
-| Compose Version   |                                                 datetime-wheel-picker Version                                                  |
-|-------------------|:------------------------------------------------------------------------------------------------------------------------------:|
-| Compose 1.3 - 1.6 |         [![badge-version-main]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.0.2)          |
-| Compose 1.7       | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.0.2-compose1.7) |
+| Compose Version |                                                     datetime-wheel-picker Version                                                      |
+|-----------------|:--------------------------------------------------------------------------------------------------------------------------------------:|
+| Compose 1.6     | [![badge-version-compose1.6]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha01-compose1.6) |
+| Compose 1.7     | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha01-compose1.7) |
 
 - Add the Maven Central repository if it is not already there:
 
@@ -131,9 +134,9 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 
 [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose)
 
-[badge-version-main]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=1.0.2&style=flat
+[badge-version-compose1.6]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.6&style=flat
 
-[badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionPrefix=1.0.2-compose1.7&style=flat
+[badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7&style=flat
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
