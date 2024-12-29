@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import dev.darkokoa.datetimewheelpicker.core.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
+import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import dev.darkokoa.datetimewheelpicker.theme.AppTheme
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -50,7 +51,7 @@ internal fun App() = AppTheme {
         maxDateTime = LocalDateTime(
           2025, 10, 20, 5, 30
         ),
-        timeFormat = TimeFormat.AM_PM,
+        timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
         size = DpSize(200.dp, 100.dp),
         rowCount = 5,
         textStyle = MaterialTheme.typography.titleSmall,
