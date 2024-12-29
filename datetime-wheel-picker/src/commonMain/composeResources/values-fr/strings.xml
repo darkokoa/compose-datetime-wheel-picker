@@ -1,0 +1,30 @@
+<resources>
+    <string name="month_january_full">janvier</string>
+    <string name="month_february_full">février</string>
+    <string name="month_march_full">mars</string>
+    <string name="month_april_full">avril</string>
+    <string name="month_may_full">mai</string>
+    <string name="month_june_full">juin</string>
+    <string name="month_july_full">juillet</string>
+    <string name="month_august_full">août</string>
+    <string name="month_september_full">septembre</string>
+    <string name="month_october_full">octobre</string>
+    <string name="month_november_full">novembre</string>
+    <string name="month_december_full">décembre</string>
+
+    <string name="month_january_short">janv.</string>
+    <string name="month_february_short">févr.</string>
+    <string name="month_march_short">mars</string>
+    <string name="month_april_short">avr.</string>
+    <string name="month_may_short">mai</string>
+    <string name="month_june_short">juin</string>
+    <string name="month_july_short">juil.</string>
+    <string name="month_august_short">août</string>
+    <string name="month_september_short">sept.</string>
+    <string name="month_october_short">oct.</string>
+    <string name="month_november_short">nov.</string>
+    <string name="month_december_short">déc.</string>
+
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+</resources>

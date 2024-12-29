@@ -1,0 +1,30 @@
+<resources>
+    <string name="month_january_full">gennaio</string>
+    <string name="month_february_full">febbraio</string>
+    <string name="month_march_full">marzo</string>
+    <string name="month_april_full">aprile</string>
+    <string name="month_may_full">maggio</string>
+    <string name="month_june_full">giugno</string>
+    <string name="month_july_full">luglio</string>
+    <string name="month_august_full">agosto</string>
+    <string name="month_september_full">settembre</string>
+    <string name="month_october_full">ottobre</string>
+    <string name="month_november_full">novembre</string>
+    <string name="month_december_full">dicembre</string>
+
+    <string name="month_january_short">gen</string>
+    <string name="month_february_short">feb</string>
+    <string name="month_march_short">mar</string>
+    <string name="month_april_short">apr</string>
+    <string name="month_may_short">mag</string>
+    <string name="month_june_short">giu</string>
+    <string name="month_july_short">lug</string>
+    <string name="month_august_short">ago</string>
+    <string name="month_september_short">set</string>
+    <string name="month_october_short">ott</string>
+    <string name="month_november_short">nov</string>
+    <string name="month_december_short">dic</string>
+
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+</resources>

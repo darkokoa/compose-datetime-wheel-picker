@@ -1,0 +1,30 @@
+<resources>
+    <string name="month_january_full">stycznia</string>
+    <string name="month_february_full">lutego</string>
+    <string name="month_march_full">marca</string>
+    <string name="month_april_full">kwietnia</string>
+    <string name="month_may_full">maja</string>
+    <string name="month_june_full">czerwca</string>
+    <string name="month_july_full">lipca</string>
+    <string name="month_august_full">sierpnia</string>
+    <string name="month_september_full">września</string>
+    <string name="month_october_full">października</string>
+    <string name="month_november_full">listopada</string>
+    <string name="month_december_full">grudnia</string>
+
+    <string name="month_january_short">sty</string>
+    <string name="month_february_short">lut</string>
+    <string name="month_march_short">mar</string>
+    <string name="month_april_short">kwi</string>
+    <string name="month_may_short">maj</string>
+    <string name="month_june_short">cze</string>
+    <string name="month_july_short">lip</string>
+    <string name="month_august_short">sie</string>
+    <string name="month_september_short">wrz</string>
+    <string name="month_october_short">paź</string>
+    <string name="month_november_short">lis</string>
+    <string name="month_december_short">gru</string>
+
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+</resources>

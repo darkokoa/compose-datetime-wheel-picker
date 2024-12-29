@@ -1,0 +1,30 @@
+<resources>
+    <string name="month_january_full">января</string>
+    <string name="month_february_full">февраля</string>
+    <string name="month_march_full">марта</string>
+    <string name="month_april_full">апреля</string>
+    <string name="month_may_full">мая</string>
+    <string name="month_june_full">июня</string>
+    <string name="month_july_full">июля</string>
+    <string name="month_august_full">августа</string>
+    <string name="month_september_full">сентября</string>
+    <string name="month_october_full">октября</string>
+    <string name="month_november_full">ноября</string>
+    <string name="month_december_full">декабря</string>
+
+    <string name="month_january_short">янв.</string>
+    <string name="month_february_short">февр.</string>
+    <string name="month_march_short">мар.</string>
+    <string name="month_april_short">апр.</string>
+    <string name="month_may_short">мая</string>
+    <string name="month_june_short">июн.</string>
+    <string name="month_july_short">июл.</string>
+    <string name="month_august_short">авг.</string>
+    <string name="month_september_short">сент.</string>
+    <string name="month_october_short">окт.</string>
+    <string name="month_november_short">нояб.</string>
+    <string name="month_december_short">дек.</string>
+
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+</resources>
