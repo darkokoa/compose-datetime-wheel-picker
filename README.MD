@@ -1,10 +1,13 @@
 # datetime-wheel-picker (work-in-progress 👷🔧️👷‍♀️⛏)
 
+> 🌐 Check out the latest version with i18n support -> [i18n branch](https://github.com/darkokoa/compose-datetime-wheel-picker/tree/feat/dkk/i18n) (WIP 👷🔧️👷‍♀️⛏)
+
 [![badge-version-main]](https://search.maven.org/search?q=g:io.github.darkokoa%20a:datetime-wheel-picker*)
 ![badge-android][badge-android]
 ![badge-jvm][badge-jvm]
 ![badge-ios][badge-ios]
 ![badge-js][badge-js]
+![badge-wasm][badge-wasm]
 
 Compose Multiplatform implementation of [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose).
 
@@ -116,7 +119,7 @@ compileOptions {
 //...
 
 dependencies {
-  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 ```
 
@@ -130,7 +133,7 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 
 [badge-version-main]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=1.0.2&style=flat
 
-[badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7&style=flat
+[badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionPrefix=1.0.2-compose1.7&style=flat
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
@@ -139,3 +142,5 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 [badge-ios]: https://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat
 
 [badge-js]: https://img.shields.io/badge/platform-js-F8DB5D.svg?style=flat
+
+[badge-wasm]: https://img.shields.io/badge/platform-wasm-654FF0.svg?style=flat
