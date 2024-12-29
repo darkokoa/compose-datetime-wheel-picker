@@ -6,14 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.DefaultWheelTimePicker
 import dev.darkokoa.datetimewheelpicker.core.MAX
 import dev.darkokoa.datetimewheelpicker.core.MIN
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
-import dev.darkokoa.datetimewheelpicker.core.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
+import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import dev.darkokoa.datetimewheelpicker.core.now
 import kotlinx.datetime.LocalTime
 
@@ -23,7 +25,7 @@ fun WheelTimePicker(
   startTime: LocalTime = LocalTime.now(),
   minTime: LocalTime = LocalTime.MIN,
   maxTime: LocalTime = LocalTime.MAX,
-  timeFormat: TimeFormat = TimeFormat.HOUR_24,
+  timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -36,7 +38,7 @@ fun WheelTimePicker(
     startTime,
     minTime,
     maxTime,
-    timeFormat,
+    timeFormatter,
     size,
     rowCount,
     textStyle,

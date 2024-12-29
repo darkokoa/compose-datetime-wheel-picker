@@ -3,6 +3,7 @@ package dev.darkokoa.datetimewheelpicker.core
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
@@ -17,8 +18,12 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
+import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import kotlinx.datetime.LocalTime
 
 @Composable
@@ -27,7 +32,7 @@ internal fun DefaultWheelTimePicker(
   startTime: LocalTime = LocalTime.now(),
   minTime: LocalTime = LocalTime.MIN,
   maxTime: LocalTime = LocalTime.MAX,
-  timeFormat: TimeFormat = TimeFormat.HOUR_24,
+  timeFormater: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -36,7 +41,7 @@ internal fun DefaultWheelTimePicker(
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
 
-  val itemCount = if (timeFormat == TimeFormat.AM_PM) 3 else 2
+  val itemCount = if (timeFormater.timeFormat == TimeFormat.AM_PM) 3 else 2
   val itemWidth = size.width / itemCount
 
   var snappedTime by remember { mutableStateOf(LocalTime(startTime.hour, startTime.minute)) }
@@ -66,12 +71,12 @@ internal fun DefaultWheelTimePicker(
 
   val amPms = listOf(
     AmPm(
-      text = "AM",
+      text = timeFormater.formatAmText(),
       value = AmPmValue.AM,
       index = 0
     ),
     AmPm(
-      text = "PM",
+      text = timeFormater.formatPmText(),
       value = AmPmValue.PM,
       index = 1
     )
@@ -92,18 +97,18 @@ internal fun DefaultWheelTimePicker(
         border = selectorProperties.border().value
       ) {}
     }
-    Row {
+    Row(modifier = Modifier.height(size.height)) {
       //Hour
       WheelTextPicker(
         size = DpSize(
           width = itemWidth,
           height = size.height
         ),
-        texts = if (timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
+        texts = if (timeFormater.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
         rowCount = rowCount,
         style = textStyle,
         color = textColor,
-        startIndex = if (timeFormat == TimeFormat.HOUR_24) {
+        startIndex = if (timeFormater.timeFormat == TimeFormat.HOUR_24) {
           hours.find { it.value == startTime.hour }?.index ?: 0
         } else amPmHours.find { it.value == localTimeToAmPmHour(startTime) }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
@@ -111,7 +116,7 @@ internal fun DefaultWheelTimePicker(
         ),
         onScrollFinished = { snappedIndex ->
 
-          val newHour = if (timeFormat == TimeFormat.HOUR_24) {
+          val newHour = if (timeFormater.timeFormat == TimeFormat.HOUR_24) {
             hours.find { it.index == snappedIndex }?.value
           } else {
             amPmHourToHour24(
@@ -129,7 +134,7 @@ internal fun DefaultWheelTimePicker(
               snappedTime = newTime
             }
 
-            val newIndex = if (timeFormat == TimeFormat.HOUR_24) {
+            val newIndex = if (timeFormater.timeFormat == TimeFormat.HOUR_24) {
               hours.find { it.value == snappedTime.hour }?.index
             } else {
               amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
@@ -141,12 +146,12 @@ internal fun DefaultWheelTimePicker(
                   localTime = snappedTime,
                   index = newIndex
                 ),
-                timeFormat
+                timeFormater.timeFormat
               )?.let { return@WheelTextPicker it }
             }
           }
 
-          return@WheelTextPicker if (timeFormat == TimeFormat.HOUR_24) {
+          return@WheelTextPicker if (timeFormater.timeFormat == TimeFormat.HOUR_24) {
             hours.find { it.value == snappedTime.hour }?.index
           } else {
             amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
@@ -178,7 +183,7 @@ internal fun DefaultWheelTimePicker(
 
           val newMinute = minutes.find { it.index == snappedIndex }?.value
 
-          val newHour = if (timeFormat == TimeFormat.HOUR_24) {
+          val newHour = if (timeFormater.timeFormat == TimeFormat.HOUR_24) {
             hours.find { it.value == snappedTime.hour }?.value
           } else {
             amPmHourToHour24(
@@ -204,7 +209,7 @@ internal fun DefaultWheelTimePicker(
                     localTime = snappedTime,
                     index = newIndex
                   ),
-                  timeFormat
+                  timeFormater.timeFormat
                 )?.let { return@WheelTextPicker it }
               }
             }
@@ -214,7 +219,7 @@ internal fun DefaultWheelTimePicker(
         }
       )
       //AM_PM
-      if (timeFormat == TimeFormat.AM_PM) {
+      if (timeFormater.timeFormat == TimeFormat.AM_PM) {
         WheelTextPicker(
           size = DpSize(
             width = itemWidth,
@@ -265,7 +270,7 @@ internal fun DefaultWheelTimePicker(
                     localTime = snappedTime,
                     index = newIndex
                   ),
-                  timeFormat
+                  timeFormater.timeFormat
                 )
               }
             }
@@ -337,10 +342,6 @@ fun TimeSeparator(
     }
   }
 
-}
-
-enum class TimeFormat {
-  HOUR_24, AM_PM
 }
 
 private data class Hour(
