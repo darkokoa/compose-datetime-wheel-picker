@@ -25,7 +25,15 @@ kotlin {
     }
   }
 
-  jvm()
+  jvm {
+    compilations.all {
+      compileTaskProvider.configure {
+        compilerOptions {
+          jvmTarget.set(JvmTarget.JVM_17)
+        }
+      }
+    }
+  }
 
   js {
     browser()
