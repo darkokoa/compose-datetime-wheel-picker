@@ -18,8 +18,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import kotlinx.datetime.Month
 import kotlin.math.abs
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -189,6 +191,42 @@ internal class DefaultSelectorProperties(
   @Composable
   override fun border(): State<BorderStroke?> {
     return rememberUpdatedState(border)
+  }
+}
+
+sealed interface MonthRepresentation {
+  data object Default : MonthRepresentation
+  data object FullName : MonthRepresentation
+  data object ShortName : MonthRepresentation
+  data object MonthNumber : MonthRepresentation
+  data class Custom(val mapper: (monthIndex: Int) -> String) : MonthRepresentation
+}
+
+internal fun MonthRepresentation.toMonthName(month: Month, dpWidthSize: Dp): String {
+  val monthName = month.name.lowercase().replaceFirstChar { char -> char.titlecase() }
+  return when(this){
+    is MonthRepresentation.Default -> {
+      if (dpWidthSize / 3 < 55.dp) {
+        monthName.substring(0, 3)
+      } else {
+        monthName
+      }
+    }
+    is MonthRepresentation.FullName -> {
+      monthName
+    }
+
+    is MonthRepresentation.ShortName -> {
+      monthName.substring(0, 3)
+    }
+
+    is MonthRepresentation.MonthNumber -> {
+      month.ordinal.plus(1).toString().padStart(2, '0')
+    }
+
+    is MonthRepresentation.Custom -> {
+      this.mapper(month.ordinal)
+    }
   }
 }
 
