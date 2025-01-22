@@ -4,32 +4,52 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.intl.Locale
-import datetime_wheel_picker.datetime_wheel_picker.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
+import dev.darkokoa.datetimewheelpicker.rememberStrings
+import dev.darkokoa.datetimewheelpicker.strings.EnStrings
+import dev.darkokoa.datetimewheelpicker.strings.Strings
 
 @Stable
 interface TimeFormatter {
   val timeFormat: TimeFormat
   val formatHour: (Int) -> String
   val formatMinute: (Int) -> String
-  val formatAmText: @Composable () -> String
-  val formatPmText: @Composable () -> String
+  val formatAmText: () -> String
+  val formatPmText: () -> String
 }
 
 private class TimeFormatterImpl(
   override val timeFormat: TimeFormat,
   override val formatHour: (Int) -> String,
   override val formatMinute: (Int) -> String,
-  override val formatAmText: @Composable () -> String,
-  override val formatPmText: @Composable () -> String,
+  override val formatAmText: () -> String,
+  override val formatPmText: () -> String,
 ) : TimeFormatter
 
 fun timeFormatter(
   timeFormat: TimeFormat = TimeFormat.HOUR_24,
   formatHour: (Int) -> String = { hour -> hour.toString().padStart(2, '0') },
   formatMinute: (Int) -> String = { minute -> minute.toString().padStart(2, '0') },
-  formatAmText: @Composable () -> String = { stringResource(Res.string.time_am) },
-  formatPmText: @Composable () -> String = { stringResource(Res.string.time_pm) },
+  formatAmText: () -> String = {
+    (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings).timeAM
+  },
+  formatPmText: () -> String = {
+    (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings).timePM
+  },
+): TimeFormatter = TimeFormatterImpl(
+  timeFormat = timeFormat,
+  formatHour = formatHour,
+  formatMinute = formatMinute,
+  formatAmText = formatAmText,
+  formatPmText = formatPmText
+)
+
+internal fun timeFormatter(
+  strings: Strings,
+  timeFormat: TimeFormat = TimeFormat.HOUR_24,
+  formatHour: (Int) -> String = { hour -> hour.toString().padStart(2, '0') },
+  formatMinute: (Int) -> String = { minute -> minute.toString().padStart(2, '0') },
+  formatAmText: () -> String = { strings.timeAM },
+  formatPmText: () -> String = { strings.timePM },
 ): TimeFormatter = TimeFormatterImpl(
   timeFormat = timeFormat,
   formatHour = formatHour,
@@ -41,11 +61,16 @@ fun timeFormatter(
 @Composable
 fun timeFormatter(
   locale: Locale,
-) = remember(locale) {
-  timeFormatter(
-    timeFormat = when {
-      locale.language == "en" || locale.region in listOf("US", "GB") -> TimeFormat.AM_PM
-      else -> TimeFormat.HOUR_24
-    }
-  )
+): TimeFormatter {
+  val lyricist = rememberStrings(currentLanguageTag = locale.language)
+
+  return remember(lyricist.strings, locale) {
+    timeFormatter(
+      strings = lyricist.strings,
+      timeFormat = when {
+        locale.language == "en" || locale.region in listOf("US", "GB") -> TimeFormat.AM_PM
+        else -> TimeFormat.HOUR_24
+      }
+    )
+  }
 }
