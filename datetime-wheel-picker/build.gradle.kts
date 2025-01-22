@@ -8,6 +8,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.android.library)
   alias(libs.plugins.maven.publish)
+  alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -65,8 +66,10 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.material3)
-      implementation(compose.components.resources)
+//      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
+
+      implementation(libs.lyricist)
     }
 
     commonTest.dependencies {
@@ -89,6 +92,25 @@ kotlin {
     }
 
   }
+}
+
+dependencies {
+  add("kspCommonMainMetadata", libs.lyricist.processor)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().all {
+  if(name != "kspCommonMainKotlinMetadata") {
+    dependsOn("kspCommonMainKotlinMetadata")
+  }
+}
+
+kotlin.sourceSets.commonMain {
+  kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+}
+
+ksp {
+  arg("lyricist.internalVisibility", "true")
+  arg("lyricist.packageName", "dev.darkokoa.datetimewheelpicker")
 }
 
 android {

@@ -111,7 +111,7 @@ internal fun DefaultWheelDateTimePicker(
       //Time
       DefaultWheelTimePicker(
         startTime = startDateTime.time,
-        timeFormater = timeFormatter,
+        timeFormatter = timeFormatter,
         size = DpSize(
           width = if (yearsRange == null) size.width * 3 / 6 else size.width * 2 / 5,
           height = size.height
