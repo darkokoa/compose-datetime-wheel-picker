@@ -21,7 +21,6 @@ import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.formatMonth
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
-import kotlin.math.min
 
 @Composable
 internal fun DefaultWheelDatePicker(
@@ -251,10 +250,9 @@ private fun rememberFormattedMonths(
 ) = remember(dateFormatter, size.width) {
   (1..12).map {
     val monthName = dateFormatter.formatMonth(kotlinx.datetime.Month(it))
+    val monthShortName = dateFormatter.formatMonth(kotlinx.datetime.Month(it), MonthDisplayStyle.SHORT)
     Month(
-      text = if (size.width / 3 < 55.dp) {
-        monthName.substring(0, min(monthName.length, 3))
-      } else monthName,
+      text = if (size.width / 3 < 55.dp) monthShortName else monthName,
       value = it,
       index = it - 1
     )

@@ -27,8 +27,12 @@ private class TimeFormatterImpl(
 
 fun timeFormatter(
   timeFormat: TimeFormat = TimeFormat.HOUR_24,
-  formatHour: (Int) -> String = { hour -> hour.toString().padStart(2, '0') },
-  formatMinute: (Int) -> String = { minute -> minute.toString().padStart(2, '0') },
+  formatHour: (Int) -> String = { hour ->
+    hour.toString().padStart(2, '0').toLocalizedNumerals()
+  },
+  formatMinute: (Int) -> String = { minute ->
+    minute.toString().padStart(2, '0').toLocalizedNumerals()
+  },
   formatAmText: () -> String = {
     (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings).timeAM
   },
@@ -46,8 +50,12 @@ fun timeFormatter(
 internal fun timeFormatter(
   strings: Strings,
   timeFormat: TimeFormat = TimeFormat.HOUR_24,
-  formatHour: (Int) -> String = { hour -> hour.toString().padStart(2, '0') },
-  formatMinute: (Int) -> String = { minute -> minute.toString().padStart(2, '0') },
+  formatHour: (Int) -> String = { hour ->
+    hour.toString().padStart(2, '0').toLocalizedNumerals(strings)
+  },
+  formatMinute: (Int) -> String = { minute ->
+    minute.toString().padStart(2, '0').toLocalizedNumerals(strings)
+  },
   formatAmText: () -> String = { strings.timeAM },
   formatPmText: () -> String = { strings.timePM },
 ): TimeFormatter = TimeFormatterImpl(

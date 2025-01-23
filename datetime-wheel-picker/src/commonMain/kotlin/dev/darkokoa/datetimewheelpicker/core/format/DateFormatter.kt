@@ -32,16 +32,16 @@ private class DateFormatterImpl(
 fun dateFormatter(
   dateOrder: DateOrder = DateOrder.DMY,
   monthDisplayStyle: MonthDisplayStyle = MonthDisplayStyle.FULL,
-  formatYear: (Int) -> String = { it.toString() },
+  formatYear: (Int) -> String = { it.toLocalizedNumerals() },
   formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
     val strings = (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings)
     when (style) {
       MonthDisplayStyle.FULL -> month.fullString(strings)
       MonthDisplayStyle.SHORT -> month.shortString(strings)
-      MonthDisplayStyle.NUMERIC -> month.number.toString()
+      MonthDisplayStyle.NUMERIC -> month.number.toLocalizedNumerals(strings)
     }
   },
-  formatDay: (Int) -> String = { it.toString() }
+  formatDay: (Int) -> String = { it.toLocalizedNumerals() }
 ): DateFormatter = DateFormatterImpl(
   dateOrder = dateOrder,
   monthDisplayStyle = monthDisplayStyle,
@@ -54,15 +54,15 @@ internal fun dateFormatter(
   strings: Strings,
   dateOrder: DateOrder = DateOrder.DMY,
   monthDisplayStyle: MonthDisplayStyle = MonthDisplayStyle.FULL,
-  formatYear: (Int) -> String = { it.toString() },
+  formatYear: (Int) -> String = { it.toLocalizedNumerals(strings) },
   formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
     when (style) {
       MonthDisplayStyle.FULL -> month.fullString(strings)
       MonthDisplayStyle.SHORT -> month.shortString(strings)
-      MonthDisplayStyle.NUMERIC -> month.number.toString()
+      MonthDisplayStyle.NUMERIC -> month.number.toLocalizedNumerals(strings)
     }
   },
-  formatDay: (Int) -> String = { it.toString() }
+  formatDay: (Int) -> String = { it.toLocalizedNumerals(strings) }
 ): DateFormatter = DateFormatterImpl(
   dateOrder = dateOrder,
   monthDisplayStyle = monthDisplayStyle,
