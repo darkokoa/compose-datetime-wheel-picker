@@ -33,14 +33,14 @@ internal val ArStrings = Strings(
   timeAM = "ص",
   timePM = "م",
 
-  number0 = "٠",
-  number1 = "١",
-  number2 = "٢",
-  number3 = "٣",
-  number4 = "٤",
-  number5 = "٥",
-  number6 = "٦",
-  number7 = "٧",
-  number8 = "٨",
-  number9 = "٩"
+  digit0 = '٠',
+  digit1 = '١',
+  digit2 = '٢',
+  digit3 = '٣',
+  digit4 = '٤',
+  digit5 = '٥',
+  digit6 = '٦',
+  digit7 = '٧',
+  digit8 = '٨',
+  digit9 = '٩'
 )

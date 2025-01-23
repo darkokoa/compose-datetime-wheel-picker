@@ -24,16 +24,16 @@ internal fun Int.toLocalizedNumerals(strings: Strings): String {
 internal fun String.toLocalizedNumerals(strings: Strings): String {
   return this.map { digit ->
     when (digit) {
-      '0' -> strings.number0
-      '1' -> strings.number1
-      '2' -> strings.number2
-      '3' -> strings.number3
-      '4' -> strings.number4
-      '5' -> strings.number5
-      '6' -> strings.number6
-      '7' -> strings.number7
-      '8' -> strings.number8
-      '9' -> strings.number9
+      '0' -> strings.digit0
+      '1' -> strings.digit1
+      '2' -> strings.digit2
+      '3' -> strings.digit3
+      '4' -> strings.digit4
+      '5' -> strings.digit5
+      '6' -> strings.digit6
+      '7' -> strings.digit7
+      '8' -> strings.digit8
+      '9' -> strings.digit9
       else -> digit.toString()
     }
   }.joinToString("")
