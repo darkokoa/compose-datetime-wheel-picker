@@ -42,7 +42,7 @@ internal fun DefaultWheelDateTimePicker(
 
   var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(ChronoUnit.MINUTES)) }
 
-  val yearTexts = yearsRange?.map { it.toString() } ?: listOf()
+  val yearTexts = remember(yearsRange) { yearsRange?.map { it.toString() } ?: listOf() }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
@@ -102,8 +102,9 @@ internal fun DefaultWheelDateTimePicker(
             }
 
             is SnappedDate.Year -> {
-              onSnappedDateTime(SnappedDateTime.Year(snappedDateTime, yearTexts.indexOf(snappedDateTime.year.toString())))
-              yearTexts.indexOf(snappedDateTime.year.toString())
+              val newYearTextIndex = yearTexts.indexOf(snappedDateTime.year.toString())
+              onSnappedDateTime(SnappedDateTime.Year(snappedDateTime, newYearTextIndex))
+              newYearTextIndex
             }
           }
         }
