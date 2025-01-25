@@ -1,3 +1,4 @@
+import com.google.devtools.ksp.gradle.KspTaskMetadata
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
@@ -98,14 +99,8 @@ dependencies {
   add("kspCommonMainMetadata", libs.lyricist.processor)
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().all {
-  if(name != "kspCommonMainKotlinMetadata") {
-    dependsOn("kspCommonMainKotlinMetadata")
-  }
-}
-
 kotlin.sourceSets.commonMain {
-  kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+  tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) }
 }
 
 ksp {
