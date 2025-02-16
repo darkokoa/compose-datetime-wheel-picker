@@ -1,3 +1,4 @@
+import com.google.devtools.ksp.gradle.KspTaskMetadata
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
@@ -8,6 +9,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.android.library)
   alias(libs.plugins.maven.publish)
+  alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -59,15 +61,16 @@ kotlin {
   sourceSets {
     all {
       languageSettings {
-//        optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+
       }
     }
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.material3)
-//      @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
 //      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
+
+      implementation(libs.lyricist)
     }
 
     commonTest.dependencies {
@@ -90,6 +93,19 @@ kotlin {
     }
 
   }
+}
+
+dependencies {
+  add("kspCommonMainMetadata", libs.lyricist.processor)
+}
+
+kotlin.sourceSets.commonMain {
+  tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) }
+}
+
+ksp {
+  arg("lyricist.internalVisibility", "true")
+  arg("lyricist.packageName", "dev.darkokoa.datetimewheelpicker")
 }
 
 android {

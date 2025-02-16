@@ -11,8 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
+import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
+import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
+import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 
@@ -23,7 +30,8 @@ internal fun DefaultWheelDateTimePicker(
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
-  timeFormat: TimeFormat = TimeFormat.HOUR_24,
+  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.SHORT),
+  timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -34,7 +42,7 @@ internal fun DefaultWheelDateTimePicker(
 
   var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(ChronoUnit.MINUTES)) }
 
-  val yearTexts = yearsRange?.map { it.toString() } ?: listOf()
+  val yearTexts = remember(yearsRange) { yearsRange?.map { it.toString() } ?: listOf() }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
@@ -51,6 +59,7 @@ internal fun DefaultWheelDateTimePicker(
       DefaultWheelDatePicker(
         startDate = startDateTime.date,
         yearsRange = yearsRange,
+        dateFormatter = dateFormatter,
         size = DpSize(
           width = if (yearsRange == null) size.width * 3 / 6 else size.width * 3 / 5,
           height = size.height
@@ -93,8 +102,9 @@ internal fun DefaultWheelDateTimePicker(
             }
 
             is SnappedDate.Year -> {
-              onSnappedDateTime(SnappedDateTime.Year(snappedDateTime, yearTexts.indexOf(snappedDateTime.year.toString())))
-              yearTexts.indexOf(snappedDateTime.year.toString())
+              val newYearTextIndex = yearTexts.indexOf(snappedDateTime.year.toString())
+              onSnappedDateTime(SnappedDateTime.Year(snappedDateTime, newYearTextIndex))
+              newYearTextIndex
             }
           }
         }
@@ -102,7 +112,7 @@ internal fun DefaultWheelDateTimePicker(
       //Time
       DefaultWheelTimePicker(
         startTime = startDateTime.time,
-        timeFormat = timeFormat,
+        timeFormatter = timeFormatter,
         size = DpSize(
           width = if (yearsRange == null) size.width * 3 / 6 else size.width * 2 / 5,
           height = size.height
