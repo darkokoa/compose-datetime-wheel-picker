@@ -49,7 +49,7 @@ internal fun App() = AppTheme {
         ),
         minDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
         maxDateTime = LocalDateTime(
-          2025, 10, 20, 5, 30
+          2027, 10, 20, 5, 30
         ),
         timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
         size = DpSize(200.dp, 100.dp),
