@@ -51,7 +51,7 @@ kotlin {
   sourceSets {
     all {
       languageSettings {
-//        optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+
       }
     }
     commonMain.dependencies {
@@ -59,8 +59,6 @@ kotlin {
 
       implementation(compose.runtime)
       implementation(compose.material3)
-//      @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-//      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
     }
 

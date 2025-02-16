@@ -1,7 +1,5 @@
 import com.google.devtools.ksp.gradle.KspTaskMetadata
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
   alias(libs.plugins.multiplatform)
@@ -42,7 +40,7 @@ kotlin {
     binaries.executable()
   }
 
-  @OptIn(ExperimentalWasmDsl::class)
+  @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
   wasmJs {
     browser()
   }
@@ -67,7 +65,6 @@ kotlin {
     commonMain.dependencies {
       implementation(compose.runtime)
       implementation(compose.material3)
-//      implementation(compose.components.resources)
       implementation(libs.kotlinx.datetime)
 
       implementation(libs.lyricist)
