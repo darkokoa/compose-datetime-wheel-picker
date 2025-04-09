@@ -96,8 +96,18 @@ dependencies {
   add("kspCommonMainMetadata", libs.lyricist.processor)
 }
 
+//kotlin.sourceSets.commonMain {
+//  tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) }
+//}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+  if(name != "kspCommonMainKotlinMetadata") {
+    dependsOn("kspCommonMainKotlinMetadata")
+  }
+}
+
 kotlin.sourceSets.commonMain {
-  tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) }
+  kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
 }
 
 ksp {
