@@ -90,11 +90,11 @@ kotlin {
 
 android {
   namespace = "dev.darkokoa.datetimewheelpicker"
-  compileSdk = 34
+  compileSdk = 35
 
   defaultConfig {
     minSdk = 24
-    targetSdk = 34
+    targetSdk = 35
 
     applicationId = "dev.darkokoa.datetimewheelpicker.androidApp"
     versionCode = 1

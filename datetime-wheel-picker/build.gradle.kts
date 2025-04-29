@@ -117,7 +117,7 @@ ksp {
 
 android {
   namespace = "dev.darkokoa.datetimewheelpicker"
-  compileSdk = 34
+  compileSdk = 35
 
   defaultConfig {
     minSdk = 21
