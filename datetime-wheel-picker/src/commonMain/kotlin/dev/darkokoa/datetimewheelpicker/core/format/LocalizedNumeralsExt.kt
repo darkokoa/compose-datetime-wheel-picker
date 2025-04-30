@@ -9,7 +9,7 @@ internal fun Int.toLocalizedNumerals(locale: Locale = Locale.current): String {
 }
 
 internal fun String.toLocalizedNumerals(locale: Locale = Locale.current): String {
-  return if (locale.language in arrayOf("ar")) {
+  return if (locale.language in arrayOf("ar", "fa")) {
     val strings = dev.darkokoa.datetimewheelpicker.Strings[locale.language] ?: EnStrings
     this.toLocalizedNumerals(strings)
   } else {

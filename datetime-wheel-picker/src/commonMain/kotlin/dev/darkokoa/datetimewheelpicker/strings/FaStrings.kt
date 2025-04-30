@@ -33,14 +33,14 @@ internal val FaStrings = Strings(
   timeAM = "ق.ظ.",
   timePM = "ب.ظ.",
 
-  digit0 = '٠',
-  digit1 = '١',
-  digit2 = '٢',
-  digit3 = '٣',
-  digit4 = '٤',
-  digit5 = '٥',
-  digit6 = '٦',
-  digit7 = '٧',
-  digit8 = '٨',
-  digit9 = '٩'
+  digit0 = '۰',
+  digit1 = '۱',
+  digit2 = '۲',
+  digit3 = '۳',
+  digit4 = '۴',
+  digit5 = '۵',
+  digit6 = '۶',
+  digit7 = '۷',
+  digit8 = '۸',
+  digit9 = '۹'
 )
