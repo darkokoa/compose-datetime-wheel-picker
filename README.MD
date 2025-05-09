@@ -74,8 +74,8 @@ datetime-wheel-picker has multiple active versions. The higher one uses the late
 
 | Compose Version |                                                     datetime-wheel-picker Version                                                      |
 |-----------------|:--------------------------------------------------------------------------------------------------------------------------------------:|
-| Compose 1.6     | [![badge-version-compose1.6]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha01-compose1.6) |
-| Compose 1.7     | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha01-compose1.7) |
+| Compose 1.7     | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha03-compose1.7) |
+| Compose 1.8     | [![badge-version-compose1.8]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha03-compose1.8) |
 
 - Add the Maven Central repository if it is not already there:
 
@@ -93,7 +93,7 @@ kotlin {
     val commonMain by getting {
       dependencies {
         implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
       }
     }
   }
@@ -107,7 +107,7 @@ kotlin {
 ```kotlin
 dependencies {
   implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
 }
 ```
 
@@ -122,7 +122,7 @@ compileOptions {
 //...
 
 dependencies {
-  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
 ```
 
@@ -134,9 +134,9 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 
 [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose)
 
-[badge-version-compose1.6]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.6&style=flat
-
 [badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7&style=flat
+
+[badge-version-compose1.8]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.8&style=flat
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
