@@ -69,6 +69,7 @@ internal fun timeFormatter(
 @Composable
 fun timeFormatter(
   locale: Locale,
+  timeFormat: TimeFormat? = null
 ): TimeFormatter {
   val lyricist = rememberStrings(currentLanguageTag = locale.language)
 
@@ -76,8 +77,8 @@ fun timeFormatter(
     timeFormatter(
       strings = lyricist.strings,
       timeFormat = when {
-        listOf("en", "ar").contains(locale.language)  || locale.region in listOf("US", "GB") -> TimeFormat.AM_PM
-        else -> TimeFormat.HOUR_24
+        locale.language == "en"  || locale.region in listOf("US", "GB") -> timeFormat ?: TimeFormat.AM_PM
+        else -> timeFormat ?: TimeFormat.HOUR_24
       }
     )
   }
