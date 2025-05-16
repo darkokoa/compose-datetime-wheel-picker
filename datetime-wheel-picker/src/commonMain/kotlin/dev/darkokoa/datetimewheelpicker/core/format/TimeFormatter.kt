@@ -76,7 +76,7 @@ fun timeFormatter(
     timeFormatter(
       strings = lyricist.strings,
       timeFormat = when {
-        locale.language == "en" || locale.region in listOf("US", "GB") -> TimeFormat.AM_PM
+        listOf("en", "ar").contains(locale.language)  || locale.region in listOf("US", "GB") -> TimeFormat.AM_PM
         else -> TimeFormat.HOUR_24
       }
     )
