@@ -62,7 +62,7 @@ internal fun WheelPicker(
     LazyColumn(
       modifier = Modifier
         .height(size.height)
-        .widthIn(size.width),
+        .width(size.width),
       state = lazyListState,
       contentPadding = PaddingValues(vertical = size.height / rowCount * ((rowCount - 1) / 2)),
       flingBehavior = flingBehavior
@@ -77,7 +77,7 @@ internal fun WheelPicker(
         Box(
           modifier = Modifier
             .height(size.height / rowCount)
-            .widthIn(size.width)
+            .width(size.width)
             .alpha(newAlpha)
             .graphicsLayer {
               rotationX = newRotationX
