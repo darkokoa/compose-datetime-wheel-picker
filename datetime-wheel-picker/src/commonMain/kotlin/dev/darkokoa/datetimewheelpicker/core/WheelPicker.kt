@@ -18,9 +18,14 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.sign
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -37,6 +42,7 @@ internal fun WheelPicker(
   val lazyListState = rememberLazyListState(startIndex)
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
   val isScrollInProgress = lazyListState.isScrollInProgress
+  val coroutineScope = rememberCoroutineScope()
 
   LaunchedEffect(isScrollInProgress, count) {
     if (!isScrollInProgress) {
@@ -47,7 +53,59 @@ internal fun WheelPicker(
   }
 
   Box(
-    modifier = modifier,
+    modifier = modifier
+      .pointerInput(Unit) {
+        awaitPointerEventScope {
+          while (true) {
+            val event = awaitPointerEvent()
+            if (event.type == PointerEventType.Scroll) {
+              val scrollDelta = event.changes.firstOrNull()?.scrollDelta?.y ?: 0f
+              
+              // Normalize scroll delta for consistent behavior across platforms
+              val normalizedDelta = normalizeScrollDelta(scrollDelta)
+              
+              if (normalizedDelta != 0f && !lazyListState.isScrollInProgress) {
+                coroutineScope.launch {
+                  // Calculate target item index based on scroll direction
+                  val currentIndex = calculateSnappedItemIndex(lazyListState)
+                  val targetIndex = if (normalizedDelta > 0) {
+                    (currentIndex + 1).coerceAtMost(count - 1)
+                  } else {
+                    (currentIndex - 1).coerceAtLeast(0)
+                  }
+                  
+                  if (targetIndex != currentIndex) {
+                    lazyListState.animateScrollToItem(targetIndex)
+                  }
+                }
+              }
+              
+              // Mark scroll event as consumed to prevent it from reaching LazyColumn
+              event.changes.forEach { it.consume() }
+            }
+          }
+        }
+      }
+      .pointerInput(Unit) {
+        detectDragGestures(
+          onDragEnd = {
+            // Snap to nearest item after drag ends
+            coroutineScope.launch {
+              val currentIndex = calculateSnappedItemIndex(lazyListState)
+              lazyListState.animateScrollToItem(currentIndex)
+            }
+          }
+        ) { change, dragAmount ->
+          coroutineScope.launch {
+            // Handle touch drag by directly manipulating the scroll position
+            try {
+              lazyListState.scrollBy(-dragAmount.y)
+            } catch (_: Exception) {
+              // Handle any scroll exceptions gracefully
+            }
+          }
+        }
+      },
     contentAlignment = Alignment.Center
   ) {
     if (selectorProperties.enabled().value) {
@@ -65,7 +123,8 @@ internal fun WheelPicker(
         .width(size.width),
       state = lazyListState,
       contentPadding = PaddingValues(vertical = size.height / rowCount * ((rowCount - 1) / 2)),
-      flingBehavior = flingBehavior
+      flingBehavior = flingBehavior,
+      userScrollEnabled = false
     ) {
       items(count) { index ->
         val (newAlpha, newRotationX) = calculateAnimatedAlphaAndRotationX(
@@ -189,6 +248,22 @@ internal class DefaultSelectorProperties(
   @Composable
   override fun border(): State<BorderStroke?> {
     return rememberUpdatedState(border)
+  }
+}
+
+/**
+ * Normalizes scroll delta values for consistent behavior across platforms.
+ * JS/WASM platforms typically have much smaller delta values compared to desktop.
+ */
+private fun normalizeScrollDelta(delta: Float): Float {
+  return when {
+    // For very small deltas (typical of JS/WASM), amplify them
+    abs(delta) < 0.1f && delta != 0f -> sign(delta) * 1f
+    // For medium deltas, reduce amplification
+    abs(delta) < 1f -> delta * 2f
+    // For large deltas (desktop-like), use as is but cap at reasonable values
+    abs(delta) > 10f -> sign(delta) * 1f
+    else -> delta
   }
 }
 
