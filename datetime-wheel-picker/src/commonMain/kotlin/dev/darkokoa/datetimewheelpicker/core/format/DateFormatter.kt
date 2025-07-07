@@ -13,38 +13,48 @@ import kotlinx.datetime.number
 @Stable
 interface DateFormatter {
   val dateOrder: DateOrder
-  val monthDisplayStyle: MonthDisplayStyle
-  val formatYear: (Int) -> String
-  val formatMonth: (Month, MonthDisplayStyle) -> String
-  val formatDay: (Int) -> String
+  val yearDisplayStyle: DisplayStyle
+  val monthDisplayStyle: DisplayStyle
+  val dayDisplayStyle: DisplayStyle
+  val formatYear: (Int, DisplayStyle) -> String
+  val formatMonth: (Month, DisplayStyle) -> String
+  val formatDay: (Int, DisplayStyle) -> String
 }
 
+fun DateFormatter.formatYear(year: Int) = formatYear(year, monthDisplayStyle)
 fun DateFormatter.formatMonth(month: Month) = formatMonth(month, monthDisplayStyle)
+fun DateFormatter.formatDay(day: Int) = formatDay(day, monthDisplayStyle)
 
 private class DateFormatterImpl(
   override val dateOrder: DateOrder,
-  override val monthDisplayStyle: MonthDisplayStyle,
-  override val formatYear: (Int) -> String,
-  override val formatMonth: (Month, MonthDisplayStyle) -> String,
-  override val formatDay: (Int) -> String
+  override val dayDisplayStyle: DisplayStyle,
+  override val monthDisplayStyle: DisplayStyle,
+  override val yearDisplayStyle: DisplayStyle,
+  override val formatYear: (Int, DisplayStyle) -> String,
+  override val formatMonth: (Month, DisplayStyle) -> String,
+  override val formatDay: (Int, DisplayStyle) -> String
 ) : DateFormatter
 
 fun dateFormatter(
   dateOrder: DateOrder = DateOrder.DMY,
-  monthDisplayStyle: MonthDisplayStyle = MonthDisplayStyle.FULL,
-  formatYear: (Int) -> String = { it.toLocalizedNumerals() },
-  formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
+  yearDisplayStyle: DisplayStyle = DisplayStyle.FULL,
+  monthDisplayStyle: DisplayStyle = DisplayStyle.FULL,
+  dayDisplayStyle: DisplayStyle = DisplayStyle.FULL,
+  formatYear: (Int, DisplayStyle) -> String = { year, _ -> year.toLocalizedNumerals() },
+  formatMonth: (Month, DisplayStyle) -> String = { month, style ->
     val strings = (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings)
     when (style) {
-      MonthDisplayStyle.FULL -> month.fullString(strings)
-      MonthDisplayStyle.SHORT -> month.shortString(strings)
-      MonthDisplayStyle.NUMERIC -> month.number.toLocalizedNumerals(strings)
+      DisplayStyle.FULL -> month.fullString(strings)
+      DisplayStyle.SHORT -> month.shortString(strings)
+      DisplayStyle.NUMERIC -> month.number.toLocalizedNumerals(strings)
     }
   },
-  formatDay: (Int) -> String = { it.toLocalizedNumerals() }
+  formatDay: (Int, DisplayStyle) -> String = { day, _ -> day.toLocalizedNumerals() }
 ): DateFormatter = DateFormatterImpl(
   dateOrder = dateOrder,
+  dayDisplayStyle = dayDisplayStyle,
   monthDisplayStyle = monthDisplayStyle,
+  yearDisplayStyle = yearDisplayStyle,
   formatYear = formatYear,
   formatMonth = formatMonth,
   formatDay = formatDay
@@ -53,19 +63,23 @@ fun dateFormatter(
 internal fun dateFormatter(
   strings: Strings,
   dateOrder: DateOrder = DateOrder.DMY,
-  monthDisplayStyle: MonthDisplayStyle = MonthDisplayStyle.FULL,
-  formatYear: (Int) -> String = { it.toLocalizedNumerals(strings) },
-  formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
+  yearDisplayStyle: DisplayStyle = DisplayStyle.FULL,
+  monthDisplayStyle: DisplayStyle = DisplayStyle.FULL,
+  dayDisplayStyle: DisplayStyle = DisplayStyle.FULL,
+  formatYear: (Int, DisplayStyle) -> String = { year, _ -> year.toLocalizedNumerals(strings) },
+  formatMonth: (Month, DisplayStyle) -> String = { month, style ->
     when (style) {
-      MonthDisplayStyle.FULL -> month.fullString(strings)
-      MonthDisplayStyle.SHORT -> month.shortString(strings)
-      MonthDisplayStyle.NUMERIC -> month.number.toLocalizedNumerals(strings)
+      DisplayStyle.FULL -> month.fullString(strings)
+      DisplayStyle.SHORT -> month.shortString(strings)
+      DisplayStyle.NUMERIC -> month.number.toLocalizedNumerals(strings)
     }
   },
-  formatDay: (Int) -> String = { it.toLocalizedNumerals(strings) }
+  formatDay: (Int, DisplayStyle) -> String = { day, _ -> day.toLocalizedNumerals(strings) }
 ): DateFormatter = DateFormatterImpl(
   dateOrder = dateOrder,
+  yearDisplayStyle = yearDisplayStyle,
   monthDisplayStyle = monthDisplayStyle,
+  dayDisplayStyle = dayDisplayStyle,
   formatYear = formatYear,
   formatMonth = formatMonth,
   formatDay = formatDay
@@ -74,15 +88,37 @@ internal fun dateFormatter(
 @Composable
 fun dateFormatter(
   locale: Locale,
-  monthDisplayStyle: MonthDisplayStyle
+  yearDisplayStyle: DisplayStyle,
+  monthDisplayStyle: DisplayStyle,
+  dayDisplayStyle: DisplayStyle
 ): DateFormatter {
   val lyricist = rememberStrings(currentLanguageTag = locale.language)
 
-  return remember(lyricist.strings, locale, monthDisplayStyle) {
+  return remember(lyricist.strings, locale, yearDisplayStyle, monthDisplayStyle, dayDisplayStyle) {
     dateFormatter(
       strings = lyricist.strings,
       dateOrder = DateOrder.match(locale),
-      monthDisplayStyle = monthDisplayStyle
+      yearDisplayStyle = yearDisplayStyle,
+      monthDisplayStyle = monthDisplayStyle,
+      dayDisplayStyle = dayDisplayStyle
+    )
+  }
+}
+
+@Composable
+fun dateFormatter(
+  locale: Locale,
+  displayStyle: DisplayStyle,
+): DateFormatter {
+  val lyricist = rememberStrings(currentLanguageTag = locale.language)
+
+  return remember(lyricist.strings, locale, displayStyle) {
+    dateFormatter(
+      strings = lyricist.strings,
+      dateOrder = DateOrder.match(locale),
+      yearDisplayStyle = displayStyle,
+      monthDisplayStyle = displayStyle,
+      dayDisplayStyle = displayStyle
     )
   }
 }

@@ -15,7 +15,7 @@ import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
-import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
+import dev.darkokoa.datetimewheelpicker.core.format.DisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
 import dev.darkokoa.datetimewheelpicker.core.now
 import kotlinx.datetime.LocalDate
@@ -27,7 +27,7 @@ fun WheelDatePicker(
   minDate: LocalDate = LocalDate.EPOCH,
   maxDate: LocalDate = LocalDate.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
-  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.FULL),
+  dateFormatter: DateFormatter = dateFormatter(Locale.current, DisplayStyle.FULL),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,

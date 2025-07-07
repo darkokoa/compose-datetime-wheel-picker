@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.format.DateField
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
-import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
+import dev.darkokoa.datetimewheelpicker.core.format.DisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
+import dev.darkokoa.datetimewheelpicker.core.format.formatDay
 import dev.darkokoa.datetimewheelpicker.core.format.formatMonth
+import dev.darkokoa.datetimewheelpicker.core.format.formatYear
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 
@@ -29,7 +31,7 @@ internal fun DefaultWheelDatePicker(
   minDate: LocalDate = LocalDate.EPOCH,
   maxDate: LocalDate = LocalDate.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
-  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.SHORT),
+  dateFormatter: DateFormatter = dateFormatter(Locale.current, DisplayStyle.SHORT),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -250,7 +252,7 @@ private fun rememberFormattedMonths(
 ) = remember(dateFormatter, size.width) {
   (1..12).map {
     val monthName = dateFormatter.formatMonth(kotlinx.datetime.Month(it))
-    val monthShortName = dateFormatter.formatMonth(kotlinx.datetime.Month(it), MonthDisplayStyle.SHORT)
+    val monthShortName = dateFormatter.formatMonth(kotlinx.datetime.Month(it), DisplayStyle.SHORT)
     Month(
       text = if (size.width / 3 < 55.dp) monthShortName else monthName,
       value = it,

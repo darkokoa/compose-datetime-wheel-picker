@@ -15,7 +15,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
-import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
+import dev.darkokoa.datetimewheelpicker.core.format.DisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
@@ -30,7 +30,7 @@ internal fun DefaultWheelDateTimePicker(
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
-  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.SHORT),
+  dateFormatter: DateFormatter = dateFormatter(Locale.current, DisplayStyle.SHORT),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
