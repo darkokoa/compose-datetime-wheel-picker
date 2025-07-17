@@ -1,11 +1,11 @@
 package dev.darkokoa.datetimewheelpicker.core
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import kotlin.time.DurationUnit.*
 
 internal fun LocalDateTime.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime {
@@ -61,7 +61,7 @@ internal fun LocalDateTime.truncatedTo(unit: ChronoUnit): LocalDateTime {
     MICROSECONDS -> LocalDateTime(
       year,
       month,
-      dayOfMonth,
+      day,
       hour,
       minute,
       second,
@@ -71,17 +71,17 @@ internal fun LocalDateTime.truncatedTo(unit: ChronoUnit): LocalDateTime {
     MILLISECONDS -> LocalDateTime(
       year,
       month,
-      dayOfMonth,
+      day,
       hour,
       minute,
       second,
       nanosecond / 1000000
     )
 
-    SECONDS -> LocalDateTime(year, month, dayOfMonth, hour, minute, second)
-    MINUTES -> LocalDateTime(year, month, dayOfMonth, hour, minute)
-    HOURS -> LocalDateTime(year, month, dayOfMonth, hour, 0)
-    DAYS -> LocalDateTime(year, month, dayOfMonth, 0, 0)
+    SECONDS -> LocalDateTime(year, month, day, hour, minute, second)
+    MINUTES -> LocalDateTime(year, month, day, hour, minute)
+    HOURS -> LocalDateTime(year, month, day, hour, 0)
+    DAYS -> LocalDateTime(year, month, day, 0, 0)
     else -> throw IllegalArgumentException("The value `else` does not match any of the patterns.")
   }
 }

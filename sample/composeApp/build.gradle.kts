@@ -51,7 +51,7 @@ kotlin {
   sourceSets {
     all {
       languageSettings {
-
+        optIn("kotlin.time.ExperimentalTime")
       }
     }
     commonMain.dependencies {

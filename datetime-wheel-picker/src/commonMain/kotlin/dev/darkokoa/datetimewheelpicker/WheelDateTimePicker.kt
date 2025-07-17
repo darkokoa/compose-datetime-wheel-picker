@@ -19,15 +19,13 @@ import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
-import kotlinx.datetime.Clock
+import dev.darkokoa.datetimewheelpicker.core.now
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun WheelDateTimePicker(
   modifier: Modifier = Modifier,
-  startDateTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+  startDateTime: LocalDateTime = LocalDateTime.now(),
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
