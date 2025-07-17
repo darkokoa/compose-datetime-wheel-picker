@@ -75,7 +75,7 @@ internal fun DefaultWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
-              startIndex = dayOfMonths.find { it.value == startDate.dayOfMonth }?.index ?: 0,
+              startIndex = dayOfMonths.find { it.value == startDate.day }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newDayOfMonth = dayOfMonths.find { it.index == snappedIndex }?.value
 
@@ -86,7 +86,7 @@ internal fun DefaultWheelDatePicker(
                     snappedDate = newDate
                   }
 
-                  val newIndex = dayOfMonths.find { it.value == snappedDate.dayOfMonth }?.index
+                  val newIndex = dayOfMonths.find { it.value == snappedDate.day }?.index
 
                   newIndex?.let {
                     onSnappedDate(
@@ -98,7 +98,7 @@ internal fun DefaultWheelDatePicker(
                   }
                 }
 
-                return@WheelTextPicker dayOfMonths.find { it.value == snappedDate.dayOfMonth }?.index
+                return@WheelTextPicker dayOfMonths.find { it.value == snappedDate.day }?.index
               }
             )
           }
@@ -116,7 +116,7 @@ internal fun DefaultWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
-              startIndex = months.find { it.value == startDate.monthNumber }?.index ?: 0,
+              startIndex = months.find { it.value == startDate.month.number }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newMonth = months.find { it.index == snappedIndex }?.value
                 newMonth?.let {
@@ -132,7 +132,7 @@ internal fun DefaultWheelDatePicker(
 //                    dateFormatter.formatDay
 //                  )
 
-                  val newIndex = months.find { it.value == snappedDate.monthNumber }?.index
+                  val newIndex = months.find { it.value == snappedDate.month.number }?.index
 
                   newIndex?.let {
                     onSnappedDate(
@@ -144,7 +144,7 @@ internal fun DefaultWheelDatePicker(
                   }
                 }
 
-                return@WheelTextPicker months.find { it.value == snappedDate.monthNumber }?.index
+                return@WheelTextPicker months.find { it.value == snappedDate.month.number }?.index
               }
             )
           }

@@ -1,9 +1,9 @@
 package dev.darkokoa.datetimewheelpicker.core
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 internal fun LocalTime.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalTime {
   return Clock.System.now().toLocalDateTime(timeZone).time

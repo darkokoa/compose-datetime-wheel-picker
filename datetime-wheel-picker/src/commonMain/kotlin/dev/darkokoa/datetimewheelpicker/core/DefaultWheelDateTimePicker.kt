@@ -74,11 +74,11 @@ internal fun DefaultWheelDateTimePicker(
 
           val newDateTime = when (snappedDate) {
             is SnappedDate.DayOfMonth -> {
-              snappedDateTime.withDayOfMonth(snappedDate.snappedLocalDate.dayOfMonth)
+              snappedDateTime.withDayOfMonth(snappedDate.snappedLocalDate.day)
             }
 
             is SnappedDate.Month -> {
-              snappedDateTime.withMonthNumber(snappedDate.snappedLocalDate.monthNumber)
+              snappedDateTime.withMonthNumber(snappedDate.snappedLocalDate.month.number)
             }
 
             is SnappedDate.Year -> {
@@ -92,8 +92,8 @@ internal fun DefaultWheelDateTimePicker(
 
           return@DefaultWheelDatePicker when (snappedDate) {
             is SnappedDate.DayOfMonth -> {
-              onSnappedDateTime(SnappedDateTime.DayOfMonth(snappedDateTime, snappedDateTime.dayOfMonth - 1))
-              snappedDateTime.dayOfMonth - 1
+              onSnappedDateTime(SnappedDateTime.DayOfMonth(snappedDateTime, snappedDateTime.day - 1))
+              snappedDateTime.day - 1
             }
 
             is SnappedDate.Month -> {

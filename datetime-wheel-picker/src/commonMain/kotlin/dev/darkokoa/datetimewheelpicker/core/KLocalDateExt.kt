@@ -1,10 +1,11 @@
 package dev.darkokoa.datetimewheelpicker.core
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
 import kotlin.math.min
+import kotlin.time.Clock
 
 internal fun LocalDate.Companion.now(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDate {
   return Clock.System.now().toLocalDateTime(timeZone).date
@@ -21,18 +22,18 @@ internal val LocalDate.isLeapYear: Boolean
   get() = isLeapYear(year)
 
 internal fun LocalDate.withDayOfMonth(dayOfMonth: Int): LocalDate {
-  return if (this.dayOfMonth == dayOfMonth) {
+  return if (this.day == dayOfMonth) {
     this
   } else {
-    LocalDate(year, monthNumber, dayOfMonth)
+    LocalDate(year, month, dayOfMonth)
   }
 }
 
 internal fun LocalDate.withMonthNumber(monthNumber: Int): LocalDate {
-  return if (this.monthNumber == monthNumber) {
+  return if (this.month.number == monthNumber) {
     this
   } else {
-    resolvePreviousValid(year, monthNumber, dayOfMonth)
+    resolvePreviousValid(year, monthNumber, day)
   }
 }
 
@@ -40,26 +41,26 @@ internal fun LocalDate.withYear(year: Int): LocalDate {
   return if (this.year == year) {
     this
   } else {
-    resolvePreviousValid(year, monthNumber, dayOfMonth)
+    resolvePreviousValid(year, month.number, day)
   }
 }
 
 internal fun resolvePreviousValid(
   year: Int,
   monthNumber: Int,
-  dayOfMonth: Int
+  day: Int
 ): LocalDate {
   val newDayOfMonth = when (monthNumber) {
     2 -> {
-      min(dayOfMonth, if (isLeapYear(year)) 29 else 28)
+      min(day, if (isLeapYear(year)) 29 else 28)
     }
 
     4, 6, 9, 11 -> {
-      min(dayOfMonth, 30)
+      min(day, 30)
     }
 
     else -> {
-      dayOfMonth
+      day
     }
   }
 
