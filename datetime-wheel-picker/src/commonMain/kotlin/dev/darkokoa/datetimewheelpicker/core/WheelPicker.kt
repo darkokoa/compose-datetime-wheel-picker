@@ -1,7 +1,6 @@
 package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +21,6 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun WheelPicker(
   modifier: Modifier = Modifier,
