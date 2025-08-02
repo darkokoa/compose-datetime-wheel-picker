@@ -32,4 +32,8 @@ internal val ZhStrings = Strings(
 
   timeAM = "上午",
   timePM = "下午",
+
+  yearSuffix = "年",
+  monthSuffix = "月",
+  daySuffix = "日",
 )

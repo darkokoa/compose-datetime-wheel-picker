@@ -18,12 +18,11 @@ import dev.darkokoa.datetimewheelpicker.core.format.DateField
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
-import dev.darkokoa.datetimewheelpicker.core.format.formatMonth
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 
 @Composable
-internal fun DefaultWheelDatePicker(
+internal fun StandardWheelDatePicker(
   modifier: Modifier = Modifier,
   startDate: LocalDate = LocalDate.now(),
   minDate: LocalDate = LocalDate.EPOCH,
@@ -45,7 +44,7 @@ internal fun DefaultWheelDatePicker(
   val dayOfMonths =
     rememberFormattedDayOfMonths(snappedDate.month.number, snappedDate.year, dateFormatter)
 
-  val months = rememberFormattedMonths(dateFormatter, size)
+  val months = rememberFormattedMonths(itemWidth, dateFormatter)
 
   val years = rememberFormattedYears(yearsRange, dateFormatter)
 
@@ -200,75 +199,5 @@ internal fun DefaultWheelDatePicker(
         }
       }
     }
-  }
-}
-
-private data class DayOfMonth(
-  val text: String,
-  val value: Int,
-  val index: Int
-)
-
-private data class Month(
-  val text: String,
-  val value: Int,
-  val index: Int
-)
-
-private data class Year(
-  val text: String,
-  val value: Int,
-  val index: Int
-)
-
-@Composable
-private fun rememberFormattedDayOfMonths(
-  month: Int,
-  year: Int,
-  dateFormatter: DateFormatter
-) = remember(month, year, dateFormatter) {
-  val daysInMonth = when (month) {
-    2 -> if (LocalDate(year, month, 1).isLeapYear) 29 else 28
-    4, 6, 9, 11 -> 30
-    1, 3, 5, 7, 8, 10, 12 -> 31
-    else -> error("Invalid month number: $month")
-  }
-
-  (1..daysInMonth).map {
-    DayOfMonth(
-      text = dateFormatter.formatDay(it),
-      value = it,
-      index = it - 1
-    )
-  }
-}
-
-@Composable
-private fun rememberFormattedMonths(
-  dateFormatter: DateFormatter,
-  size: DpSize
-) = remember(dateFormatter, size.width) {
-  (1..12).map {
-    val monthName = dateFormatter.formatMonth(kotlinx.datetime.Month(it))
-    val monthShortName = dateFormatter.formatMonth(kotlinx.datetime.Month(it), MonthDisplayStyle.SHORT)
-    Month(
-      text = if (size.width / 3 < 55.dp) monthShortName else monthName,
-      value = it,
-      index = it - 1
-    )
-  }
-}
-
-@Composable
-private fun rememberFormattedYears(
-  yearsRange: IntRange?,
-  dateFormatter: DateFormatter
-) = remember(yearsRange, dateFormatter) {
-  yearsRange?.map {
-    Year(
-      text = dateFormatter.formatYear(it),
-      value = it,
-      index = yearsRange.indexOf(it)
-    )
   }
 }

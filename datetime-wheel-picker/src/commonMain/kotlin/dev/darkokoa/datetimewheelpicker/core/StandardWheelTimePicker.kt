@@ -27,7 +27,7 @@ import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import kotlinx.datetime.LocalTime
 
 @Composable
-internal fun DefaultWheelTimePicker(
+internal fun StandardWheelTimePicker(
   modifier: Modifier = Modifier,
   startTime: LocalTime = LocalTime.now(),
   minTime: LocalTime = LocalTime.MIN,
