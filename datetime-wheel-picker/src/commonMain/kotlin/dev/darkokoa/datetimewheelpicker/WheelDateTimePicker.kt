@@ -14,7 +14,7 @@ import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
-import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfiguration
+import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
@@ -33,7 +33,7 @@ fun WheelDateTimePicker(
   dateFormatter: DateFormatter = dateFormatter(
     locale = Locale.current,
     monthDisplayStyle = MonthDisplayStyle.SHORT,
-    cjkSuffixConfiguration = CjkSuffixConfiguration.HideAll
+    cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(256.dp, 128.dp),

@@ -14,7 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfiguration
+import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
@@ -34,7 +34,7 @@ internal fun AdaptiveWheelDateTimePicker(
   dateFormatter: DateFormatter = dateFormatter(
     locale = Locale.current,
     monthDisplayStyle = MonthDisplayStyle.SHORT,
-    cjkSuffixConfiguration = CjkSuffixConfiguration.HideAll
+    cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(256.dp, 128.dp),

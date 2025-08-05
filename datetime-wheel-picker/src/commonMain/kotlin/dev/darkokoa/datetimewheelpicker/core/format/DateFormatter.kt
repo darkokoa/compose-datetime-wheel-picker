@@ -14,7 +14,7 @@ import kotlinx.datetime.number
 interface DateFormatter {
   val dateOrder: DateOrder
   val monthDisplayStyle: MonthDisplayStyle
-  val cjkSuffixConfiguration: CjkSuffixConfiguration
+  val cjkSuffixConfig: CjkSuffixConfig
   val formatYear: (Int) -> String
   val formatMonth: (Month, MonthDisplayStyle) -> String
   val formatDay: (Int) -> String
@@ -25,7 +25,7 @@ fun DateFormatter.formatMonth(month: Month) = formatMonth(month, monthDisplaySty
 private class DateFormatterImpl(
   override val dateOrder: DateOrder,
   override val monthDisplayStyle: MonthDisplayStyle,
-  override val cjkSuffixConfiguration: CjkSuffixConfiguration,
+  override val cjkSuffixConfig: CjkSuffixConfig,
   override val formatYear: (Int) -> String,
   override val formatMonth: (Month, MonthDisplayStyle) -> String,
   override val formatDay: (Int) -> String
@@ -34,7 +34,7 @@ private class DateFormatterImpl(
 fun dateFormatter(
   dateOrder: DateOrder = DateOrder.DMY,
   monthDisplayStyle: MonthDisplayStyle = MonthDisplayStyle.FULL,
-  cjkSuffixConfiguration: CjkSuffixConfiguration = CjkSuffixConfiguration.ShowAll,
+  cjkSuffixConfig: CjkSuffixConfig = CjkSuffixConfig.ShowAll,
   formatYear: (Int) -> String = { it.toLocalizedNumerals() },
   formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
     val strings = (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings)
@@ -48,7 +48,7 @@ fun dateFormatter(
 ): DateFormatter = DateFormatterImpl(
   dateOrder = dateOrder,
   monthDisplayStyle = monthDisplayStyle,
-  cjkSuffixConfiguration = cjkSuffixConfiguration,
+  cjkSuffixConfig = cjkSuffixConfig,
   formatYear = formatYear,
   formatMonth = formatMonth,
   formatDay = formatDay
@@ -58,7 +58,7 @@ internal fun dateFormatter(
   strings: Strings,
   dateOrder: DateOrder = DateOrder.DMY,
   monthDisplayStyle: MonthDisplayStyle = MonthDisplayStyle.FULL,
-  cjkSuffixConfiguration: CjkSuffixConfiguration = CjkSuffixConfiguration.ShowAll,
+  cjkSuffixConfig: CjkSuffixConfig = CjkSuffixConfig.ShowAll,
   formatYear: (Int) -> String = { it.toLocalizedNumerals(strings) },
   formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
     when (style) {
@@ -71,7 +71,7 @@ internal fun dateFormatter(
 ): DateFormatter = DateFormatterImpl(
   dateOrder = dateOrder,
   monthDisplayStyle = monthDisplayStyle,
-  cjkSuffixConfiguration = cjkSuffixConfiguration,
+  cjkSuffixConfig = cjkSuffixConfig,
   formatYear = formatYear,
   formatMonth = formatMonth,
   formatDay = formatDay
@@ -81,16 +81,16 @@ internal fun dateFormatter(
 fun dateFormatter(
   locale: Locale,
   monthDisplayStyle: MonthDisplayStyle,
-  cjkSuffixConfiguration: CjkSuffixConfiguration = CjkSuffixConfiguration.ShowAll
+  cjkSuffixConfig: CjkSuffixConfig
 ): DateFormatter {
   val lyricist = rememberStrings(currentLanguageTag = locale.language)
 
-  return remember(lyricist.strings, locale, monthDisplayStyle, cjkSuffixConfiguration) {
+  return remember(lyricist.strings, locale, monthDisplayStyle, cjkSuffixConfig) {
     dateFormatter(
       strings = lyricist.strings,
       dateOrder = DateOrder.match(locale),
       monthDisplayStyle = monthDisplayStyle,
-      cjkSuffixConfiguration = cjkSuffixConfiguration
+      cjkSuffixConfig = cjkSuffixConfig
     )
   }
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateField
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
@@ -31,7 +32,11 @@ internal fun CJKWheelDatePicker(
   minDate: LocalDate = LocalDate.EPOCH,
   maxDate: LocalDate = LocalDate.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
-  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.SHORT),
+  dateFormatter: DateFormatter = dateFormatter(
+    locale = Locale.current,
+    monthDisplayStyle = MonthDisplayStyle.SHORT,
+    cjkSuffixConfig = CjkSuffixConfig.ShowAll
+  ),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -74,8 +79,8 @@ internal fun CJKWheelDatePicker(
                 height = size.height
               ),
               texts = dayOfMonths.map { it.text },
-              suffix = if (dateFormatter.cjkSuffixConfiguration.showDaySuffix) strings.daySuffix else "",
-              textToSuffixSpacing = dateFormatter.cjkSuffixConfiguration.daySuffixSpacing,
+              suffix = if (dateFormatter.cjkSuffixConfig.showDaySuffix) strings.daySuffix else "",
+              textToSuffixSpacing = dateFormatter.cjkSuffixConfig.daySuffixSpacing,
               rowCount = rowCount,
               style = textStyle,
               color = textColor,
@@ -118,8 +123,8 @@ internal fun CJKWheelDatePicker(
                 height = size.height
               ),
               texts = months.map { it.text },
-              suffix = if (dateFormatter.cjkSuffixConfiguration.showMonthSuffix) strings.monthSuffix else "",
-              textToSuffixSpacing = dateFormatter.cjkSuffixConfiguration.monthSuffixSpacing,
+              suffix = if (dateFormatter.cjkSuffixConfig.showMonthSuffix) strings.monthSuffix else "",
+              textToSuffixSpacing = dateFormatter.cjkSuffixConfig.monthSuffixSpacing,
               rowCount = rowCount,
               style = textStyle,
               color = textColor,
@@ -162,8 +167,8 @@ internal fun CJKWheelDatePicker(
                   height = size.height
                 ),
                 texts = years.map { it.text },
-                suffix = if (dateFormatter.cjkSuffixConfiguration.showYearSuffix) strings.yearSuffix else "",
-                textToSuffixSpacing = dateFormatter.cjkSuffixConfiguration.yearSuffixSpacing,
+                suffix = if (dateFormatter.cjkSuffixConfig.showYearSuffix) strings.yearSuffix else "",
+                textToSuffixSpacing = dateFormatter.cjkSuffixConfig.yearSuffixSpacing,
                 rowCount = rowCount,
                 style = textStyle,
                 color = textColor,
