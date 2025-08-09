@@ -9,7 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import dev.darkokoa.datetimewheelpicker.core.DefaultWheelTimePicker
+import dev.darkokoa.datetimewheelpicker.core.StandardWheelTimePicker
 import dev.darkokoa.datetimewheelpicker.core.MAX
 import dev.darkokoa.datetimewheelpicker.core.MIN
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
@@ -33,7 +33,7 @@ fun WheelTimePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: LocalTime) -> Unit = {},
 ) {
-  DefaultWheelTimePicker(
+  StandardWheelTimePicker(
     modifier,
     startTime,
     minTime,

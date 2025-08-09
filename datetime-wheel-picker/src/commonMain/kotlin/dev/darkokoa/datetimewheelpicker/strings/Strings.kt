@@ -30,6 +30,10 @@ internal data class Strings(
   val timeAM: String = "AM",
   val timePM: String = "PM",
 
+  val yearSuffix: String = "",
+  val monthSuffix: String = "",
+  val daySuffix: String = "",
+
   val digit0: Char = '0',
   val digit1: Char = '1',
   val digit2: Char = '2',

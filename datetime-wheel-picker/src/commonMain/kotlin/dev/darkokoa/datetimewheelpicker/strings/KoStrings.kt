@@ -32,4 +32,8 @@ internal val KoStrings = Strings(
 
   timeAM = "오전",
   timePM = "오후",
+
+  yearSuffix = "년",
+  monthSuffix = "월",
+  daySuffix = "일",
 )

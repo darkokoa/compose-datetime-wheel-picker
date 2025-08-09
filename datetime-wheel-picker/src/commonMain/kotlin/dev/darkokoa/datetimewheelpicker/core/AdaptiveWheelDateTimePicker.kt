@@ -14,6 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
@@ -24,13 +25,17 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.number
 
 @Composable
-internal fun DefaultWheelDateTimePicker(
+internal fun AdaptiveWheelDateTimePicker(
   modifier: Modifier = Modifier,
   startDateTime: LocalDateTime = LocalDateTime.now(),
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
-  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.SHORT),
+  dateFormatter: DateFormatter = dateFormatter(
+    locale = Locale.current,
+    monthDisplayStyle = MonthDisplayStyle.SHORT,
+    cjkSuffixConfig = CjkSuffixConfig.HideAll
+  ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
@@ -56,7 +61,7 @@ internal fun DefaultWheelDateTimePicker(
     }
     Row {
       //Date
-      DefaultWheelDatePicker(
+      AdaptiveWheelDatePicker(
         startDate = startDateTime.date,
         yearsRange = yearsRange,
         dateFormatter = dateFormatter,
@@ -90,7 +95,7 @@ internal fun DefaultWheelDateTimePicker(
             snappedDateTime = newDateTime
           }
 
-          return@DefaultWheelDatePicker when (snappedDate) {
+          return@AdaptiveWheelDatePicker when (snappedDate) {
             is SnappedDate.DayOfMonth -> {
               onSnappedDateTime(SnappedDateTime.DayOfMonth(snappedDateTime, snappedDateTime.day - 1))
               snappedDateTime.day - 1
@@ -110,7 +115,7 @@ internal fun DefaultWheelDateTimePicker(
         }
       )
       //Time
-      DefaultWheelTimePicker(
+      StandardWheelTimePicker(
         startTime = startDateTime.time,
         timeFormatter = timeFormatter,
         size = DpSize(
@@ -139,7 +144,7 @@ internal fun DefaultWheelDateTimePicker(
             snappedDateTime = newDateTime
           }
 
-          return@DefaultWheelTimePicker when (snappedTime) {
+          return@StandardWheelTimePicker when (snappedTime) {
             is SnappedTime.Hour -> {
               onSnappedDateTime(SnappedDateTime.Hour(snappedDateTime, snappedDateTime.hour))
               if (timeFormat == TimeFormat.HOUR_24) snappedDateTime.hour else

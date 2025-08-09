@@ -1,6 +1,7 @@
 package dev.darkokoa.datetimewheelpicker.core.format
 
 import androidx.compose.ui.text.intl.Locale
+import dev.darkokoa.datetimewheelpicker.core.isCjkLanguage
 
 enum class DateOrder(val fields: List<DateField>) {
   DMY(listOf(DateField.DAY, DateField.MONTH, DateField.YEAR)),   // Most European countries
@@ -12,7 +13,7 @@ enum class DateOrder(val fields: List<DateField>) {
     fun match(locale: Locale): DateOrder {
       return when {
         locale.language == "en" && locale.region == "US" -> MDY
-        locale.language in listOf("zh", "ja", "ko") -> YMD
+        locale.isCjkLanguage -> YMD
         else -> DMY
       }
     }

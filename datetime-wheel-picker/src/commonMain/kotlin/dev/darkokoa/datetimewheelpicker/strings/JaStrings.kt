@@ -32,4 +32,8 @@ internal val JaStrings = Strings(
 
   timeAM = "午前",
   timePM = "午後",
+
+  yearSuffix = "年",
+  monthSuffix = "月",
+  daySuffix = "日",
 )

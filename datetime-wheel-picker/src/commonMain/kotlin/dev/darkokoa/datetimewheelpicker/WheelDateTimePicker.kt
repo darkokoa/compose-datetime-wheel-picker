@@ -9,11 +9,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.core.AdaptiveWheelDateTimePicker
 import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
-import dev.darkokoa.datetimewheelpicker.core.DefaultWheelDateTimePicker
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
@@ -29,7 +30,11 @@ fun WheelDateTimePicker(
   minDateTime: LocalDateTime = LocalDateTime.EPOCH,
   maxDateTime: LocalDateTime = LocalDateTime.CYB3R_1N1T_ZOLL,
   yearsRange: IntRange? = IntRange(minDateTime.year, maxDateTime.year),
-  dateFormatter: DateFormatter = dateFormatter(Locale.current, MonthDisplayStyle.SHORT),
+  dateFormatter: DateFormatter = dateFormatter(
+    locale = Locale.current,
+    monthDisplayStyle = MonthDisplayStyle.SHORT,
+    cjkSuffixConfig = CjkSuffixConfig.HideAll
+  ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
@@ -38,7 +43,7 @@ fun WheelDateTimePicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateTime: (snappedDateTime: LocalDateTime) -> Unit = {}
 ) {
-  DefaultWheelDateTimePicker(
+  AdaptiveWheelDateTimePicker(
     modifier,
     startDateTime,
     minDateTime,
