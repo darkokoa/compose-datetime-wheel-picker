@@ -100,7 +100,7 @@ dependencies {
 //  tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) }
 //}
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().all {
   if(name != "kspCommonMainKotlinMetadata") {
     dependsOn("kspCommonMainKotlinMetadata")
   }
