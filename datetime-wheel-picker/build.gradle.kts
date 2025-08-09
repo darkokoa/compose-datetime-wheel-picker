@@ -100,9 +100,21 @@ dependencies {
 //  tasks.withType<KspTaskMetadata> { kotlin.srcDir(destinationDirectory) }
 //}
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().all {
-  if(name != "kspCommonMainKotlinMetadata") {
-    dependsOn("kspCommonMainKotlinMetadata")
+// Add task dependencies after plugin configuration is complete
+afterEvaluate {
+  // Make all compilation tasks depend on KSP
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    if (name != "kspCommonMainKotlinMetadata") {
+      dependsOn("kspCommonMainKotlinMetadata")
+    }
+  }
+
+  // Make all tasks depend on KSP if their names contain specific patterns
+  tasks.configureEach {
+    if (name.contains("SourcesJar") || name == "sourcesJar") {
+      dependsOn("kspCommonMainKotlinMetadata")
+      logger.info("Added KSP dependency to task: $name")
+    }
   }
 }
 
