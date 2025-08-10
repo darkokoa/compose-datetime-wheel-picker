@@ -25,8 +25,8 @@
 WheelDateTimePicker(
   startDateTime = LocalDateTime(
     year = 2025,
-    monthNumber = 10,
-    dayOfMonth = 20,
+    month = 10,
+    day = 20,
     hour = 5,
     minute = 30
   ),
@@ -35,14 +35,15 @@ WheelDateTimePicker(
     .toLocalDateTime(TimeZone.currentSystemDefault()),
   maxDateTime = LocalDateTime(
     year = 2025,
-    monthNumber = 10,
-    dayOfMonth = 20,
+    month = 10,
+    day = 20,
     hour = 5,
     minute = 30
   ),
   dateFormatter = dateFormatter(
     locale = Locale.current, 
-    monthDisplayStyle = MonthDisplayStyle.SHORT
+    monthDisplayStyle = MonthDisplayStyle.SHORT,
+    cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
   timeFormatter = timeFormatter(
     timeFormat = TimeFormat.HOUR_24
@@ -74,8 +75,9 @@ datetime-wheel-picker has multiple active versions. The higher one uses the late
 
 | Compose Version |                                                     datetime-wheel-picker Version                                                      |
 |-----------------|:--------------------------------------------------------------------------------------------------------------------------------------:|
-| Compose 1.7     | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha03-compose1.7) |
-| Compose 1.8     | [![badge-version-compose1.8]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha03-compose1.8) |
+| Compose 1.7     | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha05-compose1.7) |
+| Compose 1.8     | [![badge-version-compose1.8]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha05-compose1.8) |
+| Compose 1.9     | [![badge-version-compose1.9]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha05-compose1.9) |
 
 - Add the Maven Central repository if it is not already there:
 
@@ -93,7 +95,7 @@ kotlin {
     val commonMain by getting {
       dependencies {
         implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
       }
     }
   }
@@ -107,7 +109,7 @@ kotlin {
 ```kotlin
 dependencies {
   implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
 }
 ```
 
@@ -137,6 +139,8 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 [badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7&style=flat
 
 [badge-version-compose1.8]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.8&style=flat
+
+[badge-version-compose1.9]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.9&style=flat
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
