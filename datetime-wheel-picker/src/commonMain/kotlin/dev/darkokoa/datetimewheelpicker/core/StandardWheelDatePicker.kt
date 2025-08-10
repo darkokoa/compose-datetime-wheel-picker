@@ -49,7 +49,7 @@ internal fun StandardWheelDatePicker(
   val dayOfMonths =
     rememberFormattedDayOfMonths(snappedDate.month.number, snappedDate.year, dateFormatter)
 
-  val months = rememberFormattedMonths(itemWidth, dateFormatter)
+  val months = rememberFormattedMonths(size.width, dateFormatter)
 
   val years = rememberFormattedYears(yearsRange, dateFormatter)
 

@@ -52,14 +52,14 @@ internal fun rememberFormattedDayOfMonths(
 
 @Composable
 internal fun rememberFormattedMonths(
-  width: Dp,
+  datePickerWidth: Dp,
   dateFormatter: DateFormatter,
-) = remember(dateFormatter, width) {
+) = remember(dateFormatter, datePickerWidth) {
   (1..12).map {
     val monthName = dateFormatter.formatMonth(kotlinx.datetime.Month(it))
     val monthShortName = dateFormatter.formatMonth(kotlinx.datetime.Month(it), MonthDisplayStyle.SHORT)
     Month(
-      text = if (width / 3 < 55.dp) monthShortName else monthName,
+      text = if (datePickerWidth / 3 < 55.dp) monthShortName else monthName,
       value = it,
       index = it - 1
     )

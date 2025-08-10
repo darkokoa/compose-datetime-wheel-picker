@@ -24,7 +24,7 @@ internal fun AdaptiveWheelDatePicker(
   yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
   dateFormatter: DateFormatter = dateFormatter(
     locale = Locale.current,
-    monthDisplayStyle = MonthDisplayStyle.SHORT,
+    monthDisplayStyle = MonthDisplayStyle.FULL,
     cjkSuffixConfig = CjkSuffixConfig.ShowAll
   ),
   size: DpSize = DpSize(256.dp, 128.dp),
