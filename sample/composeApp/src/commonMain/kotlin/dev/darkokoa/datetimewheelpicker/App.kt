@@ -40,6 +40,12 @@ internal fun App() = AppTheme {
       WheelDatePicker { snappedDate ->
         println(snappedDate)
       }
+      WheelDayMonthPicker(
+        month = 6,
+        dayOfMonth = 15
+      ) { snappedDateTime ->
+        println("Day-Month Picker: $snappedDateTime")
+      }
       WheelDateTimePicker { snappedDateTime ->
         println(snappedDateTime)
       }
