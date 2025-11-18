@@ -6,16 +6,148 @@
 ![badge-js][badge-js]
 ![badge-wasm][badge-wasm]
 
-[Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) datetime picker implementation featuring customizable wheel pickers for date, time, and datetime selection.
+[Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) datetime picker implementation featuring **highly customizable** wheel pickers for date, time, and datetime selection.
 
-| Picker                                                                                                                                     | Usage                                                                                                  |
+| Picker                                                                                                                                     | Basic Usage                                                                                            |
 |--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
 | <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | ```WheelDateTimePicker { snappedDateTime -> }```                                                       |
 | <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | ```WheelDatePicker { snappedDate -> }```                                                               |
 | <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | ```WheelTimePicker { snappedTime -> }```                                                               |
 | <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | ```WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }``` |
 
-## Features
+## Key Features
+
+### 🎯 Flexible Date Field Configuration
+- **Customizable date order**: DMY (Day-Month-Year), MDY (Month-Day-Year), or YMD (Year-Month-Day)
+- **Hide year picker**: Set `yearsRange = null` to create **day-month only** or **month-day only** pickers
+- **Custom year range**: Limit year selection to specific ranges (e.g., next 10 years, last 50 years)
+- **Multiple month display styles**: Full names, short names, or numeric format
+
+### 🌍 Internationalization & Localization
+- **Auto-adapts to locale**: Date order and month names automatically match the current locale
+- **CJK language support**: Special handling for Chinese (年/月/日), Japanese (年/月/日), Korean (년/월/일) with customizable year/month/day suffixes
+- **Localized numerals**: Supports Eastern Arabic numerals and other numeral systems
+
+### 🎨 Visual Customization
+- Configurable size, row count, text style, and colors
+- Customizable selector appearance (shape, color, border)
+- Material Design integration
+
+### ⏰ Time Picker Features
+- 12-hour (AM/PM) and 24-hour formats
+- Customizable time display
+
+## Common Use Cases
+
+<details>
+<summary><b>Day-Month Picker (No Year)</b></summary>
+
+Perfect for birthdays, anniversaries, or recurring events:
+
+```kotlin
+WheelDatePicker(
+  startDate = LocalDate(2025, 6, 15),
+  yearsRange = null,  // Hides the year picker
+  dateFormatter = dateFormatter(
+    dateOrder = DateOrder.DMY,
+    monthDisplayStyle = MonthDisplayStyle.FULL
+  )
+) { snappedDate ->
+  // snappedDate.month and snappedDate.dayOfMonth
+}
+```
+
+> **Note**: This uses the non-Composable `dateFormatter()` overload that accepts `dateOrder` parameter.
+
+</details>
+
+<details>
+<summary><b>Month-Day Picker (US Format)</b></summary>
+
+For US-style date input without year:
+
+```kotlin
+WheelDatePicker(
+  yearsRange = null,
+  dateFormatter = dateFormatter(
+    dateOrder = DateOrder.MDY,
+    monthDisplayStyle = MonthDisplayStyle.SHORT
+  )
+) { snappedDate -> }
+```
+</details>
+
+<details>
+<summary><b>Limited Year Range</b></summary>
+
+Restrict year selection to a specific range:
+
+```kotlin
+// Only allow next 10 years
+WheelDatePicker(
+  yearsRange = IntRange(2025, 2035),
+  dateFormatter = dateFormatter(
+    dateOrder = DateOrder.YMD
+  )
+) { snappedDate -> }
+
+// Only allow past 50 years (for birthdate)
+val currentYear = Clock.System.now()
+  .toLocalDateTime(TimeZone.currentSystemDefault()).year
+WheelDatePicker(
+  yearsRange = IntRange(currentYear - 50, currentYear),
+  dateFormatter = dateFormatter(dateOrder = DateOrder.DMY)
+) { snappedDate -> }
+```
+</details>
+
+<details>
+<summary><b>Chinese/Japanese/Korean Format</b></summary>
+
+With native year-month-day suffixes:
+- Chinese: "2025年1月15日"
+- Korean: "2025년1월15일"
+- Japanese: "2025年1月15日"
+
+```kotlin
+WheelDatePicker(
+  dateFormatter = dateFormatter(
+    locale = Locale("zh"),  // "zh" for Chinese, "ja" for Japanese, "ko" for Korean
+    monthDisplayStyle = MonthDisplayStyle.NUMERIC,
+    cjkSuffixConfig = CjkSuffixConfig.ShowAll
+  )
+) { snappedDate -> }
+
+// Without suffixes
+WheelDatePicker(
+  dateFormatter = dateFormatter(
+    locale = Locale("zh"),
+    monthDisplayStyle = MonthDisplayStyle.NUMERIC,
+    cjkSuffixConfig = CjkSuffixConfig.HideAll
+  )
+) { snappedDate -> }
+```
+
+> **Note**: This uses the Composable `dateFormatter()` overload. Date order (YMD for CJK) is auto-detected from locale.
+
+</details>
+
+<details>
+<summary><b>Numeric Month Display</b></summary>
+
+Show months as numbers instead of names:
+
+```kotlin
+WheelDatePicker(
+  dateFormatter = dateFormatter(
+    dateOrder = DateOrder.DMY,  // or MDY, YMD based on your preference
+    monthDisplayStyle = MonthDisplayStyle.NUMERIC
+  )
+) { snappedDate -> }
+```
+</details>
+
+## Full Customization Example
 
 <table>
 <tr>
@@ -69,6 +201,56 @@ WheelDateTimePicker(
 </td>
 </tr>
 </table>
+
+## API Reference
+
+### WheelDatePicker Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `startDate` | `LocalDate` | `LocalDate.now()` | Initial selected date |
+| `minDate` | `LocalDate` | `LocalDate.EPOCH` | Minimum selectable date |
+| `maxDate` | `LocalDate` | `LocalDate.CYB3R_1N1T_ZOLL` | Maximum selectable date |
+| `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
+| `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
+| `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
+| `rowCount` | `Int` | `3` | Number of visible rows in the wheel |
+| `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling |
+| `textColor` | `Color` | `LocalContentColor.current` | Text color |
+| `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
+| `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback when date is selected |
+
+### DateFormatter Options
+
+**DateOrder** (controls field arrangement):
+- `DateOrder.DMY` - Day, Month, Year (Europe, most of world)
+- `DateOrder.MDY` - Month, Day, Year (US)
+- `DateOrder.YMD` - Year, Month, Day (East Asia, ISO 8601)
+
+**MonthDisplayStyle**:
+- `MonthDisplayStyle.FULL` - "January", "February", etc.
+- `MonthDisplayStyle.SHORT` - "Jan", "Feb", etc.
+- `MonthDisplayStyle.NUMERIC` - "1", "2", etc.
+
+**CjkSuffixConfig** (for Chinese/Japanese/Korean):
+- `CjkSuffixConfig.ShowAll` - Shows year/month/day suffixes (Chinese/Japanese: 年/月/日, Korean: 년/월/일)
+- `CjkSuffixConfig.HideAll` - Hides all suffixes
+- Custom: `CjkSuffixConfig(showYearSuffix = true, showMonthSuffix = false, ...)`
+
+### WheelTimePicker Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `startTime` | `LocalTime` | `LocalTime.now()` | Initial selected time |
+| `minTime` | `LocalTime` | `LocalTime.MIN` | Minimum selectable time |
+| `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
+| `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
+| `size` | `DpSize` | `DpSize(128.dp, 128.dp)` | Picker dimensions (narrower than date picker) |
+| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectorProperties, etc. |
+
+**TimeFormat**:
+- `TimeFormat.HOUR_24` - 24-hour format (00:00 - 23:59)
+- `TimeFormat.AM_PM` - 12-hour format with AM/PM
 
 ## Setup
 datetime-wheel-picker has multiple active versions. The higher one uses the latest versions for Compose, while the others use only stable versions. Choose the one that matches your Compose version, considering this table:
