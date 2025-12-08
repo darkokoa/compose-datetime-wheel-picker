@@ -7,7 +7,7 @@ androidx-activityCompose = "1.12.1"
 kotlinx-datetime = "0.7.1"
 ksp = "2.2.0-2.0.2"
 lyricist = "1.7.0"
-maven-publish = "0.34.0"
+maven-publish = "0.35.0"
 
 [libraries]
 
