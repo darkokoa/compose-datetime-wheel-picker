@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
 @Composable
-internal fun WheelPicker(
+fun WheelPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   count: Int,
