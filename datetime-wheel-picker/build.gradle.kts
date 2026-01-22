@@ -1,4 +1,4 @@
-import com.google.devtools.ksp.gradle.KspTaskMetadata
+//import com.google.devtools.ksp.gradle.KspTaskMetadata
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
