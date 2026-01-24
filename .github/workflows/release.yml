@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-notification:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Comment on issues and PRs
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const release = context.payload.release;
+            const releaseName = release.name || release.tag_name;
+            const releaseUrl = release.html_url;
+
+            const message = `This has been addressed in [${releaseName}](${releaseUrl}) :rocket:`;
+
+            const body = release.body || '';
+            const issuePattern = /#(\d+)/g;
+            const matches = body.matchAll(issuePattern);
+
+            for (const match of matches) {
+              const issueNumber = parseInt(match[1]);
+              try {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body: message
+                });
+                console.log(`Commented on issue #${issueNumber}`);
+              } catch (error) {
+                console.log(`Failed to comment on issue #${issueNumber}: ${error.message}`);
+              }
+            }
