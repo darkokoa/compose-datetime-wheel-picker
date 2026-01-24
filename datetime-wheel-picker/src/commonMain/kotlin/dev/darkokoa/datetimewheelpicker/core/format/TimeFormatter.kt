@@ -82,3 +82,19 @@ fun timeFormatter(
     )
   }
 }
+
+@Composable
+fun timeFormatter(
+  locale: Locale,
+  timeFormat: TimeFormat
+): TimeFormatter {
+  val lyricist = rememberStrings(currentLanguageTag = locale.language)
+
+  return remember(lyricist.strings, locale) {
+    timeFormatter(
+      strings = lyricist.strings,
+      timeFormat = timeFormat
+    )
+  }
+}
+
