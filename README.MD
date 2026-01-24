@@ -28,6 +28,11 @@
 - **CJK language support**: Special handling for Chinese (年/月/日), Japanese (年/月/日), Korean (년/월/일) with customizable year/month/day suffixes
 - **Localized numerals**: Supports Eastern Arabic numerals and other numeral systems
 
+**Currently Supported Languages (22):**
+Arabic (العربية), Bengali (বাংলা), Chinese (中文), Dutch (Nederlands), English, French (Français), German (Deutsch), Hebrew (עברית), Hindi (हिन्दी), Indonesian (Bahasa Indonesia), Italian (Italiano), Japanese (日本語), Korean (한국어), Persian (فارسی), Polish (Polski), Portuguese (Português), Russian (Русский), Spanish (Español), Thai (ไทย), Turkish (Türkçe), Ukrainian (Українська), Vietnamese (Tiếng Việt)
+
+> **Contributions welcome**: If you find any translation errors or want to add support for a new language, please [open an issue](../../issues) or submit a pull request.
+
 ### 🎨 Visual Customization
 - Configurable size, row count, text style, and colors
 - Customizable selector appearance (shape, color, border)
@@ -253,13 +258,8 @@ WheelDateTimePicker(
 - `TimeFormat.AM_PM` - 12-hour format with AM/PM
 
 ## Setup
-datetime-wheel-picker has multiple active versions. The higher one uses the latest versions for Compose, while the others use only stable versions. Choose the one that matches your Compose version, considering this table:
 
-| Compose Version |                                                     datetime-wheel-picker Version                                                      |
-|-----------------|:--------------------------------------------------------------------------------------------------------------------------------------:|
-| Compose 1.7     | [![badge-version-compose1.7]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha05-compose1.7) |
-| Compose 1.8     | [![badge-version-compose1.8]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha05-compose1.8) |
-| Compose 1.9     | [![badge-version-compose1.9]](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0-alpha05-compose1.9) |
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?style=flat)](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0)
 
 - Add the Maven Central repository if it is not already there:
 
@@ -317,12 +317,6 @@ Released under the [Apache License, Version 2.0](https://opensource.org/license/
 ## Thx
 
 [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose)
-
-[badge-version-compose1.7]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.7&style=flat
-
-[badge-version-compose1.8]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.8&style=flat
-
-[badge-version-compose1.9]: https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?versionSuffix=compose1.9&style=flat
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 
