@@ -63,6 +63,8 @@ internal fun AdaptiveWheelDateTimePicker(
       //Date
       AdaptiveWheelDatePicker(
         startDate = startDateTime.date,
+        minDate = minDateTime.date,
+        maxDate = maxDateTime.date,
         yearsRange = yearsRange,
         dateFormatter = dateFormatter,
         size = DpSize(
