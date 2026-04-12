@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.intl.Locale
+import dev.darkokoa.datetimewheelpicker.core.resolveLanguageTag
+import dev.darkokoa.datetimewheelpicker.core.resolveStrings
 import dev.darkokoa.datetimewheelpicker.rememberStrings
 import dev.darkokoa.datetimewheelpicker.strings.EnStrings
 import dev.darkokoa.datetimewheelpicker.strings.Strings
@@ -34,10 +36,10 @@ fun timeFormatter(
     minute.toString().padStart(2, '0').toLocalizedNumerals()
   },
   formatAmText: () -> String = {
-    (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings).timeAM
+    Locale.current.resolveStrings().timeAM
   },
   formatPmText: () -> String = {
-    (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings).timePM
+    Locale.current.resolveStrings().timePM
   },
 ): TimeFormatter = TimeFormatterImpl(
   timeFormat = timeFormat,
@@ -70,7 +72,7 @@ internal fun timeFormatter(
 fun timeFormatter(
   locale: Locale,
 ): TimeFormatter {
-  val lyricist = rememberStrings(currentLanguageTag = locale.language)
+  val lyricist = rememberStrings(currentLanguageTag = locale.resolveLanguageTag())
 
   return remember(lyricist.strings, locale) {
     timeFormatter(
