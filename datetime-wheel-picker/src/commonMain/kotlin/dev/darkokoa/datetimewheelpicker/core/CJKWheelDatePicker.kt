@@ -21,6 +21,7 @@ import dev.darkokoa.datetimewheelpicker.core.format.DateField
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
+import dev.darkokoa.datetimewheelpicker.core.resolveLanguageTag
 import dev.darkokoa.datetimewheelpicker.rememberStrings
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
@@ -45,7 +46,7 @@ internal fun CJKWheelDatePicker(
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null }
 ) {
   val currentLocale = Locale.current
-  val strings = rememberStrings(currentLanguageTag = currentLocale.language).strings
+  val strings = rememberStrings(currentLanguageTag = currentLocale.resolveLanguageTag()).strings
 
   val itemWidth = Dp.Infinity
 

@@ -1,16 +1,24 @@
 package dev.darkokoa.datetimewheelpicker.core.format
 
 import androidx.compose.ui.text.intl.Locale
-import dev.darkokoa.datetimewheelpicker.strings.EnStrings
+import dev.darkokoa.datetimewheelpicker.core.resolveStrings
 import dev.darkokoa.datetimewheelpicker.strings.Strings
 
 internal fun Int.toLocalizedNumerals(locale: Locale = Locale.current): String {
   return this.toString().toLocalizedNumerals(locale)
 }
 
+/**
+ * Converts digits in the string to the localized numerals for the current Locale.
+ *
+ * Uses [resolveStrings] to obtain the [Strings] for the given Locale,
+ * then checks whether [Strings.digit0] is a non-standard digit (i.e. != '0') to decide if conversion is needed.
+ * This automatically covers all languages that define localized digits in their Strings (e.g. ar, fa, uz-Arab),
+ * without maintaining a hardcoded language list.
+ */
 internal fun String.toLocalizedNumerals(locale: Locale = Locale.current): String {
-  return if (locale.language in arrayOf("ar", "fa")) {
-    val strings = dev.darkokoa.datetimewheelpicker.Strings[locale.language] ?: EnStrings
+  val strings = locale.resolveStrings()
+  return if (strings.digit0 != '0') {
     this.toLocalizedNumerals(strings)
   } else {
     this

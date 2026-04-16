@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.intl.Locale
+import dev.darkokoa.datetimewheelpicker.core.resolveLanguageTag
+import dev.darkokoa.datetimewheelpicker.core.resolveStrings
 import dev.darkokoa.datetimewheelpicker.rememberStrings
 import dev.darkokoa.datetimewheelpicker.strings.EnStrings
 import dev.darkokoa.datetimewheelpicker.strings.Strings
@@ -37,7 +39,7 @@ fun dateFormatter(
   cjkSuffixConfig: CjkSuffixConfig = CjkSuffixConfig.ShowAll,
   formatYear: (Int) -> String = { it.toLocalizedNumerals() },
   formatMonth: (Month, MonthDisplayStyle) -> String = { month, style ->
-    val strings = (dev.darkokoa.datetimewheelpicker.Strings[Locale.current.language] ?: EnStrings)
+    val strings = Locale.current.resolveStrings()
     when (style) {
       MonthDisplayStyle.FULL -> month.fullString(strings)
       MonthDisplayStyle.SHORT -> month.shortString(strings)
@@ -83,7 +85,7 @@ fun dateFormatter(
   monthDisplayStyle: MonthDisplayStyle,
   cjkSuffixConfig: CjkSuffixConfig
 ): DateFormatter {
-  val lyricist = rememberStrings(currentLanguageTag = locale.language)
+  val lyricist = rememberStrings(currentLanguageTag = locale.resolveLanguageTag())
 
   return remember(lyricist.strings, locale, monthDisplayStyle, cjkSuffixConfig) {
     dateFormatter(
