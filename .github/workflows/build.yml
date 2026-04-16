@@ -44,7 +44,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run checks and build
-        run: ./gradlew check :datetime-wheel-picker:assemble :sample:composeApp:assembleDebug --stacktrace
+        run: ./gradlew check :datetime-wheel-picker:assembleDebug :sample:composeApp:assembleDebug --stacktrace
 
       - name: Upload test reports
         if: failure()
