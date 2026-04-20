@@ -1,10 +1,16 @@
 package dev.darkokoa.datetimewheelpicker.core
 
+import androidx.compose.ui.text.intl.Locale
 import dev.darkokoa.datetimewheelpicker.strings.EnStrings
+import dev.darkokoa.datetimewheelpicker.strings.JaStrings
+import dev.darkokoa.datetimewheelpicker.strings.KoStrings
 import dev.darkokoa.datetimewheelpicker.strings.Strings
+import dev.darkokoa.datetimewheelpicker.strings.ZhStrings
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class LocaleResolutionTest {
 
@@ -93,5 +99,58 @@ class LocaleResolutionTest {
     // "uz-Latn" not in map → falls back to "uz"
     val tag = resolveLanguageTagFromComponents(script = "Latn", language = "uz", stringsMap)
     assertEquals("uz", tag)
+  }
+
+  // ---- Integration with the real default Strings map ----
+  //
+  // These tests exercise the resolution against the real KSP-generated
+  // `dev.darkokoa.datetimewheelpicker.Strings` map (no `zh-Hant` / `zh-Hans`
+  // entries), locking in the documented CJK fallback behavior.
+
+  @Test
+  fun realMap_zhHantFallsBackToZh() {
+    val strings = Locale("zh-Hant").resolveStrings()
+    assertSame(ZhStrings, strings, "zh-Hant should fall back to ZhStrings (no Hant variant)")
+  }
+
+  @Test
+  fun realMap_zhHansFallsBackToZh() {
+    val strings = Locale("zh-Hans").resolveStrings()
+    assertSame(ZhStrings, strings, "zh-Hans should fall back to ZhStrings (no Hans variant)")
+  }
+
+  @Test
+  fun realMap_zhHantLanguageTag() {
+    assertEquals("zh", Locale("zh-Hant").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_jaResolvesToJaStrings() {
+    assertSame(JaStrings, Locale("ja").resolveStrings())
+    assertEquals("ja", Locale("ja").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_koResolvesToKoStrings() {
+    assertSame(KoStrings, Locale("ko").resolveStrings())
+    assertEquals("ko", Locale("ko").resolveLanguageTag())
+  }
+
+  // ---- isCjkLanguage ----
+
+  @Test
+  fun isCjkLanguage_trueForZhJaKo() {
+    assertTrue(Locale("zh").isCjkLanguage)
+    assertTrue(Locale("ja").isCjkLanguage)
+    assertTrue(Locale("ko").isCjkLanguage)
+    // Script-tagged Chinese still counts as CJK
+    assertTrue(Locale("zh-Hant").isCjkLanguage)
+  }
+
+  @Test
+  fun isCjkLanguage_falseForOthers() {
+    assertFalse(Locale("en").isCjkLanguage)
+    assertFalse(Locale("uz-Arab").isCjkLanguage)
+    assertFalse(Locale("ar").isCjkLanguage)
   }
 }
