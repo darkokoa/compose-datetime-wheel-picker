@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 @Composable
 internal fun WheelPicker(
@@ -31,6 +32,7 @@ internal fun WheelPicker(
   size: DpSize = DpSize(128.dp, 128.dp),
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
   val lazyListState = rememberLazyListState(startIndex)
@@ -39,11 +41,15 @@ internal fun WheelPicker(
   LaunchedEffect(lazyListState, count) {
     snapshotFlow { calculateSnappedItemIndex(lazyListState) }
       .distinctUntilChanged()
-      .collect { index ->
-        val correctedIndex = onScrollFinished(index)
-        if (!lazyListState.isScrollInProgress) {
-          correctedIndex?.let { lazyListState.scrollToItem(it) }
-        }
+      .collect { onScrollChanged(it) }
+  }
+
+  LaunchedEffect(lazyListState, count) {
+    snapshotFlow { lazyListState.isScrollInProgress }
+      .filter { !it }
+      .collect {
+        onScrollFinished(calculateSnappedItemIndex(lazyListState))
+          ?.let { lazyListState.scrollToItem(it) }
       }
   }
 

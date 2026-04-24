@@ -35,6 +35,7 @@ fun WheelTextPicker(
   color: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
 ) {
   WheelPicker(
     modifier = modifier,
@@ -43,7 +44,8 @@ fun WheelTextPicker(
     count = texts.size,
     rowCount = rowCount,
     selectorProperties = selectorProperties,
-    onScrollFinished = onScrollFinished
+    onScrollFinished = onScrollFinished,
+    onScrollChanged = onScrollChanged
   ) { index ->
     Text(
       text = texts[index],
@@ -70,6 +72,7 @@ internal fun WheelTextPickerWithSuffix(
   textToSuffixSpacing: Dp = 8.dp,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
 ) {
   val textMeasurer = rememberTextMeasurer()
   val density = LocalDensity.current
@@ -101,7 +104,8 @@ internal fun WheelTextPickerWithSuffix(
       count = texts.size,
       rowCount = rowCount,
       selectorProperties = selectorProperties,
-      onScrollFinished = onScrollFinished
+      onScrollFinished = onScrollFinished,
+      onScrollChanged = onScrollChanged
     ) { index ->
       Row(
         modifier = Modifier.fillMaxWidth(),

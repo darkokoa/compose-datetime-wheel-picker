@@ -118,7 +118,7 @@ private fun TimePickerDialog(
       ) {
         WheelTimePicker(
           startTime = initialTime,
-          onSnappedTime = { pendingTime = it }
+          onSnappedTimeChanged = { pendingTime = it }
         )
       }
     },

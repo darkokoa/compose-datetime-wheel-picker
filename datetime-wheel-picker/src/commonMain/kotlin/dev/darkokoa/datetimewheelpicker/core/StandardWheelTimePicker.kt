@@ -39,6 +39,7 @@ internal fun StandardWheelTimePicker(
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
+  onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
 ) {
 
   val itemCount = remember(timeFormatter.timeFormat) {
@@ -57,6 +58,17 @@ internal fun StandardWheelTimePicker(
   var snappedAmPm by remember {
     mutableStateOf(amPms.find { it.value == amPmValueFromTime(startTime) } ?: amPms[0])
   }
+
+  fun resolveHour(index: Int): Int? =
+    if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
+      hours.find { it.index == index }?.value
+    } else {
+      amPmHours.find { it.index == index }?.value?.let { amPmHour ->
+        amPmHourToHour24(amPmHour, snappedTime.minute, snappedAmPm.value)
+      }
+    }
+
+  fun resolveAmPm(index: Int) = amPms.find { if (index == 2) it.index == 1 else it.index == index }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
@@ -86,15 +98,7 @@ internal fun StandardWheelTimePicker(
         ),
         onScrollFinished = { snappedIndex ->
 
-          val newHour = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-            hours.find { it.index == snappedIndex }?.value
-          } else {
-            amPmHourToHour24(
-              amPmHours.find { it.index == snappedIndex }?.value ?: 0,
-              snappedTime.minute,
-              snappedAmPm.value
-            )
-          }
+          val newHour = resolveHour(snappedIndex)
 
           newHour?.let {
 
@@ -125,6 +129,20 @@ internal fun StandardWheelTimePicker(
             hours.find { it.value == snappedTime.hour }?.index
           } else {
             amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
+          }
+        },
+        onScrollChanged = { snappedIndex ->
+          resolveHour(snappedIndex)?.let { newHour ->
+            val pendingTime = snappedTime.withHour(newHour)
+            val pendingIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
+              hours.find { it.value == newHour }?.index ?: snappedIndex
+            } else {
+              amPmHours.find { it.value == localTimeToAmPmHour(pendingTime) }?.index ?: snappedIndex
+            }
+            onSnappedTimeChanged(
+              SnappedTime.Hour(localTime = pendingTime, index = pendingIndex),
+              timeFormatter.timeFormat
+            )
           }
         }
       )
@@ -186,6 +204,15 @@ internal fun StandardWheelTimePicker(
           }
 
           return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
+        },
+        onScrollChanged = { snappedIndex ->
+          val newMinute = minutes.find { it.index == snappedIndex }?.value
+          newMinute?.let {
+            onSnappedTimeChanged(
+              SnappedTime.Minute(localTime = snappedTime.withMinute(newMinute), index = snappedIndex),
+              timeFormatter.timeFormat
+            )
+          }
         }
       )
       //AM_PM
@@ -205,13 +232,7 @@ internal fun StandardWheelTimePicker(
           ),
           onScrollFinished = { snappedIndex ->
 
-            val newAmPm = amPms.find {
-              if (snappedIndex == 2) {
-                it.index == 1
-              } else {
-                it.index == snappedIndex
-              }
-            }
+            val newAmPm = resolveAmPm(snappedIndex)
 
             newAmPm?.let {
               snappedAmPm = newAmPm
@@ -246,6 +267,18 @@ internal fun StandardWheelTimePicker(
             }
 
             return@WheelTextPicker snappedIndex
+          },
+          onScrollChanged = { snappedIndex ->
+            resolveAmPm(snappedIndex)?.let { pendingAmPm ->
+              val currentAmPmHour = amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.value ?: 0
+              val newHour = amPmHourToHour24(currentAmPmHour, snappedTime.minute, pendingAmPm.value)
+              val pendingTime = snappedTime.withHour(newHour)
+              val newIndex = amPmHours.find { it.value == localTimeToAmPmHour(pendingTime) }?.index ?: 0
+              onSnappedTimeChanged(
+                SnappedTime.Hour(localTime = pendingTime, index = newIndex),
+                timeFormatter.timeFormat
+              )
+            }
           }
         )
       }

@@ -39,7 +39,8 @@ internal fun StandardWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null }
+  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
+  onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
 ) {
   val itemCount = if (yearsRange == null) 2 else 3
   val itemWidth = size.width / itemCount
@@ -103,6 +104,11 @@ internal fun StandardWheelDatePicker(
                 }
 
                 return@WheelTextPicker dayOfMonths.find { it.value == snappedDate.day }?.index
+              },
+              onScrollChanged = { snappedIndex ->
+                dayOfMonths.find { it.index == snappedIndex }?.value?.let { newDay ->
+                  onSnappedDateChanged(SnappedDate.DayOfMonth(localDate = snappedDate.withDayOfMonth(newDay), index = snappedIndex))
+                }
               }
             )
           }
@@ -149,6 +155,11 @@ internal fun StandardWheelDatePicker(
                 }
 
                 return@WheelTextPicker months.find { it.value == snappedDate.month.number }?.index
+              },
+              onScrollChanged = { snappedIndex ->
+                months.find { it.index == snappedIndex }?.value?.let { newMonth ->
+                  onSnappedDateChanged(SnappedDate.Month(localDate = snappedDate.withMonthNumber(newMonth), index = snappedIndex))
+                }
               }
             )
           }
@@ -197,6 +208,11 @@ internal fun StandardWheelDatePicker(
                   }
 
                   return@WheelTextPicker years.find { it.value == snappedDate.year }?.index
+                },
+                onScrollChanged = { snappedIndex ->
+                  years.find { it.index == snappedIndex }?.value?.let { newYear ->
+                    onSnappedDateChanged(SnappedDate.Year(localDate = snappedDate.withYear(newYear), index = snappedIndex))
+                  }
                 }
               )
             }
