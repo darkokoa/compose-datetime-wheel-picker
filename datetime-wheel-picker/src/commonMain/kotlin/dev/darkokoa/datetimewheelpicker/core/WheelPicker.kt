@@ -31,8 +31,8 @@ internal fun WheelPicker(
   rowCount: Int,
   size: DpSize = DpSize(128.dp, 128.dp),
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
+  onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
   val lazyListState = rememberLazyListState(startIndex)

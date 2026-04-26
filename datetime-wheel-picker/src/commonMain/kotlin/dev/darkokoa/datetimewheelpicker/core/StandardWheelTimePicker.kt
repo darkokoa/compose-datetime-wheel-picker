@@ -38,8 +38,8 @@ internal fun StandardWheelTimePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
   onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
+  onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
 
   val itemCount = remember(timeFormatter.timeFormat) {

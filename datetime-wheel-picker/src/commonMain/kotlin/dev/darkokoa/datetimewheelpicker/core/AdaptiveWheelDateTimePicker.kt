@@ -42,8 +42,8 @@ internal fun AdaptiveWheelDateTimePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
   onSnappedDateTimeChanged: (snappedDateTime: SnappedDateTime) -> Unit = {},
+  onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
 ) {
 
   var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(ChronoUnit.MINUTES)) }

@@ -39,8 +39,8 @@ internal fun StandardWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
+  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
   val itemCount = if (yearsRange == null) 2 else 3
   val itemWidth = size.width / itemCount

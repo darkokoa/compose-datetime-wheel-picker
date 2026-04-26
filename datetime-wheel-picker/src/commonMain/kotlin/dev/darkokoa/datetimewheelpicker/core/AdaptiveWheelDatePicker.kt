@@ -32,8 +32,8 @@ internal fun AdaptiveWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
+  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
   if (Locale.current.isCjkLanguage) {
     CJKWheelDatePicker(
@@ -48,8 +48,8 @@ internal fun AdaptiveWheelDatePicker(
       textStyle,
       textColor,
       selectorProperties,
-      onSnappedDate,
-      onSnappedDateChanged
+      onSnappedDateChanged,
+      onSnappedDate
     )
   } else {
     StandardWheelDatePicker(
@@ -64,8 +64,8 @@ internal fun AdaptiveWheelDatePicker(
       textStyle,
       textColor,
       selectorProperties,
-      onSnappedDate,
-      onSnappedDateChanged
+      onSnappedDateChanged,
+      onSnappedDate
     )
   }
 }
