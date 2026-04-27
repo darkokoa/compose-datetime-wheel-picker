@@ -43,7 +43,8 @@ internal fun CJKWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null }
+  onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
+  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
   val currentLocale = Locale.current
   val strings = rememberStrings(currentLanguageTag = currentLocale.resolveLanguageTag()).strings
@@ -112,6 +113,11 @@ internal fun CJKWheelDatePicker(
                 }
 
                 return@WheelTextPickerWithSuffix dayOfMonths.find { it.value == snappedDate.day }?.index
+              },
+              onScrollChanged = { snappedIndex ->
+                dayOfMonths.find { it.index == snappedIndex }?.value?.let { newDay ->
+                  onSnappedDateChanged(SnappedDate.DayOfMonth(localDate = snappedDate.withDayOfMonth(newDay), index = snappedIndex))
+                }
               }
             )
           }
@@ -155,6 +161,11 @@ internal fun CJKWheelDatePicker(
                 }
 
                 return@WheelTextPickerWithSuffix months.find { it.value == snappedDate.month.number }?.index
+              },
+              onScrollChanged = { snappedIndex ->
+                months.find { it.index == snappedIndex }?.value?.let { newMonth ->
+                  onSnappedDateChanged(SnappedDate.Month(localDate = snappedDate.withMonthNumber(newMonth), index = snappedIndex))
+                }
               }
             )
           }
@@ -200,6 +211,11 @@ internal fun CJKWheelDatePicker(
                   }
 
                   return@WheelTextPickerWithSuffix years.find { it.value == snappedDate.year }?.index
+                },
+                onScrollChanged = { snappedIndex ->
+                  years.find { it.index == snappedIndex }?.value?.let { newYear ->
+                    onSnappedDateChanged(SnappedDate.Year(localDate = snappedDate.withYear(newYear), index = snappedIndex))
+                  }
                 }
               )
             }

@@ -42,7 +42,8 @@ internal fun AdaptiveWheelDateTimePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null }
+  onSnappedDateTimeChanged: (snappedDateTime: SnappedDateTime) -> Unit = {},
+  onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
 ) {
 
   var snappedDateTime by remember { mutableStateOf(startDateTime.truncatedTo(ChronoUnit.MINUTES)) }
@@ -114,6 +115,16 @@ internal fun AdaptiveWheelDateTimePicker(
               newYearTextIndex
             }
           }
+        },
+        onSnappedDateChanged = { snappedDate ->
+          onSnappedDateTimeChanged(when (snappedDate) {
+            is SnappedDate.DayOfMonth -> snappedDateTime.withDayOfMonth(snappedDate.snappedLocalDate.day)
+              .let { SnappedDateTime.DayOfMonth(it, it.day - 1) }
+            is SnappedDate.Month -> snappedDateTime.withMonthNumber(snappedDate.snappedLocalDate.month.number)
+              .let { SnappedDateTime.Month(it, it.month.number - 1) }
+            is SnappedDate.Year -> snappedDateTime.withYear(snappedDate.snappedLocalDate.year)
+              .let { SnappedDateTime.Year(it, yearTexts.indexOf(it.year.toString())) }
+          })
         }
       )
       //Time
@@ -158,6 +169,14 @@ internal fun AdaptiveWheelDateTimePicker(
               snappedDateTime.minute
             }
           }
+        },
+        onSnappedTimeChanged = { snappedTime, timeFormat ->
+          onSnappedDateTimeChanged(when (snappedTime) {
+            is SnappedTime.Hour -> snappedDateTime.withHour(snappedTime.snappedLocalTime.hour)
+              .let { SnappedDateTime.Hour(it, if (timeFormat == TimeFormat.HOUR_24) it.hour else localTimeToAmPmHour(it.time) - 1) }
+            is SnappedTime.Minute -> snappedDateTime.withMinute(snappedTime.snappedLocalTime.minute)
+              .let { SnappedDateTime.Minute(it, it.minute) }
+          })
         }
       )
     }

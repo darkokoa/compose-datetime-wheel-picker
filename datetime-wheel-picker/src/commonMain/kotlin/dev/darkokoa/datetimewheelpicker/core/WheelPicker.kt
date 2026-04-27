@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 @Composable
 internal fun WheelPicker(
@@ -29,19 +31,26 @@ internal fun WheelPicker(
   rowCount: Int,
   size: DpSize = DpSize(128.dp, 128.dp),
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
   val lazyListState = rememberLazyListState(startIndex)
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
-  val isScrollInProgress = lazyListState.isScrollInProgress
 
-  LaunchedEffect(isScrollInProgress, count) {
-    if (!isScrollInProgress) {
-      onScrollFinished(calculateSnappedItemIndex(lazyListState))?.let {
-        lazyListState.scrollToItem(it)
+  LaunchedEffect(lazyListState, count) {
+    snapshotFlow { calculateSnappedItemIndex(lazyListState) }
+      .distinctUntilChanged()
+      .collect { onScrollChanged(it) }
+  }
+
+  LaunchedEffect(lazyListState, count) {
+    snapshotFlow { lazyListState.isScrollInProgress }
+      .filter { !it }
+      .collect {
+        onScrollFinished(calculateSnappedItemIndex(lazyListState))
+          ?.let { lazyListState.scrollToItem(it) }
       }
-    }
   }
 
   Box(
