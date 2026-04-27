@@ -225,7 +225,14 @@ WheelDateTimePicker(
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
-| `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback when date is selected |
+| `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
+| `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
+
+> **`onSnappedDateChanged` vs `onSnappedDate`**
+> - `onSnappedDateChanged` is invoked continuously while the user is scrolling, each time a different item snaps into the selector. Useful for live previews, syncing UI, or tracking the in-flight value.
+> - `onSnappedDate` is invoked only once after the wheel comes to rest, representing the user's final choice. Use it for committing the selection (saving, navigating, etc.).
+>
+> The same pattern applies to `WheelTimePicker` (`onSnappedTimeChanged` / `onSnappedTime`) and `WheelDateTimePicker` (`onSnappedDateTimeChanged` / `onSnappedDateTime`).
 
 ### DateFormatter Options
 
@@ -259,9 +266,24 @@ WheelDateTimePicker(
 - `TimeFormat.HOUR_24` - 24-hour format (00:00 - 23:59)
 - `TimeFormat.AM_PM` - 12-hour format with AM/PM
 
+### WheelDateTimePicker Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `startDateTime` | `LocalDateTime` | `LocalDateTime.now()` | Initial selected date-time |
+| `minDateTime` | `LocalDateTime` | `LocalDateTime.EPOCH` | Minimum selectable date-time |
+| `maxDateTime` | `LocalDateTime` | `LocalDateTime.CYB3R_1N1T_ZOLL` | Maximum selectable date-time |
+| `yearsRange` | `IntRange?` | `IntRange(minDateTime.year, maxDateTime.year)` | Year range to display. **Set to `null` to hide year picker** |
+| `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
+| `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format |
+| `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
+| `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
+| `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
+| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectorProperties |
+
 ## Setup
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?style=flat)](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker/1.1.0)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?style=flat)](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker)
 
 - Add the Maven Central repository if it is not already there:
 
