@@ -7,7 +7,6 @@ import androidx.compose.ui.text.intl.Locale
 import dev.darkokoa.datetimewheelpicker.core.resolveLanguageTag
 import dev.darkokoa.datetimewheelpicker.core.resolveStrings
 import dev.darkokoa.datetimewheelpicker.rememberStrings
-import dev.darkokoa.datetimewheelpicker.strings.EnStrings
 import dev.darkokoa.datetimewheelpicker.strings.Strings
 
 @Stable
@@ -71,16 +70,14 @@ internal fun timeFormatter(
 @Composable
 fun timeFormatter(
   locale: Locale,
+  timeFormat: TimeFormat = TimeFormat.systemDefault(),
 ): TimeFormatter {
   val lyricist = rememberStrings(currentLanguageTag = locale.resolveLanguageTag())
 
-  return remember(lyricist.strings, locale) {
+  return remember(lyricist.strings, locale, timeFormat) {
     timeFormatter(
       strings = lyricist.strings,
-      timeFormat = when {
-        locale.language == "en" || locale.region in listOf("US", "GB") -> TimeFormat.AM_PM
-        else -> TimeFormat.HOUR_24
-      }
+      timeFormat = timeFormat
     )
   }
 }
