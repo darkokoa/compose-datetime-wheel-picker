@@ -16,6 +16,11 @@
       "description": "Disable updates to SNAPSHOTS",
       "matchDatasources": ["maven"],
       "allowedVersions": "!/SNAPSHOT$/"
+    },
+    {
+      "description": "Avoid kotlinx-datetime -compat variant (renovate sorts it above plain releases)",
+      "matchPackageNames": ["org.jetbrains.kotlinx:kotlinx-datetime"],
+      "allowedVersions": "!/-compat$/"
     }
   ]
 }
