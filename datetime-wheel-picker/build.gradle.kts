@@ -148,3 +148,12 @@ mavenPublishing {
   publishToMavenCentral(automaticRelease = true)
   signAllPublications()
 }
+
+// https://youtrack.jetbrains.com/issue/CMP-4906
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest> {
+  enabled = false
+}
+
+tasks.withType<Test> {
+  failOnNoDiscoveredTests.set(false)
+}
