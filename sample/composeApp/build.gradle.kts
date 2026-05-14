@@ -39,7 +39,6 @@ kotlin {
   }
 
   listOf(
-    iosX64(),
     iosArm64(),
     iosSimulatorArm64()
   ).forEach {
@@ -122,4 +121,13 @@ compose.desktop {
       packageVersion = "1.0.0"
     }
   }
+}
+
+// https://youtrack.jetbrains.com/issue/CMP-4906
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest> {
+  enabled = false
+}
+
+tasks.withType<Test> {
+  failOnNoDiscoveredTests.set(false)
 }
