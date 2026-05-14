@@ -2,7 +2,7 @@
 
 kotlin = "2.3.21"
 compose = "1.11.0"
-agp = "8.13.2"
+agp = "9.2.1"
 androidx-activityCompose = "1.13.0"
 kotlinx-datetime = "0.8.0"
 ksp = "2.3.7"
