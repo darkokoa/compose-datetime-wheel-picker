@@ -301,7 +301,7 @@ kotlin {
     val commonMain by getting {
       dependencies {
         implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
       }
     }
   }
@@ -315,7 +315,7 @@ kotlin {
 ```kotlin
 dependencies {
   implementation("io.github.darkokoa:datetime-wheel-picker:<version>")
-  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
 }
 ```
 
