@@ -5,7 +5,7 @@ plugins {
   alias(libs.plugins.multiplatform)
   alias(libs.plugins.compose)
   alias(libs.plugins.compose.compiler)
-  alias(libs.plugins.android.library)
+  alias(libs.plugins.android.kotlin.multiplatform.library)
   alias(libs.plugins.maven.publish)
   alias(libs.plugins.ksp)
 }
@@ -13,16 +13,16 @@ plugins {
 kotlin {
   applyDefaultHierarchyTemplate()
 
-  androidTarget {
-    publishLibraryVariants("release")
+  android {
+    namespace = "dev.darkokoa.datetimewheelpicker"
+    compileSdk = 36
+    minSdk = 21
 
-    compilations.all {
-      compileTaskProvider.configure {
-        compilerOptions {
-          jvmTarget.set(JvmTarget.JVM_17)
-        }
-      }
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_17)
     }
+
+    withHostTest {}
   }
 
   jvm {
@@ -124,24 +124,6 @@ kotlin.sourceSets.commonMain {
 ksp {
   arg("lyricist.internalVisibility", "true")
   arg("lyricist.packageName", "dev.darkokoa.datetimewheelpicker")
-}
-
-android {
-  namespace = "dev.darkokoa.datetimewheelpicker"
-  compileSdk = 36
-
-  defaultConfig {
-    minSdk = 21
-  }
-  sourceSets["main"].apply {
-    manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    res.srcDirs("src/androidMain/resources")
-    resources.srcDirs("src/commonMain/resources")
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-  }
 }
 
 mavenPublishing {

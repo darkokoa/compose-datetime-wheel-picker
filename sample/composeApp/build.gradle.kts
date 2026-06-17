@@ -6,17 +6,17 @@ plugins {
   alias(libs.plugins.multiplatform)
   alias(libs.plugins.compose)
   alias(libs.plugins.compose.compiler)
-  alias(libs.plugins.android.application)
+  alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
 kotlin {
-  androidTarget {
-    compilations.all {
-      compileTaskProvider.configure {
-        compilerOptions {
-          jvmTarget.set(JvmTarget.JVM_17)
-        }
-      }
+  android {
+    namespace = "dev.darkokoa.datetimewheelpicker.sample"
+    compileSdk = 36
+    minSdk = 24
+
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_17)
     }
   }
 
@@ -67,7 +67,6 @@ kotlin {
     }
 
     androidMain.dependencies {
-      implementation(libs.androidx.activityCompose)
     }
 
     jvmMain.dependencies {
@@ -85,29 +84,6 @@ kotlin {
     iosMain.dependencies {
     }
 
-  }
-}
-
-android {
-  namespace = "dev.darkokoa.datetimewheelpicker"
-  compileSdk = 36
-
-  defaultConfig {
-    minSdk = 24
-    targetSdk = 36
-
-    applicationId = "dev.darkokoa.datetimewheelpicker.androidApp"
-    versionCode = 1
-    versionName = "1.0.0"
-  }
-  sourceSets["main"].apply {
-    manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    res.srcDirs("src/androidMain/resources")
-    resources.srcDirs("src/commonMain/resources")
-  }
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
   }
 }
 

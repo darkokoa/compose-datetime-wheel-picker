@@ -33,7 +33,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 @Composable
-internal fun App() = AppTheme {
+fun App() = AppTheme {
   Surface(
     modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing),
     color = MaterialTheme.colorScheme.background
