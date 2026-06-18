@@ -21,54 +21,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.TimePickerSnap
+import dev.darkokoa.datetimewheelpicker.WheelTimePickerState
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalTime
 
 @Composable
 internal fun StandardWheelTimePicker(
+  state: WheelTimePickerState,
   modifier: Modifier = Modifier,
-  startTime: LocalTime = LocalTime.now(),
-  minTime: LocalTime = LocalTime.MIN,
-  maxTime: LocalTime = LocalTime.MAX,
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   size: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
-  onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
+  eventSink: TimePickerEventSink = NoOpTimePickerEventSink,
 ) {
 
-  val itemCount = remember(timeFormatter.timeFormat) {
-    if (timeFormatter.timeFormat == TimeFormat.AM_PM) 3 else 2
+  val timeFormat = timeFormatter.timeFormat
+  val itemCount = remember(timeFormat) {
+    if (timeFormat == TimeFormat.AM_PM) 3 else 2
   }
 
   val itemWidth = remember(itemCount) { size.width / itemCount }
+  val scope = rememberCoroutineScope()
 
   val hours = rememberHours(timeFormatter)
   val amPmHours = rememberAmPmHours(timeFormatter)
   val minutes = rememberMinutes(timeFormatter)
   val amPms = rememberAmPm(timeFormatter)
-
-  var snappedTime by remember { mutableStateOf(LocalTime(startTime.hour, startTime.minute)) }
-
-  var snappedAmPm by remember {
-    mutableStateOf(amPms.find { it.value == amPmValueFromTime(startTime) } ?: amPms[0])
-  }
-
-  fun resolveHour(index: Int): Int? =
-    if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-      hours.find { it.index == index }?.value
-    } else {
-      amPmHours.find { it.index == index }?.value?.let { amPmHour ->
-        amPmHourToHour24(amPmHour, snappedTime.minute, snappedAmPm.value)
-      }
-    }
-
-  fun resolveAmPm(index: Int) = amPms.find { if (index == 2) it.index == 1 else it.index == index }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
@@ -82,67 +67,36 @@ internal fun StandardWheelTimePicker(
     Row(modifier = Modifier.height(size.height)) {
       //Hour
       WheelTextPicker(
+        state = if (timeFormat == TimeFormat.HOUR_24) state.hour24WheelState else state.amPmHourWheelState,
         size = DpSize(
           width = itemWidth,
           height = size.height
         ),
-        texts = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
+        texts = if (timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
         rowCount = rowCount,
         style = textStyle,
         color = textColor,
-        startIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-          hours.find { it.value == startTime.hour }?.index ?: 0
-        } else amPmHours.find { it.value == localTimeToAmPmHour(startTime) }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
         onScrollFinished = { snappedIndex ->
-
-          val newHour = resolveHour(snappedIndex)
-
-          newHour?.let {
-
-            val newTime = snappedTime.withHour(newHour)
-
-            if (!newTime.isBefore(minTime) && !newTime.isAfter(maxTime)) {
-              snappedTime = newTime
-            }
-
-            val newIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-              hours.find { it.value == snappedTime.hour }?.index
+          val snap = state.settleTime(TimePickerField.Hour, snappedIndex, timeFormat)
+          if (snap != null) {
+            scope.launch { state.snapWheelsToTime(snap.snappedTime.snappedLocalTime) }
+            val sinkIndex = if (!state.isProgrammaticScrollInProgress) {
+              eventSink.onTimeSettled(snap.snappedTime, timeFormat)
             } else {
-              amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
+              null
             }
-
-            newIndex?.let {
-              onSnappedTime(
-                SnappedTime.Hour(
-                  localTime = snappedTime,
-                  index = newIndex
-                ),
-                timeFormatter.timeFormat
-              )?.let { return@WheelTextPicker it }
-            }
+            return@WheelTextPicker settledTimeWheelIndex(TimePickerField.Hour, snap, sinkIndex)
           }
 
-          return@WheelTextPicker if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-            hours.find { it.value == snappedTime.hour }?.index
-          } else {
-            amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
-          }
+          return@WheelTextPicker state.indexFor(TimePickerField.Hour, timeFormat)
         },
         onScrollChanged = { snappedIndex ->
-          resolveHour(snappedIndex)?.let { newHour ->
-            val pendingTime = snappedTime.withHour(newHour)
-            val pendingIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-              hours.find { it.value == newHour }?.index ?: snappedIndex
-            } else {
-              amPmHours.find { it.value == localTimeToAmPmHour(pendingTime) }?.index ?: snappedIndex
-            }
-            onSnappedTimeChanged(
-              SnappedTime.Hour(localTime = pendingTime, index = pendingIndex),
-              timeFormatter.timeFormat
-            )
+          val snap = state.updateDisplayedTime(TimePickerField.Hour, snappedIndex, timeFormat)
+          if (snap != null && !state.isProgrammaticScrollInProgress) {
+            eventSink.onDisplayedTimeChanged(snap.snappedTime, timeFormat)
           }
         }
       )
@@ -155,6 +109,7 @@ internal fun StandardWheelTimePicker(
 
       //Minute
       WheelTextPicker(
+        state = state.minuteWheelState,
         size = DpSize(
           width = itemWidth,
           height = size.height
@@ -163,61 +118,34 @@ internal fun StandardWheelTimePicker(
         rowCount = rowCount,
         style = textStyle,
         color = textColor,
-        startIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
         onScrollFinished = { snappedIndex ->
-
-          val newMinute = minutes.find { it.index == snappedIndex }?.value
-
-          val newHour = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-            hours.find { it.value == snappedTime.hour }?.value
-          } else {
-            amPmHourToHour24(
-              amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.value ?: 0,
-              snappedTime.minute,
-              snappedAmPm.value
-            )
-          }
-
-          newMinute?.let {
-            newHour?.let {
-              val newTime = snappedTime.withMinute(newMinute).withHour(newHour)
-
-              if (!newTime.isBefore(minTime) && !newTime.isAfter(maxTime)) {
-                snappedTime = newTime
-              }
-
-              val newIndex = minutes.find { it.value == snappedTime.minute }?.index
-
-              newIndex?.let {
-                onSnappedTime(
-                  SnappedTime.Minute(
-                    localTime = snappedTime,
-                    index = newIndex
-                  ),
-                  timeFormatter.timeFormat
-                )?.let { return@WheelTextPicker it }
-              }
+          val snap = state.settleTime(TimePickerField.Minute, snappedIndex, timeFormat)
+          if (snap != null) {
+            scope.launch { state.snapWheelsToTime(snap.snappedTime.snappedLocalTime) }
+            val sinkIndex = if (!state.isProgrammaticScrollInProgress) {
+              eventSink.onTimeSettled(snap.snappedTime, timeFormat)
+            } else {
+              null
             }
+            return@WheelTextPicker settledTimeWheelIndex(TimePickerField.Minute, snap, sinkIndex)
           }
 
-          return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
+          return@WheelTextPicker state.indexFor(TimePickerField.Minute, timeFormat)
         },
         onScrollChanged = { snappedIndex ->
-          val newMinute = minutes.find { it.index == snappedIndex }?.value
-          newMinute?.let {
-            onSnappedTimeChanged(
-              SnappedTime.Minute(localTime = snappedTime.withMinute(newMinute), index = snappedIndex),
-              timeFormatter.timeFormat
-            )
+          val snap = state.updateDisplayedTime(TimePickerField.Minute, snappedIndex, timeFormat)
+          if (snap != null && !state.isProgrammaticScrollInProgress) {
+            eventSink.onDisplayedTimeChanged(snap.snappedTime, timeFormat)
           }
         }
       )
       //AM_PM
-      if (timeFormatter.timeFormat == TimeFormat.AM_PM) {
+      if (timeFormat == TimeFormat.AM_PM) {
         WheelTextPicker(
+          state = state.periodWheelState,
           size = DpSize(
             width = itemWidth,
             height = size.height
@@ -226,63 +154,44 @@ internal fun StandardWheelTimePicker(
           rowCount = rowCount,
           style = textStyle,
           color = textColor,
-          startIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?: 0,
           selectorProperties = WheelPickerDefaults.selectorProperties(
             enabled = false
           ),
           onScrollFinished = { snappedIndex ->
-
-            val newAmPm = resolveAmPm(snappedIndex)
-
-            newAmPm?.let {
-              snappedAmPm = newAmPm
+            val snap = state.settleTime(TimePickerField.Period, snappedIndex, timeFormat)
+            if (snap != null) {
+              scope.launch { state.snapWheelsToTime(snap.snappedTime.snappedLocalTime) }
+              val sinkIndex = if (!state.isProgrammaticScrollInProgress) {
+                eventSink.onTimeSettled(snap.snappedTime, timeFormat)
+              } else {
+                null
+              }
+              return@WheelTextPicker settledTimeWheelIndex(TimePickerField.Period, snap, sinkIndex)
             }
 
-            val newMinute = minutes.find { it.value == snappedTime.minute }?.value
-
-            val newHour = amPmHourToHour24(
-              amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.value ?: 0,
-              snappedTime.minute,
-              snappedAmPm.value
-            )
-
-            newMinute?.let {
-              val newTime = snappedTime.withMinute(newMinute).withHour(newHour)
-
-              if (!newTime.isBefore(minTime) && !newTime.isAfter(maxTime)) {
-                snappedTime = newTime
-              }
-
-              val newIndex = minutes.find { it.value == snappedTime.hour }?.index
-
-              newIndex?.let {
-                onSnappedTime(
-                  SnappedTime.Hour(
-                    localTime = snappedTime,
-                    index = newIndex
-                  ),
-                  timeFormatter.timeFormat
-                )
-              }
-            }
-
-            return@WheelTextPicker snappedIndex
+            return@WheelTextPicker state.indexFor(TimePickerField.Period, timeFormat)
           },
           onScrollChanged = { snappedIndex ->
-            resolveAmPm(snappedIndex)?.let { pendingAmPm ->
-              val currentAmPmHour = amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.value ?: 0
-              val newHour = amPmHourToHour24(currentAmPmHour, snappedTime.minute, pendingAmPm.value)
-              val pendingTime = snappedTime.withHour(newHour)
-              val newIndex = amPmHours.find { it.value == localTimeToAmPmHour(pendingTime) }?.index ?: 0
-              onSnappedTimeChanged(
-                SnappedTime.Hour(localTime = pendingTime, index = newIndex),
-                timeFormatter.timeFormat
-              )
+            val snap = state.updateDisplayedTime(TimePickerField.Period, snappedIndex, timeFormat)
+            if (snap != null && !state.isProgrammaticScrollInProgress) {
+              eventSink.onDisplayedTimeChanged(snap.snappedTime, timeFormat)
             }
           }
         )
       }
     }
+  }
+}
+
+internal fun settledTimeWheelIndex(
+  field: TimePickerField,
+  snap: TimePickerSnap,
+  eventSinkIndex: Int?,
+): Int {
+  return when (field) {
+    TimePickerField.Period -> snap.index
+    TimePickerField.Hour,
+    TimePickerField.Minute -> eventSinkIndex ?: snap.index
   }
 }
 

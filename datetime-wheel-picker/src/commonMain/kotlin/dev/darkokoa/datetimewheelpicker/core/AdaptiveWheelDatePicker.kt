@@ -9,19 +9,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.WheelDatePickerState
 import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
-import kotlinx.datetime.LocalDate
 
 @Composable
 internal fun AdaptiveWheelDatePicker(
+  state: WheelDatePickerState,
   modifier: Modifier = Modifier,
-  startDate: LocalDate = LocalDate.now(),
-  minDate: LocalDate = LocalDate.EPOCH,
-  maxDate: LocalDate = LocalDate.CYB3R_1N1T_ZOLL,
-  yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
   dateFormatter: DateFormatter = dateFormatter(
     locale = Locale.current,
     monthDisplayStyle = MonthDisplayStyle.FULL,
@@ -32,40 +29,31 @@ internal fun AdaptiveWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
-  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
+  eventSink: DatePickerEventSink = NoOpDatePickerEventSink,
 ) {
   if (Locale.current.isCjkLanguage) {
     CJKWheelDatePicker(
-      modifier,
-      startDate,
-      minDate,
-      maxDate,
-      yearsRange,
-      dateFormatter,
-      size,
-      rowCount,
-      textStyle,
-      textColor,
-      selectorProperties,
-      onSnappedDateChanged,
-      onSnappedDate
+      state = state,
+      modifier = modifier,
+      dateFormatter = dateFormatter,
+      size = size,
+      rowCount = rowCount,
+      textStyle = textStyle,
+      textColor = textColor,
+      selectorProperties = selectorProperties,
+      eventSink = eventSink,
     )
   } else {
     StandardWheelDatePicker(
-      modifier,
-      startDate,
-      minDate,
-      maxDate,
-      yearsRange,
-      dateFormatter,
-      size,
-      rowCount,
-      textStyle,
-      textColor,
-      selectorProperties,
-      onSnappedDateChanged,
-      onSnappedDate
+      state = state,
+      modifier = modifier,
+      dateFormatter = dateFormatter,
+      size = size,
+      rowCount = rowCount,
+      textStyle = textStyle,
+      textColor = textColor,
+      selectorProperties = selectorProperties,
+      eventSink = eventSink,
     )
   }
 }

@@ -10,10 +10,10 @@
 
 | Picker                                                                                                                                     | Basic Usage                                                                                            |
 |--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | ```WheelDateTimePicker { snappedDateTime -> }```                                                       |
-| <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | ```WheelDatePicker { snappedDate -> }```                                                               |
-| <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | ```WheelTimePicker { snappedTime -> }```                                                               |
-| <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | ```WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }``` |
+| <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | ```WheelDateTimePicker(state = rememberWheelDateTimePickerState())```                                  |
+| <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | ```WheelDatePicker(state = rememberWheelDatePickerState())```                                          |
+| <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | ```WheelTimePicker(state = rememberWheelTimePickerState())```                                          |
+| <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | ```WheelTimePicker(selectedTime = time, onTimeChange = { time = it })```                               |
 
 ## Key Features
 
@@ -46,22 +46,56 @@ Arabic (العربية), Bengali (বাংলা), Chinese (中文), Dutch (Ned
 
 ## Common Use Cases
 
+### State-based usage
+
+For local UI state, create a picker state and pass it to the picker. The state object is the source of truth for this overload and does not take an `onChange` callback:
+
+```kotlin
+val state = rememberWheelTimePickerState()
+val scope = rememberCoroutineScope()
+
+WheelTimePicker(state = state)
+
+Button(
+  onClick = {
+    scope.launch {
+      state.animateScrollToTime(LocalTime(9, 30))
+    }
+  }
+) {
+  Text("09:30")
+}
+```
+
+For MVI or externally managed screen state, use the controlled value overload:
+
+```kotlin
+WheelDatePicker(
+  selectedDate = uiState.date,
+  onDateChange = viewModel::onDateChange
+)
+```
+
+The public picker API is intentionally limited to state-based and controlled value-based overloads.
+
 <details>
 <summary><b>Day-Month Picker (No Year)</b></summary>
 
 Perfect for birthdays, anniversaries, or recurring events:
 
 ```kotlin
-WheelDatePicker(
-  startDate = LocalDate(2025, 6, 15),
+val state = rememberWheelDatePickerState(
+  initialSelectedDate = LocalDate(2025, 6, 15),
   yearsRange = null,  // Hides the year picker
+)
+
+WheelDatePicker(
+  state = state,
   dateFormatter = dateFormatter(
     dateOrder = DateOrder.DMY,
     monthDisplayStyle = MonthDisplayStyle.FULL
   )
-) { snappedDate ->
-  // snappedDate.month and snappedDate.dayOfMonth
-}
+)
 ```
 
 > **Note**: This uses the non-Composable `dateFormatter()` overload that accepts `dateOrder` parameter.
@@ -74,13 +108,15 @@ WheelDatePicker(
 For US-style date input without year:
 
 ```kotlin
+val state = rememberWheelDatePickerState(yearsRange = null)
+
 WheelDatePicker(
-  yearsRange = null,
+  state = state,
   dateFormatter = dateFormatter(
     dateOrder = DateOrder.MDY,
     monthDisplayStyle = MonthDisplayStyle.SHORT
   )
-) { snappedDate -> }
+)
 ```
 </details>
 
@@ -92,19 +128,23 @@ Restrict year selection to a specific range:
 ```kotlin
 // Only allow next 10 years
 WheelDatePicker(
+  selectedDate = selectedDate,
+  onDateChange = { selectedDate = it },
   yearsRange = IntRange(2025, 2035),
   dateFormatter = dateFormatter(
     dateOrder = DateOrder.YMD
   )
-) { snappedDate -> }
+)
 
 // Only allow past 50 years (for birthdate)
 val currentYear = Clock.System.now()
   .toLocalDateTime(TimeZone.currentSystemDefault()).year
 WheelDatePicker(
+  selectedDate = selectedDate,
+  onDateChange = { selectedDate = it },
   yearsRange = IntRange(currentYear - 50, currentYear),
   dateFormatter = dateFormatter(dateOrder = DateOrder.DMY)
-) { snappedDate -> }
+)
 ```
 </details>
 
@@ -117,22 +157,26 @@ With native year-month-day suffixes:
 - Japanese: "2025年1月15日"
 
 ```kotlin
+val state = rememberWheelDatePickerState()
+
 WheelDatePicker(
+  state = state,
   dateFormatter = dateFormatter(
     locale = Locale("zh"),  // "zh" for Chinese, "ja" for Japanese, "ko" for Korean
     monthDisplayStyle = MonthDisplayStyle.NUMERIC,
     cjkSuffixConfig = CjkSuffixConfig.ShowAll
   )
-) { snappedDate -> }
+)
 
 // Without suffixes
 WheelDatePicker(
+  state = state,
   dateFormatter = dateFormatter(
     locale = Locale("zh"),
     monthDisplayStyle = MonthDisplayStyle.NUMERIC,
     cjkSuffixConfig = CjkSuffixConfig.HideAll
   )
-) { snappedDate -> }
+)
 ```
 
 > **Note**: This uses the Composable `dateFormatter()` overload. Date order (YMD for CJK) is auto-detected from locale.
@@ -145,12 +189,15 @@ WheelDatePicker(
 Show months as numbers instead of names:
 
 ```kotlin
+val state = rememberWheelDatePickerState()
+
 WheelDatePicker(
+  state = state,
   dateFormatter = dateFormatter(
     dateOrder = DateOrder.DMY,  // or MDY, YMD based on your preference
     monthDisplayStyle = MonthDisplayStyle.NUMERIC
   )
-) { snappedDate -> }
+)
 ```
 </details>
 
@@ -161,8 +208,8 @@ WheelDatePicker(
 <td>
 
 ```kotlin  
-WheelDateTimePicker(
-  startDateTime = LocalDateTime(
+val state = rememberWheelDateTimePickerState(
+  initialSelectedDateTime = LocalDateTime(
     year = 2025,
     month = 10,
     day = 20,
@@ -179,6 +226,10 @@ WheelDateTimePicker(
     hour = 5,
     minute = 30
   ),
+)
+
+WheelDateTimePicker(
+  state = state,
   dateFormatter = dateFormatter(
     locale = Locale.current, 
     monthDisplayStyle = MonthDisplayStyle.SHORT,
@@ -197,7 +248,7 @@ WheelDateTimePicker(
     color = Color(0xFFf1faee).copy(alpha = 0.2f),
     border = BorderStroke(2.dp, Color(0xFFf1faee))
   )
-) { snappedDateTime -> }
+)
 ```
 
 </td>
@@ -211,11 +262,28 @@ WheelDateTimePicker(
 
 ## API Reference
 
-### WheelDatePicker Parameters
+### WheelDatePicker APIs
+
+State-based overload:
+
+```kotlin
+WheelDatePicker(state = rememberWheelDatePickerState())
+```
+
+Value-based overload:
+
+```kotlin
+WheelDatePicker(
+  selectedDate = selectedDate,
+  onDateChange = { selectedDate = it },
+)
+```
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `startDate` | `LocalDate` | `LocalDate.now()` | Initial selected date |
+| `state` | `WheelDatePickerState` | Required for state-based API | Picker state and programmatic scroll controller |
+| `selectedDate` | `LocalDate` | Required for value-based API | Externally owned selected date |
+| `onDateChange` | `(LocalDate) -> Unit` | Required for value-based API | Called when the user settles on a new date |
 | `minDate` | `LocalDate` | `LocalDate.EPOCH` | Minimum selectable date |
 | `maxDate` | `LocalDate` | `LocalDate.CYB3R_1N1T_ZOLL` | Maximum selectable date |
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
@@ -225,14 +293,6 @@ WheelDateTimePicker(
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
-| `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
-| `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
-
-> **`onSnappedDateChanged` vs `onSnappedDate`**
-> - `onSnappedDateChanged` is invoked continuously while the user is scrolling, each time a different item snaps into the selector. Useful for live previews, syncing UI, or tracking the in-flight value.
-> - `onSnappedDate` is invoked only once after the wheel comes to rest, representing the user's final choice. Use it for committing the selection (saving, navigating, etc.).
->
-> The same pattern applies to `WheelTimePicker` (`onSnappedTimeChanged` / `onSnappedTime`) and `WheelDateTimePicker` (`onSnappedDateTimeChanged` / `onSnappedDateTime`).
 
 ### DateFormatter Options
 
@@ -251,11 +311,28 @@ WheelDateTimePicker(
 - `CjkSuffixConfig.HideAll` - Hides all suffixes
 - Custom: `CjkSuffixConfig(showYearSuffix = true, showMonthSuffix = false, ...)`
 
-### WheelTimePicker Parameters
+### WheelTimePicker APIs
+
+State-based overload:
+
+```kotlin
+WheelTimePicker(state = rememberWheelTimePickerState())
+```
+
+Value-based overload:
+
+```kotlin
+WheelTimePicker(
+  selectedTime = selectedTime,
+  onTimeChange = { selectedTime = it },
+)
+```
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `startTime` | `LocalTime` | `LocalTime.now()` | Initial selected time |
+| `state` | `WheelTimePickerState` | Required for state-based API | Picker state and programmatic scroll controller |
+| `selectedTime` | `LocalTime` | Required for value-based API | Externally owned selected time |
+| `onTimeChange` | `(LocalTime) -> Unit` | Required for value-based API | Called when the user settles on a new time |
 | `minTime` | `LocalTime` | `LocalTime.MIN` | Minimum selectable time |
 | `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
@@ -266,19 +343,34 @@ WheelDateTimePicker(
 - `TimeFormat.HOUR_24` - 24-hour format (00:00 - 23:59)
 - `TimeFormat.AM_PM` - 12-hour format with AM/PM
 
-### WheelDateTimePicker Parameters
+### WheelDateTimePicker APIs
+
+State-based overload:
+
+```kotlin
+WheelDateTimePicker(state = rememberWheelDateTimePickerState())
+```
+
+Value-based overload:
+
+```kotlin
+WheelDateTimePicker(
+  selectedDateTime = selectedDateTime,
+  onDateTimeChange = { selectedDateTime = it },
+)
+```
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `startDateTime` | `LocalDateTime` | `LocalDateTime.now()` | Initial selected date-time |
+| `state` | `WheelDateTimePickerState` | Required for state-based API | Picker state and programmatic scroll controller |
+| `selectedDateTime` | `LocalDateTime` | Required for value-based API | Externally owned selected date-time |
+| `onDateTimeChange` | `(LocalDateTime) -> Unit` | Required for value-based API | Called when the user settles on a new date-time |
 | `minDateTime` | `LocalDateTime` | `LocalDateTime.EPOCH` | Minimum selectable date-time |
 | `maxDateTime` | `LocalDateTime` | `LocalDateTime.CYB3R_1N1T_ZOLL` | Maximum selectable date-time |
 | `yearsRange` | `IntRange?` | `IntRange(minDateTime.year, maxDateTime.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format |
 | `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
-| `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
-| `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
 | Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectorProperties |
 
 ## Setup

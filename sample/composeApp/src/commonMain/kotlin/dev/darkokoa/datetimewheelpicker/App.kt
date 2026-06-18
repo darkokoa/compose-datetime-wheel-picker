@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,6 +28,8 @@ import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import dev.darkokoa.datetimewheelpicker.theme.AppTheme
+import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -43,39 +47,87 @@ fun App() = AppTheme {
       verticalArrangement = Arrangement.Center
     ) {
       TimePickerChip()
-      WheelTimePicker { snappedTime ->
-        println(snappedTime)
-      }
-      WheelDatePicker { snappedDate ->
-        println(snappedDate)
-      }
-      WheelDateTimePicker { snappedDateTime ->
-        println(snappedDateTime)
-      }
-      WheelDateTimePicker(
-        startDateTime = LocalDateTime(
-          2025, 10, 20, 5, 30
-        ),
-        minDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-        maxDateTime = LocalDateTime(
-          2027, 10, 20, 5, 30
-        ),
-        timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
-        size = DpSize(200.dp, 100.dp),
-        rowCount = 5,
-        textStyle = MaterialTheme.typography.titleSmall,
-        textColor = Color(0xFFffc300),
-        selectorProperties = WheelPickerDefaults.selectorProperties(
-          enabled = true,
-          shape = RoundedCornerShape(0.dp),
-          color = Color(0xFFf1faee).copy(alpha = 0.2f),
-          border = BorderStroke(2.dp, Color(0xFFf1faee))
-        )
-      ) { snappedDateTime ->
-        println(snappedDateTime)
-      }
+      StateBasedTimePicker()
+      ValueBasedTimePicker()
+      ValueBasedDatePicker()
+      CustomizedDateTimePicker()
     }
   }
+}
+
+@Composable
+private fun StateBasedTimePicker() {
+  val timeFormatter = timeFormatter(timeFormat = TimeFormat.HOUR_24)
+  val state = rememberWheelTimePickerState()
+  val scope = rememberCoroutineScope()
+
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    Text("State time: ${state.selectedTime}")
+    TextButton(
+      onClick = {
+        scope.launch {
+          state.animateScrollToTime(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time)
+        }
+      }
+    ) {
+      Text("Now")
+    }
+  }
+
+  WheelTimePicker(
+    state = state,
+    timeFormatter = timeFormatter
+  )
+}
+
+@Composable
+private fun ValueBasedTimePicker() {
+  var selectedTime by remember { mutableStateOf(LocalTime(9, 30)) }
+
+  Text("Value time: $selectedTime")
+  WheelTimePicker(
+    selectedTime = selectedTime,
+    onTimeChange = { selectedTime = it }
+  )
+}
+
+@Composable
+private fun ValueBasedDatePicker() {
+  var selectedDate by remember { mutableStateOf(LocalDate(2025, 6, 18)) }
+
+  Text("Value date: $selectedDate")
+  WheelDatePicker(
+    selectedDate = selectedDate,
+    onDateChange = { selectedDate = it },
+  )
+}
+
+@Composable
+private fun CustomizedDateTimePicker() {
+  val timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)
+  val minDateTime = remember {
+    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+  }
+  val state = rememberWheelDateTimePickerState(
+    initialSelectedDateTime = LocalDateTime(2025, 10, 20, 5, 30),
+    minDateTime = minDateTime,
+    maxDateTime = LocalDateTime(2027, 10, 20, 5, 30),
+  )
+
+  WheelDateTimePicker(
+    state = state,
+    timeFormatter = timeFormatter,
+    size = DpSize(200.dp, 100.dp),
+    rowCount = 5,
+    textStyle = MaterialTheme.typography.titleSmall,
+    textColor = Color(0xFFffc300),
+    selectorProperties = WheelPickerDefaults.selectorProperties(
+      enabled = true,
+      shape = RoundedCornerShape(0.dp),
+      color = Color(0xFFf1faee).copy(alpha = 0.2f),
+      border = BorderStroke(2.dp, Color(0xFFf1faee))
+    )
+  )
 }
 
 @Composable
@@ -106,7 +158,7 @@ private fun TimePickerDialog(
   onConfirm: (LocalTime) -> Unit,
   onDismiss: () -> Unit,
 ) {
-  var pendingTime by remember { mutableStateOf(initialTime) }
+  val state = rememberWheelTimePickerState(initialSelectedTime = initialTime)
 
   AlertDialog(
     onDismissRequest = onDismiss,
@@ -117,13 +169,12 @@ private fun TimePickerDialog(
         contentAlignment = Alignment.Center
       ) {
         WheelTimePicker(
-          startTime = initialTime,
-          onSnappedTimeChanged = { pendingTime = it }
+          state = state,
         )
       }
     },
     confirmButton = {
-      TextButton(onClick = { onConfirm(pendingTime) }) {
+      TextButton(onClick = { onConfirm(state.selectedTime) }) {
         Text("OK")
       }
     },

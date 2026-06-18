@@ -16,6 +16,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.darkokoa.datetimewheelpicker.WheelDatePickerState
 import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateField
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
@@ -23,16 +24,13 @@ import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
 import dev.darkokoa.datetimewheelpicker.core.format.dateFormatter
 import dev.darkokoa.datetimewheelpicker.core.resolveLanguageTag
 import dev.darkokoa.datetimewheelpicker.rememberStrings
-import kotlinx.datetime.LocalDate
+import kotlinx.coroutines.launch
 import kotlinx.datetime.number
 
 @Composable
 internal fun CJKWheelDatePicker(
+  state: WheelDatePickerState,
   modifier: Modifier = Modifier,
-  startDate: LocalDate = LocalDate.now(),
-  minDate: LocalDate = LocalDate.EPOCH,
-  maxDate: LocalDate = LocalDate.CYB3R_1N1T_ZOLL,
-  yearsRange: IntRange? = IntRange(minDate.year, maxDate.year),
   dateFormatter: DateFormatter = dateFormatter(
     locale = Locale.current,
     monthDisplayStyle = MonthDisplayStyle.SHORT,
@@ -43,22 +41,20 @@ internal fun CJKWheelDatePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
-  onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
+  eventSink: DatePickerEventSink = NoOpDatePickerEventSink,
 ) {
   val currentLocale = Locale.current
   val strings = rememberStrings(currentLanguageTag = currentLocale.resolveLanguageTag()).strings
 
   val itemWidth = Dp.Infinity
-
-  var snappedDate by remember { mutableStateOf(startDate) }
+  val scope = rememberCoroutineScope()
 
   val dayOfMonths =
-    rememberFormattedDayOfMonths(snappedDate.month.number, snappedDate.year, dateFormatter)
+    rememberFormattedDayOfMonths(state.displayedDate.month.number, state.displayedDate.year, dateFormatter)
 
   val months = rememberFormattedMonths(Dp.Hairline, dateFormatter)
 
-  val years = rememberFormattedYears(yearsRange, dateFormatter)
+  val years = rememberFormattedYears(state.yearsRange, dateFormatter)
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
@@ -75,6 +71,7 @@ internal fun CJKWheelDatePicker(
         when (dateField) {
           DateField.DAY -> {
             WheelTextPickerWithSuffix(
+              state = state.dayWheelState,
               modifier = Modifier.weight(1f),
               size = DpSize(
                 width = itemWidth,
@@ -89,34 +86,22 @@ internal fun CJKWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
-              startIndex = dayOfMonths.find { it.value == startDate.day }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
-                val newDayOfMonth = dayOfMonths.find { it.index == snappedIndex }?.value
-
-                newDayOfMonth?.let {
-                  val newDate = snappedDate.withDayOfMonth(newDayOfMonth)
-
-                  if (!newDate.isBefore(minDate) && !newDate.isAfter(maxDate)) {
-                    snappedDate = newDate
+                val snap = state.settleDate(DateField.DAY, snappedIndex)
+                if (snap != null) {
+                  scope.launch { state.snapWheelsToDate(snap.snappedDate.snappedLocalDate) }
+                  if (!state.isProgrammaticScrollInProgress) {
+                    eventSink.onDateSettled(snap.snappedDate)?.let { return@WheelTextPickerWithSuffix it }
                   }
-
-                  val newIndex = dayOfMonths.find { it.value == snappedDate.day }?.index
-
-                  newIndex?.let {
-                    onSnappedDate(
-                      SnappedDate.DayOfMonth(
-                        localDate = snappedDate,
-                        index = newIndex
-                      )
-                    )?.let { return@WheelTextPickerWithSuffix it }
-                  }
+                  return@WheelTextPickerWithSuffix snap.index
                 }
 
-                return@WheelTextPickerWithSuffix dayOfMonths.find { it.value == snappedDate.day }?.index
+                return@WheelTextPickerWithSuffix state.indexFor(DateField.DAY)
               },
               onScrollChanged = { snappedIndex ->
-                dayOfMonths.find { it.index == snappedIndex }?.value?.let { newDay ->
-                  onSnappedDateChanged(SnappedDate.DayOfMonth(localDate = snappedDate.withDayOfMonth(newDay), index = snappedIndex))
+                val snap = state.updateDisplayedDate(DateField.DAY, snappedIndex)
+                if (snap != null && !state.isProgrammaticScrollInProgress) {
+                  eventSink.onDisplayedDateChanged(snap.snappedDate)
                 }
               }
             )
@@ -124,6 +109,7 @@ internal fun CJKWheelDatePicker(
 
           DateField.MONTH -> {
             WheelTextPickerWithSuffix(
+              state = state.monthWheelState,
               modifier = Modifier.weight(1f),
               size = DpSize(
                 width = itemWidth,
@@ -138,33 +124,22 @@ internal fun CJKWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
-              startIndex = months.find { it.value == startDate.month.number }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
-                val newMonth = months.find { it.index == snappedIndex }?.value
-                newMonth?.let {
-                  val newDate = snappedDate.withMonthNumber(newMonth)
-
-                  if (!newDate.isBefore(minDate) && !newDate.isAfter(maxDate)) {
-                    snappedDate = newDate
+                val snap = state.settleDate(DateField.MONTH, snappedIndex)
+                if (snap != null) {
+                  scope.launch { state.snapWheelsToDate(snap.snappedDate.snappedLocalDate) }
+                  if (!state.isProgrammaticScrollInProgress) {
+                    eventSink.onDateSettled(snap.snappedDate)?.let { return@WheelTextPickerWithSuffix it }
                   }
-
-                  val newIndex = months.find { it.value == snappedDate.month.number }?.index
-
-                  newIndex?.let {
-                    onSnappedDate(
-                      SnappedDate.Month(
-                        localDate = snappedDate,
-                        index = newIndex
-                      )
-                    )?.let { return@WheelTextPickerWithSuffix it }
-                  }
+                  return@WheelTextPickerWithSuffix snap.index
                 }
 
-                return@WheelTextPickerWithSuffix months.find { it.value == snappedDate.month.number }?.index
+                return@WheelTextPickerWithSuffix state.indexFor(DateField.MONTH)
               },
               onScrollChanged = { snappedIndex ->
-                months.find { it.index == snappedIndex }?.value?.let { newMonth ->
-                  onSnappedDateChanged(SnappedDate.Month(localDate = snappedDate.withMonthNumber(newMonth), index = snappedIndex))
+                val snap = state.updateDisplayedDate(DateField.MONTH, snappedIndex)
+                if (snap != null && !state.isProgrammaticScrollInProgress) {
+                  eventSink.onDisplayedDateChanged(snap.snappedDate)
                 }
               }
             )
@@ -173,6 +148,7 @@ internal fun CJKWheelDatePicker(
           DateField.YEAR -> {
             years?.let { years ->
               WheelTextPickerWithSuffix(
+                state = state.yearWheelState ?: return@let,
                 modifier = Modifier.weight(1.4f),
                 size = DpSize(
                   width = itemWidth,
@@ -187,34 +163,22 @@ internal fun CJKWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                   enabled = false
                 ),
-                startIndex = years.find { it.value == startDate.year }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
-                  val newYear = years.find { it.index == snappedIndex }?.value
-
-                  newYear?.let {
-                    val newDate = snappedDate.withYear(newYear)
-
-                    if (!newDate.isBefore(minDate) && !newDate.isAfter(maxDate)) {
-                      snappedDate = newDate
+                  val snap = state.settleDate(DateField.YEAR, snappedIndex)
+                  if (snap != null) {
+                    scope.launch { state.snapWheelsToDate(snap.snappedDate.snappedLocalDate) }
+                    if (!state.isProgrammaticScrollInProgress) {
+                      eventSink.onDateSettled(snap.snappedDate)?.let { return@WheelTextPickerWithSuffix it }
                     }
-
-                    val newIndex = years.find { it.value == snappedDate.year }?.index
-
-                    newIndex?.let {
-                      onSnappedDate(
-                        SnappedDate.Year(
-                          localDate = snappedDate,
-                          index = newIndex
-                        )
-                      )?.let { return@WheelTextPickerWithSuffix it }
-                    }
+                    return@WheelTextPickerWithSuffix snap.index
                   }
 
-                  return@WheelTextPickerWithSuffix years.find { it.value == snappedDate.year }?.index
+                  return@WheelTextPickerWithSuffix state.indexFor(DateField.YEAR)
                 },
                 onScrollChanged = { snappedIndex ->
-                  years.find { it.index == snappedIndex }?.value?.let { newYear ->
-                    onSnappedDateChanged(SnappedDate.Year(localDate = snappedDate.withYear(newYear), index = snappedIndex))
+                  val snap = state.updateDisplayedDate(DateField.YEAR, snappedIndex)
+                  if (snap != null && !state.isProgrammaticScrollInProgress) {
+                    eventSink.onDisplayedDateChanged(snap.snappedDate)
                   }
                 }
               )

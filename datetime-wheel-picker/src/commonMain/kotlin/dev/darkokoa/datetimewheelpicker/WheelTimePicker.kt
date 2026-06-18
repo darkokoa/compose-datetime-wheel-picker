@@ -3,6 +3,7 @@ package dev.darkokoa.datetimewheelpicker
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -13,16 +14,42 @@ import dev.darkokoa.datetimewheelpicker.core.StandardWheelTimePicker
 import dev.darkokoa.datetimewheelpicker.core.MAX
 import dev.darkokoa.datetimewheelpicker.core.MIN
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
+import dev.darkokoa.datetimewheelpicker.core.SnappedTime
+import dev.darkokoa.datetimewheelpicker.core.TimePickerEventSink
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
-import dev.darkokoa.datetimewheelpicker.core.now
 import kotlinx.datetime.LocalTime
 
 @Composable
 fun WheelTimePicker(
+  state: WheelTimePickerState,
   modifier: Modifier = Modifier,
-  startTime: LocalTime = LocalTime.now(),
+  timeFormatter: TimeFormatter = timeFormatter(Locale.current),
+  size: DpSize = DpSize(128.dp, 128.dp),
+  rowCount: Int = 3,
+  textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+  textColor: Color = LocalContentColor.current,
+  selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+) {
+  StandardWheelTimePicker(
+    state = state,
+    modifier = modifier,
+    timeFormatter = timeFormatter,
+    size = size,
+    rowCount = rowCount,
+    textStyle = textStyle,
+    textColor = textColor,
+    selectorProperties = selectorProperties,
+  )
+}
+
+@Composable
+fun WheelTimePicker(
+  selectedTime: LocalTime,
+  onTimeChange: (LocalTime) -> Unit,
+  modifier: Modifier = Modifier,
   minTime: LocalTime = LocalTime.MIN,
   maxTime: LocalTime = LocalTime.MAX,
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
@@ -31,26 +58,36 @@ fun WheelTimePicker(
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  onSnappedTimeChanged: (snappedTime: LocalTime) -> Unit = {},
-  onSnappedTime: (snappedTime: LocalTime) -> Unit = {},
 ) {
-  StandardWheelTimePicker(
-    modifier,
-    startTime,
-    minTime,
-    maxTime,
-    timeFormatter,
-    size,
-    rowCount,
-    textStyle,
-    textColor,
-    selectorProperties,
-    onSnappedTime = { snappedTime, _ ->
-      onSnappedTime(snappedTime.snappedLocalTime)
-      snappedTime.snappedIndex
-    },
-    onSnappedTimeChanged = { snappedTime, _ ->
-      onSnappedTimeChanged(snappedTime.snappedLocalTime)
+  val state = rememberWheelTimePickerState(
+    initialSelectedTime = selectedTime,
+    minTime = minTime,
+    maxTime = maxTime,
+  )
+
+  val settledTime = state.selectedTime
+  LaunchedEffect(selectedTime, settledTime, state) {
+    if (state.selectedTime != state.coerceTime(selectedTime)) {
+      state.scrollToTime(selectedTime)
     }
+  }
+
+  StandardWheelTimePicker(
+    state = state,
+    modifier = modifier,
+    timeFormatter = timeFormatter,
+    size = size,
+    rowCount = rowCount,
+    textStyle = textStyle,
+    textColor = textColor,
+    selectorProperties = selectorProperties,
+    eventSink = object : TimePickerEventSink {
+      override fun onTimeSettled(snappedTime: SnappedTime, timeFormat: TimeFormat): Int? {
+        if (snappedTime.snappedLocalTime != state.coerceTime(selectedTime)) {
+          onTimeChange(snappedTime.snappedLocalTime)
+        }
+        return snappedTime.snappedIndex
+      }
+    },
   )
 }

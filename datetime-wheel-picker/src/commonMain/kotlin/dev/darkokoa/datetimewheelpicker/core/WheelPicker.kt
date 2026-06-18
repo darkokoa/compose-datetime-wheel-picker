@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,20 +34,47 @@ internal fun WheelPicker(
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
-  val lazyListState = rememberLazyListState(startIndex)
+  WheelPicker(
+    state = rememberWheelPickerState(startIndex),
+    modifier = modifier,
+    count = count,
+    rowCount = rowCount,
+    size = size,
+    selectorProperties = selectorProperties,
+    onScrollChanged = onScrollChanged,
+    onScrollFinished = onScrollFinished,
+    content = content,
+  )
+}
+
+@Composable
+internal fun WheelPicker(
+  state: WheelPickerState,
+  modifier: Modifier = Modifier,
+  count: Int,
+  rowCount: Int,
+  size: DpSize = DpSize(128.dp, 128.dp),
+  selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
+  onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+  content: @Composable LazyItemScope.(index: Int) -> Unit,
+) {
+  val lazyListState = state.lazyListState
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
+  val latestOnScrollChanged by rememberUpdatedState(onScrollChanged)
+  val latestOnScrollFinished by rememberUpdatedState(onScrollFinished)
 
   LaunchedEffect(lazyListState, count) {
     snapshotFlow { calculateSnappedItemIndex(lazyListState) }
       .distinctUntilChanged()
-      .collect { onScrollChanged(it) }
+      .collect { latestOnScrollChanged(it) }
   }
 
   LaunchedEffect(lazyListState, count) {
     snapshotFlow { lazyListState.isScrollInProgress }
       .filter { !it }
       .collect {
-        onScrollFinished(calculateSnappedItemIndex(lazyListState))
+        latestOnScrollFinished(calculateSnappedItemIndex(lazyListState))
           ?.let { lazyListState.scrollToItem(it) }
       }
   }
@@ -98,7 +124,7 @@ internal fun WheelPicker(
   }
 }
 
-private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
+internal fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
   val currentItemIndex = lazyListState.firstVisibleItemIndex
   val itemCount = lazyListState.layoutInfo.totalItemsCount
   val offset = lazyListState.firstVisibleItemScrollOffset
@@ -198,5 +224,3 @@ internal class DefaultSelectorProperties(
     return rememberUpdatedState(border)
   }
 }
-
-
