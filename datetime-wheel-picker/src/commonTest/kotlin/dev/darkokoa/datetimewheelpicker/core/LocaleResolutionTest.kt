@@ -1,10 +1,18 @@
 package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.ui.text.intl.Locale
+import dev.darkokoa.datetimewheelpicker.strings.CsStrings
+import dev.darkokoa.datetimewheelpicker.strings.DaStrings
+import dev.darkokoa.datetimewheelpicker.strings.ElStrings
 import dev.darkokoa.datetimewheelpicker.strings.EnStrings
+import dev.darkokoa.datetimewheelpicker.strings.FiStrings
 import dev.darkokoa.datetimewheelpicker.strings.JaStrings
 import dev.darkokoa.datetimewheelpicker.strings.KoStrings
+import dev.darkokoa.datetimewheelpicker.strings.NbStrings
+import dev.darkokoa.datetimewheelpicker.strings.NoStrings
+import dev.darkokoa.datetimewheelpicker.strings.RoStrings
 import dev.darkokoa.datetimewheelpicker.strings.Strings
+import dev.darkokoa.datetimewheelpicker.strings.SvStrings
 import dev.darkokoa.datetimewheelpicker.strings.ZhStrings
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -134,6 +142,59 @@ class LocaleResolutionTest {
   fun realMap_koResolvesToKoStrings() {
     assertSame(KoStrings, Locale("ko").resolveStrings())
     assertEquals("ko", Locale("ko").resolveLanguageTag())
+  }
+
+  // ---- Newly added European locales ----
+  //
+  // Each should resolve to its own bundled Strings (not fall back to EnStrings)
+  // and report its own language tag.
+
+  @Test
+  fun realMap_csResolvesToCsStrings() {
+    assertSame(CsStrings, Locale("cs").resolveStrings())
+    assertEquals("cs", Locale("cs").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_daResolvesToDaStrings() {
+    assertSame(DaStrings, Locale("da").resolveStrings())
+    assertEquals("da", Locale("da").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_elResolvesToElStrings() {
+    assertSame(ElStrings, Locale("el").resolveStrings())
+    assertEquals("el", Locale("el").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_fiResolvesToFiStrings() {
+    assertSame(FiStrings, Locale("fi").resolveStrings())
+    assertEquals("fi", Locale("fi").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_nbResolvesToNbStrings() {
+    assertSame(NbStrings, Locale("nb").resolveStrings())
+    assertEquals("nb", Locale("nb").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_noResolvesToNoStrings() {
+    assertSame(NoStrings, Locale("no").resolveStrings())
+    assertEquals("no", Locale("no").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_roResolvesToRoStrings() {
+    assertSame(RoStrings, Locale("ro").resolveStrings())
+    assertEquals("ro", Locale("ro").resolveLanguageTag())
+  }
+
+  @Test
+  fun realMap_svResolvesToSvStrings() {
+    assertSame(SvStrings, Locale("sv").resolveStrings())
+    assertEquals("sv", Locale("sv").resolveLanguageTag())
   }
 
   // ---- isCjkLanguage ----

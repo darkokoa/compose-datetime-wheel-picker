@@ -30,8 +30,8 @@
 - **Script-aware locale matching**: A locale is matched first by its `language`+`script` subtags, then by `language` alone, and finally falls back to English. Examples: `uz-Arab` → `uz-Arab` (direct script match), `uz-Latn` → `uz` (script not bundled, base language used), `zh-Hant` → `zh` (same).
 - **Limitations**: BCP 47 `-u-*` Unicode extension subtags (e.g. `-u-nu-*` numbering system, `-u-ca-*` calendar) are ignored — only the `language` and `script` subtags influence resolution.
 
-**Currently Supported Languages (23):**
-Arabic (العربية), Bengali (বাংলা), Chinese (中文), Dutch (Nederlands), English, French (Français), German (Deutsch), Hebrew (עברית), Hindi (हिन्दी), Indonesian (Bahasa Indonesia), Italian (Italiano), Japanese (日本語), Korean (한국어), Persian (فارسی), Polish (Polski), Portuguese (Português), Russian (Русский), Spanish (Español), Thai (ไทย), Turkish (Türkçe), Ukrainian (Українська), Uzbek (Oʻzbekcha / Ўзбекча / اۉزبېکچه — `uz`, `uz-Cyrl`, `uz-Arab`), Vietnamese (Tiếng Việt)
+**Currently Supported Languages (30):**
+Arabic (العربية), Bengali (বাংলা), Chinese (中文), Czech (Čeština), Danish (Dansk), Dutch (Nederlands), English, Finnish (Suomi), French (Français), German (Deutsch), Greek (Ελληνικά), Hebrew (עברית), Hindi (हिन्दी), Indonesian (Bahasa Indonesia), Italian (Italiano), Japanese (日本語), Korean (한국어), Norwegian (Norsk — `nb`, `no`), Persian (فارسی), Polish (Polski), Portuguese (Português), Romanian (Română), Russian (Русский), Spanish (Español), Swedish (Svenska), Thai (ไทย), Turkish (Türkçe), Ukrainian (Українська), Uzbek (Oʻzbekcha / Ўзбекча / اۉزبېکچه — `uz`, `uz-Cyrl`, `uz-Arab`), Vietnamese (Tiếng Việt)
 
 > **Contributions welcome**: If you find any translation errors or want to add support for a new language, please [open an issue](../../issues) or submit a pull request.
 
