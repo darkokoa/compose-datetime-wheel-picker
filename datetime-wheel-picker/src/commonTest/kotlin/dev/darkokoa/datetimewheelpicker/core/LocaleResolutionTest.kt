@@ -180,9 +180,12 @@ class LocaleResolutionTest {
   }
 
   @Test
-  fun realMap_noResolvesToNoStrings() {
-    assertSame(NoStrings, Locale("no").resolveStrings())
-    assertEquals("no", Locale("no").resolveLanguageTag())
+  fun realMap_noResolvesToNorwegianStrings() {
+    assertSame(NbStrings, Locale("no").resolveStrings())
+    assertTrue(
+      Locale("no").resolveLanguageTag() in setOf("no", "nb"),
+      "Norwegian legacy tag should resolve to \"no\" or (ICU-normalised) \"nb\""
+    )
   }
 
   @Test
