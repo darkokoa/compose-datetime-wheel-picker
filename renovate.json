@@ -3,6 +3,9 @@
   "extends": [
     "config:base"
   ],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps",
   "packageRules": [
     {
       "groupName": "Kotlin and Compose Multiplatform",
