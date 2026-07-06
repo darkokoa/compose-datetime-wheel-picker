@@ -37,18 +37,20 @@ internal fun WheelPicker(
 ) {
   val lazyListState = rememberLazyListState(startIndex)
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
+  val latestOnScrollChanged by rememberUpdatedState(onScrollChanged)
+  val latestOnScrollFinished by rememberUpdatedState(onScrollFinished)
 
   LaunchedEffect(lazyListState, count) {
     snapshotFlow { calculateSnappedItemIndex(lazyListState) }
       .distinctUntilChanged()
-      .collect { onScrollChanged(it) }
+      .collect { latestOnScrollChanged(it) }
   }
 
   LaunchedEffect(lazyListState, count) {
     snapshotFlow { lazyListState.isScrollInProgress }
       .filter { !it }
       .collect {
-        onScrollFinished(calculateSnappedItemIndex(lazyListState))
+        latestOnScrollFinished(calculateSnappedItemIndex(lazyListState))
           ?.let { lazyListState.scrollToItem(it) }
       }
   }
@@ -198,5 +200,4 @@ internal class DefaultSelectorProperties(
     return rememberUpdatedState(border)
   }
 }
-
 
