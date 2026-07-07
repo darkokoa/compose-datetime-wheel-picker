@@ -35,6 +35,8 @@ internal fun WheelPicker(
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
+  require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
+  require(size.height > 0.dp) { "size.height must be positive, was ${size.height}" }
   val lazyListState = rememberLazyListState(startIndex)
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
   val latestOnScrollChanged by rememberUpdatedState(onScrollChanged)
@@ -91,9 +93,9 @@ internal fun WheelPicker(
               val distanceToCenterIndex = index - centerIndex
               val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeightPx - centerIndexOffset
               val distanceToIndexSnapAbs = abs(distanceToIndexSnap)
-              alpha = if (distanceToIndexSnapAbs in 0f..singleViewPortHeightPx)
+              alpha = if (distanceToIndexSnapAbs <= singleViewPortHeightPx)
                 1.2f - (distanceToIndexSnapAbs / singleViewPortHeightPx) else 0.2f
-              rotationX = (-20f * (distanceToIndexSnap / singleViewPortHeightPx)).takeUnless { it.isNaN() } ?: 0f
+              rotationX = -20f * (distanceToIndexSnap / singleViewPortHeightPx)
             },
           contentAlignment = Alignment.Center
         ) {
