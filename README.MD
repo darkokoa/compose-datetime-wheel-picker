@@ -302,6 +302,8 @@ WheelDatePicker(
 
 > `selectedTextColor` overrides `selectedTextStyle.color`, mirroring how `Text(color = ...)` overrides `TextStyle.color` in Compose. The same parameters are available on `WheelTimePicker`, `WheelDateTimePicker`, and the internal text pickers.
 
+> In `WheelTimePicker` and `WheelDateTimePicker`, the colon separator sits in the center row next to the selected hour and minute, so it follows `selectedTextStyle` / `selectedTextColor`. If you don't set the `selected*` params (defaults equal `textStyle` / `textColor`), the colon is unchanged.
+
 ## Setup
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?style=flat)](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker)
