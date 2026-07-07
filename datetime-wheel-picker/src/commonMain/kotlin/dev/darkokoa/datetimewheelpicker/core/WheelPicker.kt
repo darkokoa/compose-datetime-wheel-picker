@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isFinite
 import kotlin.math.abs
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -36,7 +37,9 @@ internal fun WheelPicker(
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
   require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
-  require(size.height > 0.dp) { "size.height must be positive, was ${size.height}" }
+  require(size.height.isFinite && size.height > 0.dp) {
+    "size.height must be finite and positive, was ${size.height}"
+  }
   val lazyListState = rememberLazyListState(startIndex)
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
   val latestOnScrollChanged by rememberUpdatedState(onScrollChanged)
