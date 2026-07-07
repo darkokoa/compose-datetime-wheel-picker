@@ -34,7 +34,7 @@ internal fun WheelPicker(
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
-  content: @Composable LazyItemScope.(index: Int) -> Unit,
+  content: @Composable LazyItemScope.(index: Int, isSelected: Boolean) -> Unit,
 ) {
   require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
   require(size.height.isFinite && size.height > 0.dp) {
@@ -47,6 +47,9 @@ internal fun WheelPicker(
   val density = LocalDensity.current
   val singleViewPortHeightPx = remember(size, rowCount, density) {
     with(density) { size.height.toPx() } / rowCount
+  }
+  val snappedItemIndex by remember(lazyListState) {
+    derivedStateOf { calculateSnappedItemIndex(lazyListState) }
   }
 
   LaunchedEffect(lazyListState, count) {
@@ -102,7 +105,7 @@ internal fun WheelPicker(
             },
           contentAlignment = Alignment.Center
         ) {
-          content(index)
+          content(index, index == snappedItemIndex)
         }
       }
     }

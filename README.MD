@@ -36,7 +36,7 @@ Arabic (العربية), Bengali (বাংলা), Chinese (中文), Czech (Če
 > **Contributions welcome**: If you find any translation errors or want to add support for a new language, please [open an issue](../../issues) or submit a pull request.
 
 ### 🎨 Visual Customization
-- Configurable size, row count, text style, and colors
+- Configurable size, row count, inactive and selected text styles, and colors
 - Customizable selector appearance (shape, color, border)
 - Material Design integration
 
@@ -191,6 +191,10 @@ WheelDateTimePicker(
   rowCount = 5,
   textStyle = MaterialTheme.typography.titleSmall,
   textColor = Color(0xFFffc300),
+  selectedTextStyle = MaterialTheme.typography.titleSmall.copy(
+    fontWeight = FontWeight.Bold
+  ),
+  selectedTextColor = Color.Black,
   selectorProperties = WheelPickerDefaults.selectorProperties(
     enabled = true,
     shape = RoundedCornerShape(0.dp),
@@ -222,8 +226,10 @@ WheelDateTimePicker(
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
 | `rowCount` | `Int` | `3` | Number of visible rows in the wheel |
-| `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling |
-| `textColor` | `Color` | `LocalContentColor.current` | Text color |
+| `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
+| `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
+| `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |
+| `selectedTextColor` | `Color` | `textColor` | Text color for the selected (centered) item |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
 | `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
 | `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
@@ -260,7 +266,7 @@ WheelDateTimePicker(
 | `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
 | `size` | `DpSize` | `DpSize(128.dp, 128.dp)` | Picker dimensions (narrower than date picker) |
-| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectorProperties, etc. |
+| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, etc. |
 
 **TimeFormat**:
 - `TimeFormat.HOUR_24` - 24-hour format (00:00 - 23:59)
@@ -279,7 +285,22 @@ WheelDateTimePicker(
 | `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
 | `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
 | `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
-| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectorProperties |
+| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties |
+
+### Styling the selected item
+
+Each picker accepts `selectedTextStyle` / `selectedTextColor` to style the **centered (snapped) item** differently from inactive items. By default, they use the same values as `textStyle` / `textColor`.
+
+```kotlin
+WheelDatePicker(
+  textStyle = MaterialTheme.typography.titleMedium,
+  textColor = LocalContentColor.current,
+  selectedTextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+  selectedTextColor = MaterialTheme.colorScheme.primary,
+)
+```
+
+> `selectedTextColor` overrides `selectedTextStyle.color`, mirroring how `Text(color = ...)` overrides `TextStyle.color` in Compose. The same parameters are available on `WheelTimePicker`, `WheelDateTimePicker`, and the internal text pickers.
 
 ## Setup
 

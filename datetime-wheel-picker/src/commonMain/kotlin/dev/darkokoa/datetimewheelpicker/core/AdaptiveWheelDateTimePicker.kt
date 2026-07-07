@@ -41,6 +41,8 @@ internal fun AdaptiveWheelDateTimePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateTimeChanged: (snappedDateTime: SnappedDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
@@ -75,6 +77,8 @@ internal fun AdaptiveWheelDateTimePicker(
         rowCount = rowCount,
         textStyle = textStyle,
         textColor = textColor,
+        selectedTextStyle = selectedTextStyle,
+        selectedTextColor = selectedTextColor,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
@@ -138,6 +142,8 @@ internal fun AdaptiveWheelDateTimePicker(
         rowCount = rowCount,
         textStyle = textStyle,
         textColor = textColor,
+        selectedTextStyle = selectedTextStyle,
+        selectedTextColor = selectedTextColor,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
@@ -182,7 +188,6 @@ internal fun AdaptiveWheelDateTimePicker(
     }
   }
 }
-
 
 
 

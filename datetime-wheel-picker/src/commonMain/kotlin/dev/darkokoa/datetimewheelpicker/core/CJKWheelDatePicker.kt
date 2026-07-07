@@ -42,6 +42,8 @@ internal fun CJKWheelDatePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
@@ -84,8 +86,12 @@ internal fun CJKWheelDatePicker(
               suffix = if (dateFormatter.cjkSuffixConfig.showDaySuffix) strings.daySuffix else "",
               textToSuffixSpacing = dateFormatter.cjkSuffixConfig.daySuffixSpacing,
               rowCount = rowCount,
-              style = textStyle,
-              color = textColor,
+              textStyle = textStyle,
+              textColor = textColor,
+              selectedTextStyle = selectedTextStyle,
+              selectedTextColor = selectedTextColor,
+              suffixTextStyle = selectedTextStyle,
+              suffixTextColor = selectedTextColor,
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
@@ -133,8 +139,12 @@ internal fun CJKWheelDatePicker(
               suffix = if (dateFormatter.cjkSuffixConfig.showMonthSuffix) strings.monthSuffix else "",
               textToSuffixSpacing = dateFormatter.cjkSuffixConfig.monthSuffixSpacing,
               rowCount = rowCount,
-              style = textStyle,
-              color = textColor,
+              textStyle = textStyle,
+              textColor = textColor,
+              selectedTextStyle = selectedTextStyle,
+              selectedTextColor = selectedTextColor,
+              suffixTextStyle = selectedTextStyle,
+              suffixTextColor = selectedTextColor,
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
@@ -182,8 +192,12 @@ internal fun CJKWheelDatePicker(
                 suffix = if (dateFormatter.cjkSuffixConfig.showYearSuffix) strings.yearSuffix else "",
                 textToSuffixSpacing = dateFormatter.cjkSuffixConfig.yearSuffixSpacing,
                 rowCount = rowCount,
-                style = textStyle,
-                color = textColor,
+                textStyle = textStyle,
+                textColor = textColor,
+                selectedTextStyle = selectedTextStyle,
+                selectedTextColor = selectedTextColor,
+                suffixTextStyle = selectedTextStyle,
+                suffixTextColor = selectedTextColor,
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                   enabled = false
                 ),

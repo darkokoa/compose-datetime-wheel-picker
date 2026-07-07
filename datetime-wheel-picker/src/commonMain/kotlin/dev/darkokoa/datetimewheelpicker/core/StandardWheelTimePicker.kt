@@ -37,6 +37,8 @@ internal fun StandardWheelTimePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
@@ -88,8 +90,10 @@ internal fun StandardWheelTimePicker(
         ),
         texts = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
         rowCount = rowCount,
-        style = textStyle,
-        color = textColor,
+        textStyle = textStyle,
+        textColor = textColor,
+        selectedTextStyle = selectedTextStyle,
+        selectedTextColor = selectedTextColor,
         startIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
           hours.find { it.value == startTime.hour }?.index ?: 0
         } else amPmHours.find { it.value == localTimeToAmPmHour(startTime) }?.index ?: 0,
@@ -150,7 +154,7 @@ internal fun StandardWheelTimePicker(
       //Colon
       TimeSeparator(
         modifier = Modifier.align(Alignment.CenterVertically).width(0.dp),
-        textStyle = textStyle.copy(color = textColor),
+        textStyle = selectedTextStyle.copy(color = selectedTextColor),
       )
 
       //Minute
@@ -161,8 +165,10 @@ internal fun StandardWheelTimePicker(
         ),
         texts = minutes.map { it.text },
         rowCount = rowCount,
-        style = textStyle,
-        color = textColor,
+        textStyle = textStyle,
+        textColor = textColor,
+        selectedTextStyle = selectedTextStyle,
+        selectedTextColor = selectedTextColor,
         startIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
@@ -224,8 +230,10 @@ internal fun StandardWheelTimePicker(
           ),
           texts = amPms.map { it.text },
           rowCount = rowCount,
-          style = textStyle,
-          color = textColor,
+          textStyle = textStyle,
+          textColor = textColor,
+          selectedTextStyle = selectedTextStyle,
+          selectedTextColor = selectedTextColor,
           startIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?: 0,
           selectorProperties = WheelPickerDefaults.selectorProperties(
             enabled = false

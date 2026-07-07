@@ -31,6 +31,8 @@ internal fun AdaptiveWheelDatePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
@@ -47,6 +49,8 @@ internal fun AdaptiveWheelDatePicker(
       rowCount,
       textStyle,
       textColor,
+      selectedTextStyle,
+      selectedTextColor,
       selectorProperties,
       onSnappedDateChanged,
       onSnappedDate
@@ -63,6 +67,8 @@ internal fun AdaptiveWheelDatePicker(
       rowCount,
       textStyle,
       textColor,
+      selectedTextStyle,
+      selectedTextColor,
       selectorProperties,
       onSnappedDateChanged,
       onSnappedDate
