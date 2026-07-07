@@ -13,12 +13,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isFinite
 import kotlin.math.abs
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -35,10 +36,18 @@ internal fun WheelPicker(
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
+  require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
+  require(size.height.isFinite && size.height > 0.dp) {
+    "size.height must be finite and positive, was ${size.height}"
+  }
   val lazyListState = rememberLazyListState(startIndex)
   val flingBehavior = rememberSnapFlingBehavior(lazyListState)
   val latestOnScrollChanged by rememberUpdatedState(onScrollChanged)
   val latestOnScrollFinished by rememberUpdatedState(onScrollFinished)
+  val density = LocalDensity.current
+  val singleViewPortHeightPx = remember(size, rowCount, density) {
+    with(density) { size.height.toPx() } / rowCount
+  }
 
   LaunchedEffect(lazyListState, count) {
     snapshotFlow { calculateSnappedItemIndex(lazyListState) }
@@ -77,19 +86,19 @@ internal fun WheelPicker(
       flingBehavior = flingBehavior
     ) {
       items(count) { index ->
-        val (newAlpha, newRotationX) = calculateAnimatedAlphaAndRotationX(
-          lazyListState = lazyListState,
-          index = index,
-          rowCount = rowCount
-        )
-
         Box(
           modifier = Modifier
             .height(size.height / rowCount)
             .width(size.width)
-            .alpha(newAlpha)
             .graphicsLayer {
-              rotationX = newRotationX
+              val centerIndex = lazyListState.firstVisibleItemIndex
+              val centerIndexOffset = lazyListState.firstVisibleItemScrollOffset
+              val distanceToCenterIndex = index - centerIndex
+              val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeightPx - centerIndexOffset
+              val distanceToIndexSnapAbs = abs(distanceToIndexSnap)
+              alpha = if (distanceToIndexSnapAbs <= singleViewPortHeightPx)
+                1.2f - (distanceToIndexSnapAbs / singleViewPortHeightPx) else 0.2f
+              rotationX = -20f * (distanceToIndexSnap / singleViewPortHeightPx)
             },
           contentAlignment = Alignment.Center
         ) {
@@ -111,36 +120,6 @@ private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
   } else {
     currentItemIndex
   }
-}
-
-@Composable
-private fun calculateAnimatedAlphaAndRotationX(
-  lazyListState: LazyListState,
-  index: Int,
-  rowCount: Int
-): Pair<Float, Float> {
-
-  val layoutInfo = remember { derivedStateOf { lazyListState.layoutInfo } }.value
-  val viewPortHeight = layoutInfo.viewportSize.height.toFloat()
-  val singleViewPortHeight = viewPortHeight / rowCount
-
-  val centerIndex = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }.value
-  val centerIndexOffset = remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }.value
-
-  val distanceToCenterIndex = index - centerIndex
-
-  val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeight.toInt() - centerIndexOffset
-  val distanceToIndexSnapAbs = abs(distanceToIndexSnap)
-
-  val animatedAlpha = if (abs(distanceToIndexSnap) in 0..singleViewPortHeight.toInt()) {
-    1.2f - (distanceToIndexSnapAbs / singleViewPortHeight)
-  } else {
-    0.2f
-  }
-
-  val animatedRotationX = (-20 * (distanceToIndexSnap / singleViewPortHeight)).takeUnless { it.isNaN() } ?: 0f
-
-  return animatedAlpha to animatedRotationX
 }
 
 object WheelPickerDefaults {
@@ -200,4 +179,3 @@ internal class DefaultSelectorProperties(
     return rememberUpdatedState(border)
   }
 }
-
