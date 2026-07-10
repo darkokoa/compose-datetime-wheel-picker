@@ -94,20 +94,21 @@ internal fun WheelTextPickerWithSuffix(
     }
   }
 
-  val textWidth = remember(texts, textStyle, selectedTextStyle, density, textMeasurer) {
-    if (texts.isEmpty()) {
+  val hasSuffix = suffix.isNotEmpty()
+  val widthReferenceText = remember(texts, hasSuffix) {
+    if (hasSuffix) texts.maxByOrNull { it.length } else null
+  }
+
+  val textWidth = remember(widthReferenceText, selectedTextStyle, density, textMeasurer) {
+    if (widthReferenceText == null) {
       0.dp
     } else {
       with(density) {
-        listOf(textStyle, selectedTextStyle).distinct().maxOf { style ->
-          texts.maxOf { text ->
-            textMeasurer.measure(
-              text = AnnotatedString(text),
-              style = style,
-              maxLines = 1
-            ).size.width
-          }
-        }.toDp()
+        textMeasurer.measure(
+          text = AnnotatedString(widthReferenceText),
+          style = selectedTextStyle,
+          maxLines = 1
+        ).size.width.toDp()
       }
     }
   }
