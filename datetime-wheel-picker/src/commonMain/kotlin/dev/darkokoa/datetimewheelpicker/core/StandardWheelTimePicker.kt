@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +44,13 @@ internal fun StandardWheelTimePicker(
   onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
+  val defaultTextStyle = MaterialTheme.typography.titleMedium
+  val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
+    defaultTextStyle.merge(textStyle)
+  }
+  val resolvedSelectedTextStyle = remember(resolvedTextStyle, selectedTextStyle) {
+    resolvedTextStyle.merge(selectedTextStyle)
+  }
 
   val itemCount = remember(timeFormatter.timeFormat) {
     if (timeFormatter.timeFormat == TimeFormat.AM_PM) 3 else 2
@@ -90,9 +98,9 @@ internal fun StandardWheelTimePicker(
         ),
         texts = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
         rowCount = rowCount,
-        textStyle = textStyle,
+        textStyle = resolvedTextStyle,
         textColor = textColor,
-        selectedTextStyle = selectedTextStyle,
+        selectedTextStyle = resolvedSelectedTextStyle,
         selectedTextColor = selectedTextColor,
         startIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
           hours.find { it.value == startTime.hour }?.index ?: 0
@@ -154,7 +162,7 @@ internal fun StandardWheelTimePicker(
       //Colon
       TimeSeparator(
         modifier = Modifier.align(Alignment.CenterVertically).width(0.dp),
-        textStyle = selectedTextStyle.copy(color = selectedTextColor),
+        textStyle = resolvedSelectedTextStyle.copy(color = selectedTextColor),
       )
 
       //Minute
@@ -165,9 +173,9 @@ internal fun StandardWheelTimePicker(
         ),
         texts = minutes.map { it.text },
         rowCount = rowCount,
-        textStyle = textStyle,
+        textStyle = resolvedTextStyle,
         textColor = textColor,
-        selectedTextStyle = selectedTextStyle,
+        selectedTextStyle = resolvedSelectedTextStyle,
         selectedTextColor = selectedTextColor,
         startIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
@@ -230,9 +238,9 @@ internal fun StandardWheelTimePicker(
           ),
           texts = amPms.map { it.text },
           rowCount = rowCount,
-          textStyle = textStyle,
+          textStyle = resolvedTextStyle,
           textColor = textColor,
-          selectedTextStyle = selectedTextStyle,
+          selectedTextStyle = resolvedSelectedTextStyle,
           selectedTextColor = selectedTextColor,
           startIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?: 0,
           selectorProperties = WheelPickerDefaults.selectorProperties(
@@ -302,10 +310,14 @@ fun TimeSeparator(
   spacingRatio: Float = 0.25f
 ) {
   val density = LocalDensity.current
+  val defaultTextStyle = MaterialTheme.typography.titleMedium
+  val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
+    defaultTextStyle.merge(textStyle)
+  }
 
-  val fontSize = textStyle.fontSize
-  val fontWeight = textStyle.fontWeight ?: FontWeight.Normal
-  val color = textStyle.color
+  val fontSize = resolvedTextStyle.fontSize
+  val fontWeight = resolvedTextStyle.fontWeight ?: FontWeight.Normal
+  val color = resolvedTextStyle.color.takeOrElse { LocalContentColor.current }
 
   val fontSizePx = with(density) { fontSize.toPx() }
   val baseDotSizePx = fontSizePx * dotSizeRatio

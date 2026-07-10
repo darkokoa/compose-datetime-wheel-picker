@@ -39,6 +39,14 @@ fun WheelTextPicker(
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
+  val defaultTextStyle = MaterialTheme.typography.titleMedium
+  val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
+    defaultTextStyle.merge(textStyle)
+  }
+  val resolvedSelectedTextStyle = remember(resolvedTextStyle, selectedTextStyle) {
+    resolvedTextStyle.merge(selectedTextStyle)
+  }
+
   WheelPicker(
     modifier = modifier,
     startIndex = startIndex,
@@ -51,7 +59,7 @@ fun WheelTextPicker(
   ) { index, isSelected ->
     Text(
       text = texts[index],
-      style = if (isSelected) selectedTextStyle else textStyle,
+      style = if (isSelected) resolvedSelectedTextStyle else resolvedTextStyle,
       color = if (isSelected) selectedTextColor else textColor,
       maxLines = 1,
       textAlign = TextAlign.Center
@@ -78,14 +86,24 @@ internal fun WheelTextPickerWithSuffix(
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
+  val defaultTextStyle = MaterialTheme.typography.titleMedium
+  val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
+    defaultTextStyle.merge(textStyle)
+  }
+  val resolvedSelectedTextStyle = remember(resolvedTextStyle, selectedTextStyle) {
+    resolvedTextStyle.merge(selectedTextStyle)
+  }
+  val resolvedSuffixTextStyle = remember(resolvedTextStyle, suffixTextStyle) {
+    resolvedTextStyle.merge(suffixTextStyle)
+  }
   val textMeasurer = rememberTextMeasurer()
   val density = LocalDensity.current
 
-  val suffixWidth = remember(suffix, suffixTextStyle, density, textMeasurer) {
+  val suffixWidth = remember(suffix, resolvedSuffixTextStyle, density, textMeasurer) {
     if (suffix.isNotEmpty()) {
       val textLayoutResult = textMeasurer.measure(
         text = AnnotatedString(suffix),
-        style = suffixTextStyle,
+        style = resolvedSuffixTextStyle,
         maxLines = 1
       )
       with(density) { textLayoutResult.size.width.toDp() }
@@ -99,14 +117,14 @@ internal fun WheelTextPickerWithSuffix(
     if (hasSuffix) texts.maxByOrNull { it.length } else null
   }
 
-  val textWidth = remember(widthReferenceText, selectedTextStyle, density, textMeasurer) {
+  val textWidth = remember(widthReferenceText, resolvedSelectedTextStyle, density, textMeasurer) {
     if (widthReferenceText == null) {
       0.dp
     } else {
       with(density) {
         textMeasurer.measure(
           text = AnnotatedString(widthReferenceText),
-          style = selectedTextStyle,
+          style = resolvedSelectedTextStyle,
           maxLines = 1
         ).size.width.toDp()
       }
@@ -130,7 +148,7 @@ internal fun WheelTextPickerWithSuffix(
       ) {
         Text(
           text = texts[index],
-          style = if (isSelected) selectedTextStyle else textStyle,
+          style = if (isSelected) resolvedSelectedTextStyle else resolvedTextStyle,
           color = if (isSelected) selectedTextColor else textColor,
           maxLines = 1,
           textAlign = TextAlign.Center
@@ -147,7 +165,7 @@ internal fun WheelTextPickerWithSuffix(
         modifier = Modifier
           .align(Alignment.Center)
           .padding(start = textWidth + textToSuffixSpacing),
-        style = suffixTextStyle,
+        style = resolvedSuffixTextStyle,
         color = suffixTextColor,
         maxLines = 1
       )
