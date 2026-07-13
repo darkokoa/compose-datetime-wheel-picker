@@ -31,12 +31,22 @@ fun WheelTextPicker(
   size: DpSize = DpSize(128.dp, 128.dp),
   texts: List<String>,
   rowCount: Int,
-  style: TextStyle = MaterialTheme.typography.titleMedium,
-  color: Color = LocalContentColor.current,
+  textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+  textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
+  val defaultTextStyle = MaterialTheme.typography.titleMedium
+  val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
+    defaultTextStyle.merge(textStyle)
+  }
+  val resolvedSelectedTextStyle = remember(resolvedTextStyle, selectedTextStyle) {
+    resolvedTextStyle.merge(selectedTextStyle)
+  }
+
   WheelPicker(
     modifier = modifier,
     startIndex = startIndex,
@@ -46,11 +56,11 @@ fun WheelTextPicker(
     selectorProperties = selectorProperties,
     onScrollFinished = onScrollFinished,
     onScrollChanged = onScrollChanged
-  ) { index ->
+  ) { index, isSelected ->
     Text(
       text = texts[index],
-      style = style,
-      color = color,
+      style = if (isSelected) resolvedSelectedTextStyle else resolvedTextStyle,
+      color = if (isSelected) selectedTextColor else textColor,
       maxLines = 1,
       textAlign = TextAlign.Center
     )
@@ -64,24 +74,37 @@ internal fun WheelTextPickerWithSuffix(
   size: DpSize = DpSize(128.dp, 128.dp),
   texts: List<String>,
   rowCount: Int,
-  style: TextStyle = MaterialTheme.typography.titleMedium,
-  color: Color = LocalContentColor.current,
+  textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+  textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   suffix: String = "",
-  suffixStyle: TextStyle = style,
-  suffixColor: Color = color,
+  suffixTextStyle: TextStyle = selectedTextStyle,
+  suffixTextColor: Color = selectedTextColor,
   textToSuffixSpacing: Dp = 8.dp,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
+  val defaultTextStyle = MaterialTheme.typography.titleMedium
+  val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
+    defaultTextStyle.merge(textStyle)
+  }
+  val resolvedSelectedTextStyle = remember(resolvedTextStyle, selectedTextStyle) {
+    resolvedTextStyle.merge(selectedTextStyle)
+  }
+  val resolvedSuffixTextStyle = remember(resolvedTextStyle, suffixTextStyle) {
+    resolvedTextStyle.merge(suffixTextStyle)
+  }
   val textMeasurer = rememberTextMeasurer()
   val density = LocalDensity.current
 
-  val suffixWidth = remember(suffix, suffixStyle) {
+  val suffixWidth = remember(suffix, resolvedSuffixTextStyle, density, textMeasurer) {
     if (suffix.isNotEmpty()) {
       val textLayoutResult = textMeasurer.measure(
         text = AnnotatedString(suffix),
-        style = suffixStyle
+        style = resolvedSuffixTextStyle,
+        maxLines = 1
       )
       with(density) { textLayoutResult.size.width.toDp() }
     } else {
@@ -89,12 +112,23 @@ internal fun WheelTextPickerWithSuffix(
     }
   }
 
-  val textWidth = remember(style) {
-      val textLayoutResult = textMeasurer.measure(
-        text = AnnotatedString(texts.last()),
-        style = style
-      )
-      with(density) { textLayoutResult.size.width.toDp() }
+  val hasSuffix = suffix.isNotEmpty()
+  val widthReferenceText = remember(texts, hasSuffix) {
+    if (hasSuffix) texts.maxByOrNull { it.length } else null
+  }
+
+  val textWidth = remember(widthReferenceText, resolvedSelectedTextStyle, density, textMeasurer) {
+    if (widthReferenceText == null) {
+      0.dp
+    } else {
+      with(density) {
+        textMeasurer.measure(
+          text = AnnotatedString(widthReferenceText),
+          style = resolvedSelectedTextStyle,
+          maxLines = 1
+        ).size.width.toDp()
+      }
+    }
   }
 
   Box(modifier = modifier) {
@@ -106,7 +140,7 @@ internal fun WheelTextPickerWithSuffix(
       selectorProperties = selectorProperties,
       onScrollFinished = onScrollFinished,
       onScrollChanged = onScrollChanged
-    ) { index ->
+    ) { index, isSelected ->
       Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -114,8 +148,8 @@ internal fun WheelTextPickerWithSuffix(
       ) {
         Text(
           text = texts[index],
-          style = style,
-          color = color,
+          style = if (isSelected) resolvedSelectedTextStyle else resolvedTextStyle,
+          color = if (isSelected) selectedTextColor else textColor,
           maxLines = 1,
           textAlign = TextAlign.Center
         )
@@ -131,8 +165,8 @@ internal fun WheelTextPickerWithSuffix(
         modifier = Modifier
           .align(Alignment.Center)
           .padding(start = textWidth + textToSuffixSpacing),
-        style = suffixStyle,
-        color = suffixColor,
+        style = resolvedSuffixTextStyle,
+        color = suffixTextColor,
         maxLines = 1
       )
     }

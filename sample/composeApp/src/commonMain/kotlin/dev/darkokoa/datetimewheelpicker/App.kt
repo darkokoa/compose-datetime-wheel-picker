@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
@@ -47,6 +48,14 @@ fun App() = AppTheme {
         println(snappedTime)
       }
       WheelDatePicker { snappedDate ->
+        println(snappedDate)
+      }
+      WheelDatePicker(
+        textStyle = MaterialTheme.typography.titleMedium,
+        textColor = LocalContentColor.current,
+        selectedTextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+        selectedTextColor = MaterialTheme.colorScheme.primary,
+      ) { snappedDate ->
         println(snappedDate)
       }
       WheelDateTimePicker { snappedDateTime ->

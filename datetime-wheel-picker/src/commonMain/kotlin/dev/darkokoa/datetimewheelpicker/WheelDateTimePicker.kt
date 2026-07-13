@@ -40,6 +40,8 @@ fun WheelDateTimePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateTimeChanged: (snappedDateTime: LocalDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: LocalDateTime) -> Unit = {},
@@ -56,6 +58,8 @@ fun WheelDateTimePicker(
     rowCount,
     textStyle,
     textColor,
+    selectedTextStyle,
+    selectedTextColor,
     selectorProperties,
     onSnappedDateTime = { snappedDateTime ->
       onSnappedDateTime(snappedDateTime.snappedLocalDateTime)

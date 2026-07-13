@@ -37,6 +37,8 @@ fun WheelDatePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateChanged: (snappedDate: LocalDate) -> Unit = {},
   onSnappedDate: (snappedDate: LocalDate) -> Unit = {},
@@ -52,6 +54,8 @@ fun WheelDatePicker(
     rowCount,
     textStyle,
     textColor,
+    selectedTextStyle,
+    selectedTextColor,
     selectorProperties,
     onSnappedDate = { snappedDate ->
       onSnappedDate(snappedDate.snappedLocalDate)

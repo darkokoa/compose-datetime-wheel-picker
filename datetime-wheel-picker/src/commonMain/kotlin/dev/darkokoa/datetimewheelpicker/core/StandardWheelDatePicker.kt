@@ -38,6 +38,8 @@ internal fun StandardWheelDatePicker(
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
@@ -75,8 +77,10 @@ internal fun StandardWheelDatePicker(
               ),
               texts = dayOfMonths.map { it.text },
               rowCount = rowCount,
-              style = textStyle,
-              color = textColor,
+              textStyle = textStyle,
+              textColor = textColor,
+              selectedTextStyle = selectedTextStyle,
+              selectedTextColor = selectedTextColor,
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
@@ -121,8 +125,10 @@ internal fun StandardWheelDatePicker(
               ),
               texts = months.map { it.text },
               rowCount = rowCount,
-              style = textStyle,
-              color = textColor,
+              textStyle = textStyle,
+              textColor = textColor,
+              selectedTextStyle = selectedTextStyle,
+              selectedTextColor = selectedTextColor,
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
@@ -173,8 +179,10 @@ internal fun StandardWheelDatePicker(
                 ),
                 texts = years.map { it.text },
                 rowCount = rowCount,
-                style = textStyle,
-                color = textColor,
+                textStyle = textStyle,
+                textColor = textColor,
+                selectedTextStyle = selectedTextStyle,
+                selectedTextColor = selectedTextColor,
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                   enabled = false
                 ),
