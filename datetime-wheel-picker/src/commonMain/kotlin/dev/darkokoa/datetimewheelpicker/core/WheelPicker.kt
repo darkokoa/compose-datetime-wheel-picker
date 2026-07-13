@@ -48,12 +48,12 @@ internal fun WheelPicker(
   val singleViewPortHeightPx = remember(size, rowCount, density) {
     with(density) { size.height.toPx() } / rowCount
   }
-  val snappedItemIndex by remember(lazyListState) {
+  val snappedItemIndexState = remember(lazyListState) {
     derivedStateOf { calculateSnappedItemIndex(lazyListState) }
   }
 
   LaunchedEffect(lazyListState, count) {
-    snapshotFlow { calculateSnappedItemIndex(lazyListState) }
+    snapshotFlow { snappedItemIndexState.value }
       .distinctUntilChanged()
       .collect { latestOnScrollChanged(it) }
   }
@@ -89,6 +89,9 @@ internal fun WheelPicker(
       flingBehavior = flingBehavior
     ) {
       items(count) { index ->
+        val isSelected by remember(snappedItemIndexState, index) {
+          derivedStateOf { index == snappedItemIndexState.value }
+        }
         Box(
           modifier = Modifier
             .height(size.height / rowCount)
@@ -105,7 +108,7 @@ internal fun WheelPicker(
             },
           contentAlignment = Alignment.Center
         ) {
-          content(index, index == snappedItemIndex)
+          content(index, isSelected)
         }
       }
     }
