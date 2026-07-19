@@ -66,18 +66,18 @@ fun WheelTimePicker(
     }
 
     StandardWheelTimePicker(
-      Modifier,
-      startTime,
-      minTime,
-      maxTime,
-      timeFormatter,
-      effectiveSize,
-      rowCount,
-      textStyle,
-      textColor,
-      selectedTextStyle,
-      selectedTextColor,
-      selectorProperties,
+      modifier = Modifier,
+      startTime = startTime,
+      minTime = minTime,
+      maxTime = maxTime,
+      timeFormatter = timeFormatter,
+      size = effectiveSize,
+      rowCount = rowCount,
+      textStyle = textStyle,
+      textColor = textColor,
+      selectedTextStyle = selectedTextStyle,
+      selectedTextColor = selectedTextColor,
+      selectorProperties = selectorProperties,
       onSnappedTime = { snappedTime, _ ->
         onSnappedTime(snappedTime.snappedLocalTime)
         snappedTime.snappedIndex

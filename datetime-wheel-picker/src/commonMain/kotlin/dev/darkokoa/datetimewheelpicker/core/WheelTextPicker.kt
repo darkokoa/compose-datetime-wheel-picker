@@ -114,7 +114,7 @@ fun WheelTextPicker(
 internal fun FixedSizeWheelTextPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
-  viewportSize: DpSize = DpSize(128.dp, 128.dp),
+  viewportSize: DpSize,
   texts: List<String>,
   rowCount: Int,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -157,7 +157,7 @@ internal fun FixedSizeWheelTextPicker(
 internal fun WheelTextPickerWithSuffix(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
-  viewportSize: DpSize = DpSize(128.dp, 128.dp),
+  viewportSize: DpSize,
   texts: List<String>,
   rowCount: Int,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,

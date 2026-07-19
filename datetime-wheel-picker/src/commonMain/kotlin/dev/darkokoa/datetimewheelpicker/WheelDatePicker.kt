@@ -73,19 +73,19 @@ fun WheelDatePicker(
     }
 
     AdaptiveWheelDatePicker(
-      Modifier,
-      startDate,
-      minDate,
-      maxDate,
-      yearsRange,
-      dateFormatter,
-      effectiveSize,
-      rowCount,
-      textStyle,
-      textColor,
-      selectedTextStyle,
-      selectedTextColor,
-      selectorProperties,
+      modifier = Modifier,
+      startDate = startDate,
+      minDate = minDate,
+      maxDate = maxDate,
+      yearsRange = yearsRange,
+      dateFormatter = dateFormatter,
+      size = effectiveSize,
+      rowCount = rowCount,
+      textStyle = textStyle,
+      textColor = textColor,
+      selectedTextStyle = selectedTextStyle,
+      selectedTextColor = selectedTextColor,
+      selectorProperties = selectorProperties,
       onSnappedDate = { snappedDate ->
         onSnappedDate(snappedDate.snappedLocalDate)
         snappedDate.snappedIndex

@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.dp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class PickerSizeTest {
 
@@ -65,13 +64,18 @@ class PickerSizeTest {
   fun unboundedMaxHeightReturnsIntrinsicHeightNotInfinity() {
     val resolved = resolve(Constraints(maxWidth = 1000, maxHeight = Constraints.Infinity))
     assertEquals(128.dp, resolved.height)
-    assertTrue(resolved.height.value < Constraints.Infinity.toFloat())
   }
 
   @Test
   fun zeroForcedAxisRetainsFinitePositiveInternalValue() {
     val resolved = resolve(Constraints(minWidth = 0, maxWidth = 0, minHeight = 0, maxHeight = 0))
     assertEquals(DpSize(256.dp, 128.dp), resolved)
+  }
+
+  @Test
+  fun zeroForcedWidthWithLooseHeightResolvesAxesIndependently() {
+    val resolved = resolve(Constraints(minWidth = 0, maxWidth = 0, minHeight = 200, maxHeight = 200))
+    assertEquals(DpSize(256.dp, 200.dp), resolved)
   }
 
   @Test
