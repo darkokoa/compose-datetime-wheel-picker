@@ -78,7 +78,7 @@ internal fun CJKWheelDatePicker(
           DateField.DAY -> {
             WheelTextPickerWithSuffix(
               modifier = Modifier.weight(1f),
-              size = DpSize(
+              viewportSize = DpSize(
                 width = itemWidth,
                 height = size.height
               ),
@@ -131,7 +131,7 @@ internal fun CJKWheelDatePicker(
           DateField.MONTH -> {
             WheelTextPickerWithSuffix(
               modifier = Modifier.weight(1f),
-              size = DpSize(
+              viewportSize = DpSize(
                 width = itemWidth,
                 height = size.height
               ),
@@ -184,7 +184,7 @@ internal fun CJKWheelDatePicker(
             years?.let { years ->
               WheelTextPickerWithSuffix(
                 modifier = Modifier.weight(1.4f),
-                size = DpSize(
+                viewportSize = DpSize(
                   width = itemWidth,
                   height = size.height
                 ),

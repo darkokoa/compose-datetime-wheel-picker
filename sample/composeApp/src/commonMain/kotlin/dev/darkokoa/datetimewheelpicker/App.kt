@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
@@ -40,6 +42,7 @@ fun App() = AppTheme {
     color = MaterialTheme.colorScheme.background
   ) {
     Column(
+      modifier = Modifier.verticalScroll(rememberScrollState()),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
     ) {
@@ -70,7 +73,7 @@ fun App() = AppTheme {
           2027, 10, 20, 5, 30
         ),
         timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
-        size = DpSize(200.dp, 100.dp),
+        modifier = Modifier.size(200.dp, 100.dp),
         rowCount = 5,
         textStyle = MaterialTheme.typography.titleSmall,
         textColor = Color(0xFFffc300),
@@ -82,6 +85,18 @@ fun App() = AppTheme {
         )
       ) { snappedDateTime ->
         println(snappedDateTime)
+      }
+      // Modifier-driven sizing (#100): fill the parent width, intrinsic height
+      WheelDatePicker(
+        modifier = Modifier.fillMaxWidth(),
+      ) { snappedDate ->
+        println(snappedDate)
+      }
+      // Default height scales with rowCount (~42.7dp per row -> ~213dp at 5 rows)
+      WheelDatePicker(
+        rowCount = 5,
+      ) { snappedDate ->
+        println(snappedDate)
       }
     }
   }

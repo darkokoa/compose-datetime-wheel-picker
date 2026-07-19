@@ -56,7 +56,7 @@ internal fun StandardWheelTimePicker(
     if (timeFormatter.timeFormat == TimeFormat.AM_PM) 3 else 2
   }
 
-  val itemWidth = remember(itemCount) { size.width / itemCount }
+  val itemWidth = size.width / itemCount
 
   val hours = rememberHours(timeFormatter)
   val amPmHours = rememberAmPmHours(timeFormatter)
@@ -91,8 +91,8 @@ internal fun StandardWheelTimePicker(
     }
     Row(modifier = Modifier.height(size.height)) {
       //Hour
-      WheelTextPicker(
-        size = DpSize(
+      FixedSizeWheelTextPicker(
+        viewportSize = DpSize(
           width = itemWidth,
           height = size.height
         ),
@@ -133,11 +133,11 @@ internal fun StandardWheelTimePicker(
                   index = newIndex
                 ),
                 timeFormatter.timeFormat
-              )?.let { return@WheelTextPicker it }
+              )?.let { return@FixedSizeWheelTextPicker it }
             }
           }
 
-          return@WheelTextPicker if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
+          return@FixedSizeWheelTextPicker if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
             hours.find { it.value == snappedTime.hour }?.index
           } else {
             amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
@@ -166,8 +166,8 @@ internal fun StandardWheelTimePicker(
       )
 
       //Minute
-      WheelTextPicker(
-        size = DpSize(
+      FixedSizeWheelTextPicker(
+        viewportSize = DpSize(
           width = itemWidth,
           height = size.height
         ),
@@ -212,12 +212,12 @@ internal fun StandardWheelTimePicker(
                     index = newIndex
                   ),
                   timeFormatter.timeFormat
-                )?.let { return@WheelTextPicker it }
+                )?.let { return@FixedSizeWheelTextPicker it }
               }
             }
           }
 
-          return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
+          return@FixedSizeWheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
         },
         onScrollChanged = { snappedIndex ->
           val newMinute = minutes.find { it.index == snappedIndex }?.value
@@ -231,8 +231,8 @@ internal fun StandardWheelTimePicker(
       )
       //AM_PM
       if (timeFormatter.timeFormat == TimeFormat.AM_PM) {
-        WheelTextPicker(
-          size = DpSize(
+        FixedSizeWheelTextPicker(
+          viewportSize = DpSize(
             width = itemWidth,
             height = size.height
           ),
@@ -282,7 +282,7 @@ internal fun StandardWheelTimePicker(
               }
             }
 
-            return@WheelTextPicker snappedIndex
+            return@FixedSizeWheelTextPicker snappedIndex
           },
           onScrollChanged = { snappedIndex ->
             resolveAmPm(snappedIndex)?.let { pendingAmPm ->

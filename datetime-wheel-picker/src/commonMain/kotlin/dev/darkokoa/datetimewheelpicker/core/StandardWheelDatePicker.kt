@@ -70,8 +70,8 @@ internal fun StandardWheelDatePicker(
       dateFormatter.dateOrder.fields.forEach { dateField ->
         when (dateField) {
           DateField.DAY -> {
-            WheelTextPicker(
-              size = DpSize(
+            FixedSizeWheelTextPicker(
+              viewportSize = DpSize(
                 width = itemWidth,
                 height = size.height
               ),
@@ -103,11 +103,11 @@ internal fun StandardWheelDatePicker(
                         localDate = snappedDate,
                         index = newIndex
                       )
-                    )?.let { return@WheelTextPicker it }
+                    )?.let { return@FixedSizeWheelTextPicker it }
                   }
                 }
 
-                return@WheelTextPicker dayOfMonths.find { it.value == snappedDate.day }?.index
+                return@FixedSizeWheelTextPicker dayOfMonths.find { it.value == snappedDate.day }?.index
               },
               onScrollChanged = { snappedIndex ->
                 dayOfMonths.find { it.index == snappedIndex }?.value?.let { newDay ->
@@ -118,8 +118,8 @@ internal fun StandardWheelDatePicker(
           }
 
           DateField.MONTH -> {
-            WheelTextPicker(
-              size = DpSize(
+            FixedSizeWheelTextPicker(
+              viewportSize = DpSize(
                 width = itemWidth,
                 height = size.height
               ),
@@ -156,11 +156,11 @@ internal fun StandardWheelDatePicker(
                         localDate = snappedDate,
                         index = newIndex
                       )
-                    )?.let { return@WheelTextPicker it }
+                    )?.let { return@FixedSizeWheelTextPicker it }
                   }
                 }
 
-                return@WheelTextPicker months.find { it.value == snappedDate.month.number }?.index
+                return@FixedSizeWheelTextPicker months.find { it.value == snappedDate.month.number }?.index
               },
               onScrollChanged = { snappedIndex ->
                 months.find { it.index == snappedIndex }?.value?.let { newMonth ->
@@ -172,8 +172,8 @@ internal fun StandardWheelDatePicker(
 
           DateField.YEAR -> {
             years?.let { years ->
-              WheelTextPicker(
-                size = DpSize(
+              FixedSizeWheelTextPicker(
+                viewportSize = DpSize(
                   width = itemWidth,
                   height = size.height
                 ),
@@ -211,11 +211,11 @@ internal fun StandardWheelDatePicker(
                           localDate = snappedDate,
                           index = newIndex
                         )
-                      )?.let { return@WheelTextPicker it }
+                      )?.let { return@FixedSizeWheelTextPicker it }
                     }
                   }
 
-                  return@WheelTextPicker years.find { it.value == snappedDate.year }?.index
+                  return@FixedSizeWheelTextPicker years.find { it.value == snappedDate.year }?.index
                 },
                 onScrollChanged = { snappedIndex ->
                   years.find { it.index == snappedIndex }?.value?.let { newYear ->
