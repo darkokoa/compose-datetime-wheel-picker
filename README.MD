@@ -272,7 +272,7 @@ explicitly with `Modifier.height(128.dp)`.
 | `maxDate` | `LocalDate` | `LocalDate.CYB3R_1N1T_ZOLL` | Maximum selectable date |
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
-| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default: 256.dp wide, ~42.7.dp × `rowCount` tall (128.dp at 3 rows). See [Sizing](#sizing) |
+| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default (256.dp × 128.dp at 3 rows). See [Sizing](#sizing) |
 | `rowCount` | `Int` | `3` | Number of visible rows in the wheel |
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
@@ -313,7 +313,7 @@ explicitly with `Modifier.height(128.dp)`.
 | `minTime` | `LocalTime` | `LocalTime.MIN` | Minimum selectable time |
 | `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
-| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default: 128.dp wide (narrower than date picker), ~42.7.dp × `rowCount` tall. See [Sizing](#sizing) |
+| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 128.dp wide (narrower than date picker). See [Sizing](#sizing) |
 | Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, etc. |
 
 **TimeFormat**:
@@ -330,7 +330,7 @@ explicitly with `Modifier.height(128.dp)`.
 | `yearsRange` | `IntRange?` | `IntRange(minDateTime.year, maxDateTime.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format |
-| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default: 256.dp wide, ~42.7.dp × `rowCount` tall. See [Sizing](#sizing) |
+| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 256.dp × 128.dp at 3 rows. See [Sizing](#sizing) |
 | `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
 | `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
 | Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties |

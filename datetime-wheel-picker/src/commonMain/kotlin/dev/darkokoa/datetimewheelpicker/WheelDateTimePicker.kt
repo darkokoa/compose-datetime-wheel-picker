@@ -32,11 +32,10 @@ import kotlinx.datetime.LocalDateTime
 /**
  * A wheel date-time picker.
  *
- * Sizing is Modifier-driven: when [modifier] and the parent leave an axis unconstrained, the
- * picker uses its intrinsic default (256.dp wide, `rowCount` rows of ~42.7.dp — 128.dp tall at
- * the default `rowCount = 3`). Constraints from [modifier] or the parent layout (`Modifier.size`,
- * `width`, `height`, `fillMaxWidth`, `widthIn`, `weight`, a narrow container, ...) override or
- * clamp the default per standard Compose rules.
+ * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
+ * intrinsic default — 256.dp wide, `(128.dp / 3) * rowCount` tall (128.dp at the default three
+ * rows). Standard Compose constraints override or clamp the default; see the README "Sizing"
+ * section for examples and migration notes.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`

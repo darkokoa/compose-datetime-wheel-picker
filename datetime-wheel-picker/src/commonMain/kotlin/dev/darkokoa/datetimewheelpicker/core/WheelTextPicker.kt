@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.dp
 /**
  * A wheel picker over arbitrary [texts].
  *
- * Sizing is Modifier-driven: when [modifier] and the parent leave an axis unconstrained, the
- * picker uses its intrinsic default (128.dp wide, `rowCount` rows of ~42.7.dp). Constraints from
- * [modifier] or the parent layout (`Modifier.size`, `width`, `height`, `fillMaxWidth`, `widthIn`,
- * `weight`, a narrow container, ...) override or clamp the default per standard Compose rules.
+ * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
+ * intrinsic default — 128.dp wide, `(128.dp / 3) * rowCount` tall. Standard Compose constraints
+ * override or clamp the default; see the README "Sizing" section for examples and migration
+ * notes.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`

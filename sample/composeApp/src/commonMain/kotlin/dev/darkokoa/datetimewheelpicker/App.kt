@@ -92,7 +92,7 @@ fun App() = AppTheme {
       ) { snappedDate ->
         println(snappedDate)
       }
-      // Default height scales with rowCount (~42.7dp per row -> ~213dp at 5 rows)
+      // Default height scales with rowCount (~213.dp at 5 rows)
       WheelDatePicker(
         rowCount = 5,
       ) { snappedDate ->
