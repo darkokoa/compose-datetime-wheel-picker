@@ -38,7 +38,7 @@ internal fun CJKWheelDatePicker(
     monthDisplayStyle = MonthDisplayStyle.SHORT,
     cjkSuffixConfig = CjkSuffixConfig.ShowAll
   ),
-  size: DpSize = DpSize(256.dp, 128.dp),
+  viewportSize: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
@@ -66,13 +66,13 @@ internal fun CJKWheelDatePicker(
     if (selectorProperties.enabled().value) {
       Surface(
         modifier = Modifier
-          .size(size.width, size.height / rowCount),
+          .size(viewportSize.width, viewportSize.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
       ) {}
     }
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(size.width)) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(viewportSize.width)) {
       dateFormatter.dateOrder.fields.forEach { dateField ->
         when (dateField) {
           DateField.DAY -> {
@@ -80,7 +80,7 @@ internal fun CJKWheelDatePicker(
               modifier = Modifier.weight(1f),
               viewportSize = DpSize(
                 width = itemWidth,
-                height = size.height
+                height = viewportSize.height
               ),
               texts = dayOfMonths.map { it.text },
               suffix = if (dateFormatter.cjkSuffixConfig.showDaySuffix) strings.daySuffix else "",
@@ -133,7 +133,7 @@ internal fun CJKWheelDatePicker(
               modifier = Modifier.weight(1f),
               viewportSize = DpSize(
                 width = itemWidth,
-                height = size.height
+                height = viewportSize.height
               ),
               texts = months.map { it.text },
               suffix = if (dateFormatter.cjkSuffixConfig.showMonthSuffix) strings.monthSuffix else "",
@@ -186,7 +186,7 @@ internal fun CJKWheelDatePicker(
                 modifier = Modifier.weight(1.4f),
                 viewportSize = DpSize(
                   width = itemWidth,
-                  height = size.height
+                  height = viewportSize.height
                 ),
                 texts = years.map { it.text },
                 suffix = if (dateFormatter.cjkSuffixConfig.showYearSuffix) strings.yearSuffix else "",

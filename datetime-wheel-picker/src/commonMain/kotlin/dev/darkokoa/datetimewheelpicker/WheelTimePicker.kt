@@ -70,7 +70,7 @@ fun WheelTimePicker(
       minTime = minTime,
       maxTime = maxTime,
       timeFormatter = timeFormatter,
-      size = effectiveSize,
+      viewportSize = effectiveSize,
       rowCount = rowCount,
       textStyle = textStyle,
       textColor = textColor,

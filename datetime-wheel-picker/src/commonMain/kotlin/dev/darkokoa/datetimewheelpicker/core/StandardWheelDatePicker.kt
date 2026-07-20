@@ -34,7 +34,7 @@ internal fun StandardWheelDatePicker(
     monthDisplayStyle = MonthDisplayStyle.SHORT,
     cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
-  size: DpSize = DpSize(256.dp, 128.dp),
+  viewportSize: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
@@ -45,14 +45,14 @@ internal fun StandardWheelDatePicker(
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
   val itemCount = if (yearsRange == null) 2 else 3
-  val itemWidth = size.width / itemCount
+  val itemWidth = viewportSize.width / itemCount
 
   var snappedDate by remember { mutableStateOf(startDate) }
 
   val dayOfMonths =
     rememberFormattedDayOfMonths(snappedDate.month.number, snappedDate.year, dateFormatter)
 
-  val months = rememberFormattedMonths(size.width, dateFormatter)
+  val months = rememberFormattedMonths(viewportSize.width, dateFormatter)
 
   val years = rememberFormattedYears(yearsRange, dateFormatter)
 
@@ -60,7 +60,7 @@ internal fun StandardWheelDatePicker(
     if (selectorProperties.enabled().value) {
       Surface(
         modifier = Modifier
-          .size(size.width, size.height / rowCount),
+          .size(viewportSize.width, viewportSize.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
@@ -73,7 +73,7 @@ internal fun StandardWheelDatePicker(
             FixedSizeWheelTextPicker(
               viewportSize = DpSize(
                 width = itemWidth,
-                height = size.height
+                height = viewportSize.height
               ),
               texts = dayOfMonths.map { it.text },
               rowCount = rowCount,
@@ -121,7 +121,7 @@ internal fun StandardWheelDatePicker(
             FixedSizeWheelTextPicker(
               viewportSize = DpSize(
                 width = itemWidth,
-                height = size.height
+                height = viewportSize.height
               ),
               texts = months.map { it.text },
               rowCount = rowCount,
@@ -175,7 +175,7 @@ internal fun StandardWheelDatePicker(
               FixedSizeWheelTextPicker(
                 viewportSize = DpSize(
                   width = itemWidth,
-                  height = size.height
+                  height = viewportSize.height
                 ),
                 texts = years.map { it.text },
                 rowCount = rowCount,

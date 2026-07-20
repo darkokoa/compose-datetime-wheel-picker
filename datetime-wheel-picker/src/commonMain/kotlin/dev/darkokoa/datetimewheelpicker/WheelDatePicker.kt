@@ -78,7 +78,7 @@ fun WheelDatePicker(
       maxDate = maxDate,
       yearsRange = yearsRange,
       dateFormatter = dateFormatter,
-      size = effectiveSize,
+      viewportSize = effectiveSize,
       rowCount = rowCount,
       textStyle = textStyle,
       textColor = textColor,

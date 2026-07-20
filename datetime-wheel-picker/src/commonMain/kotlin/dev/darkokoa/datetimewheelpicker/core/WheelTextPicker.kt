@@ -136,7 +136,7 @@ internal fun FixedSizeWheelTextPicker(
   WheelPicker(
     modifier = modifier,
     startIndex = startIndex,
-    size = viewportSize,
+    viewportSize = viewportSize,
     count = texts.size,
     rowCount = rowCount,
     selectorProperties = selectorProperties,
@@ -220,7 +220,7 @@ internal fun WheelTextPickerWithSuffix(
   Box(modifier = modifier) {
     WheelPicker(
       startIndex = startIndex,
-      size = viewportSize,
+      viewportSize = viewportSize,
       count = texts.size,
       rowCount = rowCount,
       selectorProperties = selectorProperties,

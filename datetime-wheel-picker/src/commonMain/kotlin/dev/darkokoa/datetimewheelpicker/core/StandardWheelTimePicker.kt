@@ -34,7 +34,7 @@ internal fun StandardWheelTimePicker(
   minTime: LocalTime = LocalTime.MIN,
   maxTime: LocalTime = LocalTime.MAX,
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
-  size: DpSize = DpSize(128.dp, 128.dp),
+  viewportSize: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
@@ -56,7 +56,7 @@ internal fun StandardWheelTimePicker(
     if (timeFormatter.timeFormat == TimeFormat.AM_PM) 3 else 2
   }
 
-  val itemWidth = size.width / itemCount
+  val itemWidth = viewportSize.width / itemCount
 
   val hours = rememberHours(timeFormatter)
   val amPmHours = rememberAmPmHours(timeFormatter)
@@ -83,18 +83,18 @@ internal fun StandardWheelTimePicker(
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
       Surface(
-        modifier = Modifier.size(size.width, size.height / rowCount),
+        modifier = Modifier.size(viewportSize.width, viewportSize.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
       ) {}
     }
-    Row(modifier = Modifier.height(size.height)) {
+    Row(modifier = Modifier.height(viewportSize.height)) {
       //Hour
       FixedSizeWheelTextPicker(
         viewportSize = DpSize(
           width = itemWidth,
-          height = size.height
+          height = viewportSize.height
         ),
         texts = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
         rowCount = rowCount,
@@ -169,7 +169,7 @@ internal fun StandardWheelTimePicker(
       FixedSizeWheelTextPicker(
         viewportSize = DpSize(
           width = itemWidth,
-          height = size.height
+          height = viewportSize.height
         ),
         texts = minutes.map { it.text },
         rowCount = rowCount,
@@ -234,7 +234,7 @@ internal fun StandardWheelTimePicker(
         FixedSizeWheelTextPicker(
           viewportSize = DpSize(
             width = itemWidth,
-            height = size.height
+            height = viewportSize.height
           ),
           texts = amPms.map { it.text },
           rowCount = rowCount,

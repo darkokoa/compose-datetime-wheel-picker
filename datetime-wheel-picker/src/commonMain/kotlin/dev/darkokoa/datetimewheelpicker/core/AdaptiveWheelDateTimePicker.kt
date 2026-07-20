@@ -37,7 +37,7 @@ internal fun AdaptiveWheelDateTimePicker(
     cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
-  size: DpSize = DpSize(256.dp, 128.dp),
+  viewportSize: DpSize = DpSize(256.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
@@ -56,7 +56,7 @@ internal fun AdaptiveWheelDateTimePicker(
     if (selectorProperties.enabled().value) {
       Surface(
         modifier = Modifier
-          .size(size.width, size.height / rowCount),
+          .size(viewportSize.width, viewportSize.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
@@ -70,9 +70,9 @@ internal fun AdaptiveWheelDateTimePicker(
         maxDate = maxDateTime.date,
         yearsRange = yearsRange,
         dateFormatter = dateFormatter,
-        size = DpSize(
-          width = if (yearsRange == null) size.width * 3 / 6 else size.width * 3 / 5,
-          height = size.height
+        viewportSize = DpSize(
+          width = if (yearsRange == null) viewportSize.width * 3 / 6 else viewportSize.width * 3 / 5,
+          height = viewportSize.height
         ),
         rowCount = rowCount,
         textStyle = textStyle,
@@ -135,9 +135,9 @@ internal fun AdaptiveWheelDateTimePicker(
       StandardWheelTimePicker(
         startTime = startDateTime.time,
         timeFormatter = timeFormatter,
-        size = DpSize(
-          width = if (yearsRange == null) size.width * 3 / 6 else size.width * 2 / 5,
-          height = size.height
+        viewportSize = DpSize(
+          width = if (yearsRange == null) viewportSize.width * 3 / 6 else viewportSize.width * 2 / 5,
+          height = viewportSize.height
         ),
         rowCount = rowCount,
         textStyle = textStyle,

@@ -82,7 +82,7 @@ fun WheelDateTimePicker(
       yearsRange = yearsRange,
       dateFormatter = dateFormatter,
       timeFormatter = timeFormatter,
-      size = effectiveSize,
+      viewportSize = effectiveSize,
       rowCount = rowCount,
       textStyle = textStyle,
       textColor = textColor,
