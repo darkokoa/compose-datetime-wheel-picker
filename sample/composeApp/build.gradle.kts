@@ -58,12 +58,10 @@ kotlin {
       implementation(project(":datetime-wheel-picker"))
 
       implementation(compose.runtime)
+      implementation("org.jetbrains.compose.foundation:foundation:${libs.versions.compose.get()}")
       implementation(compose.material3)
+      implementation(compose.materialIconsExtended)
       implementation(libs.kotlinx.datetime)
-    }
-
-    commonTest.dependencies {
-      implementation(kotlin("test"))
     }
 
     androidMain.dependencies {
@@ -72,6 +70,11 @@ kotlin {
     jvmMain.dependencies {
 //      implementation(compose.desktop.common)
       implementation(compose.desktop.currentOs)
+    }
+
+    jvmTest.dependencies {
+      implementation(kotlin("test"))
+      implementation("org.jetbrains.compose.ui:ui-test:${libs.versions.compose.get()}")
     }
 
     jsMain.dependencies {
