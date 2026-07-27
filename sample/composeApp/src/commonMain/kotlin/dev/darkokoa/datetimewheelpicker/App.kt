@@ -25,12 +25,14 @@ import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -45,7 +47,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
@@ -237,7 +242,7 @@ private fun <T : DemoVariant> DemoPage(
       modifier = Modifier
         .weight(1f)
         .fillMaxWidth()
-        .padding(horizontal = 16.dp, vertical = 8.dp),
+        .padding(horizontal = 16.dp, vertical = 16.dp),
       contentAlignment = Alignment.Center,
     ) {
       saveableStateHolder.SaveableStateProvider(stateKey(selectedVariant)) {
@@ -256,7 +261,7 @@ private fun DemoSection(
   Column(
     modifier = modifier,
     horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.spacedBy(8.dp),
+    verticalArrangement = Arrangement.spacedBy(16.dp),
   ) {
     DemoLabel(title)
     content()
@@ -266,20 +271,85 @@ private fun DemoSection(
 @Composable
 private fun PickerDemoSection(
   title: String,
+  callbackName: String,
   modifier: Modifier = Modifier,
-  content: @Composable ColumnScope.(onSelected: (String) -> Unit) -> Unit,
+  content: @Composable ColumnScope.(
+    onSnapped: (String) -> Unit,
+    onSnappedChanged: (String) -> Unit,
+  ) -> Unit,
 ) {
-  var selectedValue by rememberSaveable { mutableStateOf<String?>(null) }
+  var snappedValue by rememberSaveable { mutableStateOf<String?>(null) }
+  var snappedChangedValue by rememberSaveable { mutableStateOf<String?>(null) }
 
   DemoSection(
     title = title,
-    modifier = modifier,
+    modifier = modifier.fillMaxWidth(),
+  ) {
+    content(
+      { snappedValue = it },
+      { snappedChangedValue = it },
+    )
+    CallbackValuesCard(
+      callbackName = callbackName,
+      snappedValue = snappedValue,
+      snappedChangedValue = snappedChangedValue,
+    )
+  }
+}
+
+@Composable
+private fun CallbackValuesCard(
+  callbackName: String,
+  snappedValue: String?,
+  snappedChangedValue: String?,
+  modifier: Modifier = Modifier,
+) {
+  Surface(
+    modifier = modifier.fillMaxWidth(),
+    shape = RoundedCornerShape(12.dp),
+    color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+  ) {
+    Column(
+      modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+      CallbackValueRow(name = callbackName, value = snappedValue)
+      HorizontalDivider()
+      CallbackValueRow(name = "${callbackName}Changed", value = snappedChangedValue)
+    }
+  }
+}
+
+@Composable
+private fun CallbackValueRow(
+  name: String,
+  value: String?,
+  modifier: Modifier = Modifier,
+) {
+  Column(
+    modifier = modifier.fillMaxWidth(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.spacedBy(2.dp),
   ) {
     Text(
-      text = selectedValue?.let { value -> "Selected: $value" } ?: "Selected: —",
-      style = MaterialTheme.typography.bodyMedium,
+      text = name,
+      modifier = Modifier.fillMaxWidth(),
+      style = MaterialTheme.typography.labelMedium,
+      color = MaterialTheme.colorScheme.primary,
+      textAlign = TextAlign.Center,
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis,
     )
-    content { selectedValue = it }
+    Text(
+      text = value ?: "—",
+      modifier = Modifier.fillMaxWidth(),
+      style = MaterialTheme.typography.bodyMedium,
+      fontFamily = FontFamily.Monospace,
+      textAlign = TextAlign.Center,
+      maxLines = 1,
+      overflow = TextOverflow.Ellipsis,
+    )
   }
 }
 
@@ -314,18 +384,26 @@ private fun TimeDemos(
     modifier = modifier,
   ) { demo ->
     when (demo) {
-      TimeDemo.DEFAULT -> PickerDemoSection("Default time picker") { onSelected ->
+      TimeDemo.DEFAULT -> PickerDemoSection(
+        title = "Default time picker",
+        callbackName = "onSnappedTime",
+      ) { onSnapped, onSnappedChanged ->
         WheelTimePicker(
           startTime = initialTime,
-          onSnappedTime = { time -> onSelected(time.toString()) },
+          onSnappedTime = { time -> onSnapped(time.toString()) },
+          onSnappedTimeChanged = { time -> onSnappedChanged(time.toString()) },
         )
       }
 
-      TimeDemo.AM_PM -> PickerDemoSection("AM/PM format") { onSelected ->
+      TimeDemo.AM_PM -> PickerDemoSection(
+        title = "AM/PM format",
+        callbackName = "onSnappedTime",
+      ) { onSnapped, onSnappedChanged ->
         WheelTimePicker(
           startTime = initialTime,
           timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
-          onSnappedTime = { time -> onSelected(time.toString()) },
+          onSnappedTime = { time -> onSnapped(time.toString()) },
+          onSnappedTimeChanged = { time -> onSnappedChanged(time.toString()) },
         )
       }
 
@@ -355,30 +433,42 @@ private fun DateDemos(
     modifier = modifier,
   ) { demo ->
     when (demo) {
-      DateDemo.DEFAULT -> PickerDemoSection("Default date picker") { onSelected ->
+      DateDemo.DEFAULT -> PickerDemoSection(
+        title = "Default date picker",
+        callbackName = "onSnappedDate",
+      ) { onSnapped, onSnappedChanged ->
         WheelDatePicker(
           startDate = initialDate,
-          onSnappedDate = { date -> onSelected(date.toString()) },
+          onSnappedDate = { date -> onSnapped(date.toString()) },
+          onSnappedDateChanged = { date -> onSnappedChanged(date.toString()) },
         )
       }
 
-      DateDemo.STYLED -> PickerDemoSection("Selected text styling") { onSelected ->
+      DateDemo.STYLED -> PickerDemoSection(
+        title = "Selected text styling",
+        callbackName = "onSnappedDate",
+      ) { onSnapped, onSnappedChanged ->
         WheelDatePicker(
           startDate = initialDate,
           textStyle = MaterialTheme.typography.titleMedium,
           textColor = LocalContentColor.current,
           selectedTextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
           selectedTextColor = MaterialTheme.colorScheme.primary,
-          onSnappedDate = { date -> onSelected(date.toString()) },
+          onSnappedDate = { date -> onSnapped(date.toString()) },
+          onSnappedDateChanged = { date -> onSnappedChanged(date.toString()) },
         )
       }
 
-      DateDemo.RANGE -> PickerDemoSection("One-year min/max range") { onSelected ->
+      DateDemo.RANGE -> PickerDemoSection(
+        title = "One-year min/max range",
+        callbackName = "onSnappedDate",
+      ) { onSnapped, onSnappedChanged ->
         WheelDatePicker(
           startDate = initialDate,
           minDate = initialDate,
           maxDate = maxDate,
-          onSnappedDate = { date -> onSelected(date.toString()) },
+          onSnappedDate = { date -> onSnapped(date.toString()) },
+          onSnappedDateChanged = { date -> onSnappedChanged(date.toString()) },
         )
       }
 
@@ -413,14 +503,21 @@ private fun DateTimeDemos(
     modifier = modifier,
   ) { demo ->
     when (demo) {
-      DateTimeDemo.DEFAULT -> PickerDemoSection("Default date time picker") { onSelected ->
+      DateTimeDemo.DEFAULT -> PickerDemoSection(
+        title = "Default date time picker",
+        callbackName = "onSnappedDateTime",
+      ) { onSnapped, onSnappedChanged ->
         WheelDateTimePicker(
           startDateTime = initialDateTime,
-          onSnappedDateTime = { dateTime -> onSelected(dateTime.toString()) },
+          onSnappedDateTime = { dateTime -> onSnapped(dateTime.toString()) },
+          onSnappedDateTimeChanged = { dateTime -> onSnappedChanged(dateTime.toString()) },
         )
       }
 
-      DateTimeDemo.CUSTOM -> PickerDemoSection("AM/PM, one-year range, custom selector") { onSelected ->
+      DateTimeDemo.CUSTOM -> PickerDemoSection(
+        title = "AM/PM, one-year range, custom selector",
+        callbackName = "onSnappedDateTime",
+      ) { onSnapped, onSnappedChanged ->
         WheelDateTimePicker(
           startDateTime = initialDateTime,
           minDateTime = initialDateTime,
@@ -436,7 +533,8 @@ private fun DateTimeDemos(
             color = Color(0xFFF1FAEE).copy(alpha = 0.2f),
             border = BorderStroke(2.dp, Color(0xFFF1FAEE)),
           ),
-          onSnappedDateTime = { dateTime -> onSelected(dateTime.toString()) },
+          onSnappedDateTime = { dateTime -> onSnapped(dateTime.toString()) },
+          onSnappedDateTimeChanged = { dateTime -> onSnappedChanged(dateTime.toString()) },
         )
       }
     }
