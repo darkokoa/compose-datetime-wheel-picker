@@ -238,7 +238,8 @@ Standard Compose constraint rules apply: fixed/min/max constraints from the `mod
 parent override or clamp the intrinsic default, and pickers shrink to fit parents narrower than
 their intrinsic width.
 
-**Migrating from `size: DpSize` (removed in 1.4.0):**
+**Migrating from `size: DpSize` (removed in 1.4.0, source-breaking only — hidden 1.3.x overloads
+keep old binaries linking until the next major release):**
 
 ```kotlin
 // Before
