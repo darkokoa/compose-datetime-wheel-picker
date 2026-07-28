@@ -2,10 +2,12 @@ package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +26,95 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
+/**
+ * A wheel picker over arbitrary [texts].
+ *
+ * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
+ * intrinsic default — 128.dp wide, `(128.dp / 3) * rowCount` tall. Standard Compose constraints
+ * override or clamp the default; see the README "Sizing" section for examples and migration
+ * notes.
+ *
+ * The picker resolves its size via subcomposition and therefore does not support
+ * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`
+ * instead.
+ */
+@Composable
+fun WheelTextPicker(
+  modifier: Modifier = Modifier,
+  startIndex: Int = 0,
+  texts: List<String>,
+  rowCount: Int,
+  textStyle: TextStyle = MaterialTheme.typography.titleMedium,
+  textColor: Color = LocalContentColor.current,
+  selectedTextStyle: TextStyle = textStyle,
+  selectedTextColor: Color = textColor,
+  selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
+  onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+) {
+  BoxWithConstraints(
+    modifier = modifier,
+    contentAlignment = Alignment.Center,
+  ) {
+    val effectiveSize = with(LocalDensity.current) {
+      resolvePickerSize(
+        constraints = constraints,
+        default = pickerDefaultSize(defaultWidth = 128.dp, rowCount = rowCount),
+      )
+    }
+
+    FixedSizeWheelTextPicker(
+      modifier = Modifier,
+      startIndex = startIndex,
+      viewportSize = effectiveSize,
+      texts = texts,
+      rowCount = rowCount,
+      textStyle = textStyle,
+      textColor = textColor,
+      selectedTextStyle = selectedTextStyle,
+      selectedTextColor = selectedTextColor,
+      selectorProperties = selectorProperties,
+      onScrollChanged = onScrollChanged,
+      onScrollFinished = onScrollFinished,
+    )
+  }
+}
+
+// Binary-compatibility shim with the exact 1.3.x released signature (style/color naming; no
+// selectedTextStyle / selectedTextColor — those were added after 1.3.3).
+@Deprecated(
+  message = "Sizing is Modifier-driven. Use Modifier.size/width/height instead of the size parameter.",
+  level = DeprecationLevel.HIDDEN,
+)
 @Composable
 fun WheelTextPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   size: DpSize = DpSize(128.dp, 128.dp),
+  texts: List<String>,
+  rowCount: Int,
+  style: TextStyle = MaterialTheme.typography.titleMedium,
+  color: Color = LocalContentColor.current,
+  selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  onScrollChanged: (snappedIndex: Int) -> Unit = {},
+  onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+) = WheelTextPicker(
+  modifier = modifier.size(size.width, size.height),
+  startIndex = startIndex,
+  texts = texts,
+  rowCount = rowCount,
+  textStyle = style,
+  textColor = color,
+  selectorProperties = selectorProperties,
+  onScrollChanged = onScrollChanged,
+  onScrollFinished = onScrollFinished,
+)
+
+@Composable
+internal fun FixedSizeWheelTextPicker(
+  modifier: Modifier = Modifier,
+  startIndex: Int = 0,
+  viewportSize: DpSize,
   texts: List<String>,
   rowCount: Int,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -50,7 +136,7 @@ fun WheelTextPicker(
   WheelPicker(
     modifier = modifier,
     startIndex = startIndex,
-    size = size,
+    viewportSize = viewportSize,
     count = texts.size,
     rowCount = rowCount,
     selectorProperties = selectorProperties,
@@ -71,7 +157,7 @@ fun WheelTextPicker(
 internal fun WheelTextPickerWithSuffix(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
-  size: DpSize = DpSize(128.dp, 128.dp),
+  viewportSize: DpSize,
   texts: List<String>,
   rowCount: Int,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
@@ -134,7 +220,7 @@ internal fun WheelTextPickerWithSuffix(
   Box(modifier = modifier) {
     WheelPicker(
       startIndex = startIndex,
-      size = size,
+      viewportSize = viewportSize,
       count = texts.size,
       rowCount = rowCount,
       selectorProperties = selectorProperties,

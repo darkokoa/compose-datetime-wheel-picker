@@ -34,7 +34,7 @@ internal fun StandardWheelTimePicker(
   minTime: LocalTime = LocalTime.MIN,
   maxTime: LocalTime = LocalTime.MAX,
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
-  size: DpSize = DpSize(128.dp, 128.dp),
+  viewportSize: DpSize = DpSize(128.dp, 128.dp),
   rowCount: Int = 3,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
@@ -56,7 +56,7 @@ internal fun StandardWheelTimePicker(
     if (timeFormatter.timeFormat == TimeFormat.AM_PM) 3 else 2
   }
 
-  val itemWidth = remember(itemCount) { size.width / itemCount }
+  val itemWidth = viewportSize.width / itemCount
 
   val hours = rememberHours(timeFormatter)
   val amPmHours = rememberAmPmHours(timeFormatter)
@@ -83,18 +83,18 @@ internal fun StandardWheelTimePicker(
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
       Surface(
-        modifier = Modifier.size(size.width, size.height / rowCount),
+        modifier = Modifier.size(viewportSize.width, viewportSize.height / rowCount),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
       ) {}
     }
-    Row(modifier = Modifier.height(size.height)) {
+    Row(modifier = Modifier.height(viewportSize.height)) {
       //Hour
-      WheelTextPicker(
-        size = DpSize(
+      FixedSizeWheelTextPicker(
+        viewportSize = DpSize(
           width = itemWidth,
-          height = size.height
+          height = viewportSize.height
         ),
         texts = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
         rowCount = rowCount,
@@ -133,11 +133,11 @@ internal fun StandardWheelTimePicker(
                   index = newIndex
                 ),
                 timeFormatter.timeFormat
-              )?.let { return@WheelTextPicker it }
+              )?.let { return@FixedSizeWheelTextPicker it }
             }
           }
 
-          return@WheelTextPicker if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
+          return@FixedSizeWheelTextPicker if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
             hours.find { it.value == snappedTime.hour }?.index
           } else {
             amPmHours.find { it.value == localTimeToAmPmHour(snappedTime) }?.index
@@ -166,10 +166,10 @@ internal fun StandardWheelTimePicker(
       )
 
       //Minute
-      WheelTextPicker(
-        size = DpSize(
+      FixedSizeWheelTextPicker(
+        viewportSize = DpSize(
           width = itemWidth,
-          height = size.height
+          height = viewportSize.height
         ),
         texts = minutes.map { it.text },
         rowCount = rowCount,
@@ -212,12 +212,12 @@ internal fun StandardWheelTimePicker(
                     index = newIndex
                   ),
                   timeFormatter.timeFormat
-                )?.let { return@WheelTextPicker it }
+                )?.let { return@FixedSizeWheelTextPicker it }
               }
             }
           }
 
-          return@WheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
+          return@FixedSizeWheelTextPicker minutes.find { it.value == snappedTime.minute }?.index
         },
         onScrollChanged = { snappedIndex ->
           val newMinute = minutes.find { it.index == snappedIndex }?.value
@@ -231,10 +231,10 @@ internal fun StandardWheelTimePicker(
       )
       //AM_PM
       if (timeFormatter.timeFormat == TimeFormat.AM_PM) {
-        WheelTextPicker(
-          size = DpSize(
+        FixedSizeWheelTextPicker(
+          viewportSize = DpSize(
             width = itemWidth,
-            height = size.height
+            height = viewportSize.height
           ),
           texts = amPms.map { it.text },
           rowCount = rowCount,
@@ -282,7 +282,7 @@ internal fun StandardWheelTimePicker(
               }
             }
 
-            return@WheelTextPicker snappedIndex
+            return@FixedSizeWheelTextPicker snappedIndex
           },
           onScrollChanged = { snappedIndex ->
             resolveAmPm(snappedIndex)?.let { pendingAmPm ->

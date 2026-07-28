@@ -36,7 +36,7 @@ Arabic (العربية), Bengali (বাংলা), Chinese (中文), Czech (Če
 > **Contributions welcome**: If you find any translation errors or want to add support for a new language, please [open an issue](../../issues) or submit a pull request.
 
 ### 🎨 Visual Customization
-- Configurable size, row count, inactive and selected text styles, and colors
+- Modifier-driven responsive sizing, configurable row count, inactive and selected text styles, and colors
 - Customizable selector appearance (shape, color, border)
 - Material Design integration
 
@@ -187,7 +187,7 @@ WheelDateTimePicker(
   timeFormatter = timeFormatter(
     timeFormat = TimeFormat.HOUR_24
   ),
-  size = DpSize(200.dp, 100.dp),
+  modifier = Modifier.size(200.dp, 100.dp),
   rowCount = 5,
   textStyle = MaterialTheme.typography.titleSmall,
   textColor = Color(0xFFffc300),
@@ -213,6 +213,55 @@ WheelDateTimePicker(
 </tr>
 </table>
 
+## Sizing
+
+Picker size is controlled entirely through `Modifier` (since 1.4.0). When the caller does not
+constrain an axis, the picker supplies its intrinsic default on that axis: 256.dp width for
+`WheelDatePicker`/`WheelDateTimePicker`, 128.dp for `WheelTimePicker`/`WheelTextPicker`, and a
+height of ~42.7.dp per row (`rowCount = 3` → exactly 128.dp). Larger `rowCount`s grow the wheel
+instead of squeezing rows.
+
+```kotlin
+WheelDatePicker { }                                          // intrinsic 256 x 128.dp
+WheelDatePicker(rowCount = 5) { }                            // intrinsic height ~213.dp
+WheelDatePicker(modifier = Modifier.fillMaxWidth()) { }      // parent width, intrinsic height
+WheelDatePicker(modifier = Modifier.height(200.dp)) { }      // fixed height
+WheelDatePicker(modifier = Modifier.size(300.dp, 160.dp)) { }        // fixed size
+WheelDatePicker(
+  modifier = Modifier
+    .widthIn(min = 240.dp, max = 400.dp)
+    .heightIn(min = 128.dp),
+) { }
+```
+
+Standard Compose constraint rules apply: fixed/min/max constraints from the `modifier` or the
+parent override or clamp the intrinsic default, and pickers shrink to fit parents narrower than
+their intrinsic width.
+
+**Migrating from `size: DpSize` (removed in 1.4.0, source-breaking only — hidden 1.3.x overloads
+keep old binaries linking until the next major release):**
+
+```kotlin
+// Before
+WheelDatePicker(size = DpSize(300.dp, 160.dp)) { }
+// After
+WheelDatePicker(modifier = Modifier.size(300.dp, 160.dp)) { }
+
+// Before workaround for responsive width
+BoxWithConstraints(Modifier.fillMaxWidth()) {
+  WheelDatePicker(size = DpSize(maxWidth, 200.dp)) { }
+}
+// After
+WheelDatePicker(modifier = Modifier.fillMaxWidth().height(200.dp)) { }
+```
+
+For `rowCount > 3`, callers that depended on the old squeezed 128.dp total height should state it
+explicitly with `Modifier.height(128.dp)`.
+
+> **Known limitation**: the picker resolves its size via subcomposition and does not support
+> intrinsic-measurement parents (`IntrinsicSize.Min`/`Max` will throw). Pass an explicit
+> `width`/`height` instead.
+
 ## API Reference
 
 ### WheelDatePicker Parameters
@@ -224,7 +273,7 @@ WheelDateTimePicker(
 | `maxDate` | `LocalDate` | `LocalDate.CYB3R_1N1T_ZOLL` | Maximum selectable date |
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
-| `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
+| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default (256.dp × 128.dp at 3 rows). See [Sizing](#sizing) |
 | `rowCount` | `Int` | `3` | Number of visible rows in the wheel |
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
@@ -265,7 +314,7 @@ WheelDateTimePicker(
 | `minTime` | `LocalTime` | `LocalTime.MIN` | Minimum selectable time |
 | `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
-| `size` | `DpSize` | `DpSize(128.dp, 128.dp)` | Picker dimensions (narrower than date picker) |
+| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 128.dp wide (narrower than date picker). See [Sizing](#sizing) |
 | Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, etc. |
 
 **TimeFormat**:
@@ -282,7 +331,7 @@ WheelDateTimePicker(
 | `yearsRange` | `IntRange?` | `IntRange(minDateTime.year, maxDateTime.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format |
-| `size` | `DpSize` | `DpSize(256.dp, 128.dp)` | Picker dimensions |
+| `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 256.dp × 128.dp at 3 rows. See [Sizing](#sizing) |
 | `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
 | `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
 | Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties |
