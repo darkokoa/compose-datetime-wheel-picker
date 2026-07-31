@@ -53,7 +53,18 @@ internal fun CJKWheelDatePicker(
 
   val itemWidth = Dp.Infinity
 
-  var snappedDate by remember { mutableStateOf(startDate) }
+  val initialDate = remember(startDate, minDate, maxDate) {
+    startDate.coerceIn(minDate, maxDate)
+  }
+
+  var snappedDate by remember { mutableStateOf(initialDate) }
+
+  val snappedDateChangeNotifier = remember { SnappedChangeNotifier<LocalDate>() }
+  val notifySnappedDateChanged: (SnappedDate) -> Unit = { newSnappedDate ->
+    snappedDateChangeNotifier.notifyIfChanged(newSnappedDate.snappedLocalDate) {
+      onSnappedDateChanged(newSnappedDate)
+    }
+  }
 
   val dayOfMonths =
     rememberFormattedDayOfMonths(snappedDate.month.number, snappedDate.year, dateFormatter)
@@ -95,7 +106,7 @@ internal fun CJKWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
-              startIndex = dayOfMonths.find { it.value == startDate.day }?.index ?: 0,
+              startIndex = dayOfMonths.find { it.value == initialDate.day }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newDayOfMonth = dayOfMonths.find { it.index == snappedIndex }?.value
 
@@ -122,7 +133,7 @@ internal fun CJKWheelDatePicker(
               },
               onScrollChanged = { snappedIndex ->
                 dayOfMonths.find { it.index == snappedIndex }?.value?.let { newDay ->
-                  onSnappedDateChanged(SnappedDate.DayOfMonth(localDate = snappedDate.withDayOfMonth(newDay), index = snappedIndex))
+                  notifySnappedDateChanged(SnappedDate.DayOfMonth(localDate = snappedDate.withDayOfMonth(newDay), index = snappedIndex))
                 }
               }
             )
@@ -148,7 +159,7 @@ internal fun CJKWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
-              startIndex = months.find { it.value == startDate.month.number }?.index ?: 0,
+              startIndex = months.find { it.value == initialDate.month.number }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newMonth = months.find { it.index == snappedIndex }?.value
                 newMonth?.let {
@@ -174,7 +185,7 @@ internal fun CJKWheelDatePicker(
               },
               onScrollChanged = { snappedIndex ->
                 months.find { it.index == snappedIndex }?.value?.let { newMonth ->
-                  onSnappedDateChanged(SnappedDate.Month(localDate = snappedDate.withMonthNumber(newMonth), index = snappedIndex))
+                  notifySnappedDateChanged(SnappedDate.Month(localDate = snappedDate.withMonthNumber(newMonth), index = snappedIndex))
                 }
               }
             )
@@ -201,7 +212,7 @@ internal fun CJKWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                   enabled = false
                 ),
-                startIndex = years.find { it.value == startDate.year }?.index ?: 0,
+                startIndex = years.find { it.value == initialDate.year }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
                   val newYear = years.find { it.index == snappedIndex }?.value
 
@@ -228,7 +239,7 @@ internal fun CJKWheelDatePicker(
                 },
                 onScrollChanged = { snappedIndex ->
                   years.find { it.index == snappedIndex }?.value?.let { newYear ->
-                    onSnappedDateChanged(SnappedDate.Year(localDate = snappedDate.withYear(newYear), index = snappedIndex))
+                    notifySnappedDateChanged(SnappedDate.Year(localDate = snappedDate.withYear(newYear), index = snappedIndex))
                   }
                 }
               )

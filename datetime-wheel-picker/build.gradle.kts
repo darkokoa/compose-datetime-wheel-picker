@@ -79,6 +79,11 @@ kotlin {
     jvmMain.dependencies {
     }
 
+    jvmTest.dependencies {
+      implementation(libs.compose.ui.test)
+      implementation(compose.desktop.currentOs)
+    }
+
     jsMain.dependencies {
     }
 

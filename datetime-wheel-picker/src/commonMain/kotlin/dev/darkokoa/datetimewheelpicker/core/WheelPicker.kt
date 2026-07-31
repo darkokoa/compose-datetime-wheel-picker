@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isFinite
 import kotlin.math.abs
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 
 @Composable
@@ -52,17 +53,27 @@ internal fun WheelPicker(
     derivedStateOf { calculateSnappedItemIndex(lazyListState) }
   }
 
-  LaunchedEffect(lazyListState, count) {
+  LaunchedEffect(lazyListState) {
     snapshotFlow { snappedItemIndexState.value }
       .distinctUntilChanged()
+      .drop(1)
       .collect { latestOnScrollChanged(it) }
   }
 
-  LaunchedEffect(lazyListState, count) {
+  LaunchedEffect(lazyListState) {
     snapshotFlow { lazyListState.isScrollInProgress }
+      .distinctUntilChanged()
+      .drop(1)
       .filter { !it }
       .collect {
-        latestOnScrollFinished(calculateSnappedItemIndex(lazyListState))
+        // A finished drag may be immediately followed by a snap fling. Wait one frame so this
+        // drag-to-fling handoff gap is not misreported as a finished scroll, which would fire
+        // onScrollFinished twice for a single gesture.
+        withFrameNanos { }
+        if (lazyListState.isScrollInProgress) return@collect
+        val snappedIndex = calculateSnappedItemIndex(lazyListState)
+        latestOnScrollFinished(snappedIndex)
+          ?.takeIf { it != snappedIndex }
           ?.let { lazyListState.scrollToItem(it) }
       }
   }
