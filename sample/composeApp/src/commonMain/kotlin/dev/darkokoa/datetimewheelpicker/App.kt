@@ -286,8 +286,8 @@ private fun PickerDemoSection(
     modifier = modifier.fillMaxWidth(),
   ) {
     content(
-      { snappedValue = it },
-      { snappedChangedValue = it },
+      { value -> snappedValue = value },
+      { value -> snappedChangedValue = value },
     )
     CallbackValuesCard(
       callbackName = callbackName,
@@ -390,8 +390,14 @@ private fun TimeDemos(
       ) { onSnapped, onSnappedChanged ->
         WheelTimePicker(
           startTime = initialTime,
-          onSnappedTime = { time -> onSnapped(time.toString()) },
-          onSnappedTimeChanged = { time -> onSnappedChanged(time.toString()) },
+          onSnappedTime = { time ->
+            logPickerCallback("Default time picker", "onSnappedTime", time)
+            onSnapped(time.toString())
+          },
+          onSnappedTimeChanged = { time ->
+            logPickerCallback("Default time picker", "onSnappedTimeChanged", time)
+            onSnappedChanged(time.toString())
+          },
         )
       }
 
@@ -402,8 +408,14 @@ private fun TimeDemos(
         WheelTimePicker(
           startTime = initialTime,
           timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
-          onSnappedTime = { time -> onSnapped(time.toString()) },
-          onSnappedTimeChanged = { time -> onSnappedChanged(time.toString()) },
+          onSnappedTime = { time ->
+            logPickerCallback("AM/PM time picker", "onSnappedTime", time)
+            onSnapped(time.toString())
+          },
+          onSnappedTimeChanged = { time ->
+            logPickerCallback("AM/PM time picker", "onSnappedTimeChanged", time)
+            onSnappedChanged(time.toString())
+          },
         )
       }
 
@@ -439,8 +451,14 @@ private fun DateDemos(
       ) { onSnapped, onSnappedChanged ->
         WheelDatePicker(
           startDate = initialDate,
-          onSnappedDate = { date -> onSnapped(date.toString()) },
-          onSnappedDateChanged = { date -> onSnappedChanged(date.toString()) },
+          onSnappedDate = { date ->
+            logPickerCallback("Default date picker", "onSnappedDate", date)
+            onSnapped(date.toString())
+          },
+          onSnappedDateChanged = { date ->
+            logPickerCallback("Default date picker", "onSnappedDateChanged", date)
+            onSnappedChanged(date.toString())
+          },
         )
       }
 
@@ -454,8 +472,14 @@ private fun DateDemos(
           textColor = LocalContentColor.current,
           selectedTextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
           selectedTextColor = MaterialTheme.colorScheme.primary,
-          onSnappedDate = { date -> onSnapped(date.toString()) },
-          onSnappedDateChanged = { date -> onSnappedChanged(date.toString()) },
+          onSnappedDate = { date ->
+            logPickerCallback("Styled date picker", "onSnappedDate", date)
+            onSnapped(date.toString())
+          },
+          onSnappedDateChanged = { date ->
+            logPickerCallback("Styled date picker", "onSnappedDateChanged", date)
+            onSnappedChanged(date.toString())
+          },
         )
       }
 
@@ -467,8 +491,14 @@ private fun DateDemos(
           startDate = initialDate,
           minDate = initialDate,
           maxDate = maxDate,
-          onSnappedDate = { date -> onSnapped(date.toString()) },
-          onSnappedDateChanged = { date -> onSnappedChanged(date.toString()) },
+          onSnappedDate = { date ->
+            logPickerCallback("Ranged date picker", "onSnappedDate", date)
+            onSnapped(date.toString())
+          },
+          onSnappedDateChanged = { date ->
+            logPickerCallback("Ranged date picker", "onSnappedDateChanged", date)
+            onSnappedChanged(date.toString())
+          },
         )
       }
 
@@ -509,8 +539,14 @@ private fun DateTimeDemos(
       ) { onSnapped, onSnappedChanged ->
         WheelDateTimePicker(
           startDateTime = initialDateTime,
-          onSnappedDateTime = { dateTime -> onSnapped(dateTime.toString()) },
-          onSnappedDateTimeChanged = { dateTime -> onSnappedChanged(dateTime.toString()) },
+          onSnappedDateTime = { dateTime ->
+            logPickerCallback("Default date time picker", "onSnappedDateTime", dateTime)
+            onSnapped(dateTime.toString())
+          },
+          onSnappedDateTimeChanged = { dateTime ->
+            logPickerCallback("Default date time picker", "onSnappedDateTimeChanged", dateTime)
+            onSnappedChanged(dateTime.toString())
+          },
         )
       }
 
@@ -533,8 +569,14 @@ private fun DateTimeDemos(
             color = Color(0xFFF1FAEE).copy(alpha = 0.2f),
             border = BorderStroke(2.dp, Color(0xFFF1FAEE)),
           ),
-          onSnappedDateTime = { dateTime -> onSnapped(dateTime.toString()) },
-          onSnappedDateTimeChanged = { dateTime -> onSnappedChanged(dateTime.toString()) },
+          onSnappedDateTime = { dateTime ->
+            logPickerCallback("Custom date time picker", "onSnappedDateTime", dateTime)
+            onSnapped(dateTime.toString())
+          },
+          onSnappedDateTimeChanged = { dateTime ->
+            logPickerCallback("Custom date time picker", "onSnappedDateTimeChanged", dateTime)
+            onSnappedChanged(dateTime.toString())
+          },
         )
       }
     }
@@ -559,16 +601,40 @@ private fun SizingDemos(modifier: Modifier = Modifier) {
         title = "fillMaxWidth(), intrinsic height",
         modifier = Modifier.fillMaxWidth(),
       ) {
-        WheelDatePicker(modifier = Modifier.fillMaxWidth())
+        WheelDatePicker(
+          modifier = Modifier.fillMaxWidth(),
+          onSnappedDate = { date ->
+            logPickerCallback("Sizing fillMaxWidth", "onSnappedDate", date)
+          },
+          onSnappedDateChanged = { date ->
+            logPickerCallback("Sizing fillMaxWidth", "onSnappedDateChanged", date)
+          },
+        )
       }
 
       SizingDemo.FIVE_ROWS -> DemoSection("rowCount = 5, intrinsic height") {
-        WheelDatePicker(rowCount = 5)
+        WheelDatePicker(
+          rowCount = 5,
+          onSnappedDate = { date ->
+            logPickerCallback("Sizing rowCount = 5", "onSnappedDate", date)
+          },
+          onSnappedDateChanged = { date ->
+            logPickerCallback("Sizing rowCount = 5", "onSnappedDateChanged", date)
+          },
+        )
       }
 
       SizingDemo.NARROW -> DemoSection("Narrow 200.dp parent") {
         Box(modifier = Modifier.width(200.dp)) {
-          WheelDatePicker(modifier = Modifier.fillMaxWidth())
+          WheelDatePicker(
+            modifier = Modifier.fillMaxWidth(),
+            onSnappedDate = { date ->
+              logPickerCallback("Sizing narrow parent", "onSnappedDate", date)
+            },
+            onSnappedDateChanged = { date ->
+              logPickerCallback("Sizing narrow parent", "onSnappedDateChanged", date)
+            },
+          )
         }
       }
 
@@ -576,7 +642,15 @@ private fun SizingDemos(modifier: Modifier = Modifier) {
         title = "WheelTimePicker, fillMaxWidth()",
         modifier = Modifier.fillMaxWidth(),
       ) {
-        WheelTimePicker(modifier = Modifier.fillMaxWidth())
+        WheelTimePicker(
+          modifier = Modifier.fillMaxWidth(),
+          onSnappedTime = { time ->
+            logPickerCallback("Sizing time fillMaxWidth", "onSnappedTime", time)
+          },
+          onSnappedTimeChanged = { time ->
+            logPickerCallback("Sizing time fillMaxWidth", "onSnappedTimeChanged", time)
+          },
+        )
       }
     }
   }
@@ -614,7 +688,13 @@ private fun TimePickerChip(
     ) {
       WheelTimePicker(
         startTime = dialogInitialTime,
-        onSnappedTimeChanged = { pendingTime = it },
+        onSnappedTime = { time ->
+          logPickerCallback("Time dialog", "onSnappedTime", time)
+        },
+        onSnappedTimeChanged = { time ->
+          logPickerCallback("Time dialog", "onSnappedTimeChanged", time)
+          pendingTime = time
+        },
       )
     }
   }
@@ -652,7 +732,13 @@ private fun DatePickerChip(
     ) {
       WheelDatePicker(
         startDate = dialogInitialDate,
-        onSnappedDateChanged = { pendingDate = it },
+        onSnappedDate = { date ->
+          logPickerCallback("Date dialog", "onSnappedDate", date)
+        },
+        onSnappedDateChanged = { date ->
+          logPickerCallback("Date dialog", "onSnappedDateChanged", date)
+          pendingDate = date
+        },
       )
     }
   }

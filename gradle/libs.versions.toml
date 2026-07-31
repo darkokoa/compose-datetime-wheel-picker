@@ -4,6 +4,7 @@ kotlin = "2.4.0"
 compose = "1.11.1"
 agp = "9.2.1"
 androidx-activityCompose = "1.13.0"
+kermit = "2.1.0"
 kotlinx-datetime = "0.8.0"
 ksp = "2.3.10"
 lyricist = "1.8.0"
@@ -14,6 +15,7 @@ maven-publish = "0.37.0"
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 lyricist = { module = "cafe.adriel.lyricist:lyricist", version.ref = "lyricist" }
 lyricist-processor = { module = "cafe.adriel.lyricist:lyricist-processor", version.ref = "lyricist" }
