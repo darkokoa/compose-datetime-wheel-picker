@@ -5,7 +5,7 @@ plugins {
 
 android {
   namespace = "dev.darkokoa.datetimewheelpicker.androidapp"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "dev.darkokoa.datetimewheelpicker.androidApp"
@@ -22,6 +22,6 @@ android {
 }
 
 dependencies {
-  implementation(project(":sample:composeApp"))
+  implementation(projects.sample.composeApp)
   implementation(libs.androidx.activityCompose)
 }

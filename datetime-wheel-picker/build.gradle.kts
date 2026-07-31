@@ -15,7 +15,7 @@ kotlin {
 
   android {
     namespace = "dev.darkokoa.datetimewheelpicker"
-    compileSdk = 36
+    compileSdk = 37
     minSdk = 21
 
     compilerOptions {
@@ -26,12 +26,8 @@ kotlin {
   }
 
   jvm {
-    compilations.all {
-      compileTaskProvider.configure {
-        compilerOptions {
-          jvmTarget.set(JvmTarget.JVM_17)
-        }
-      }
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_17)
     }
   }
 
@@ -62,8 +58,10 @@ kotlin {
       }
     }
     commonMain.dependencies {
-      implementation(compose.runtime)
-      implementation(compose.material3)
+      implementation(libs.compose.runtime)
+      implementation(libs.compose.foundation)
+      implementation(libs.compose.ui)
+      implementation(libs.compose.material3)
       implementation(libs.kotlinx.datetime)
 
       implementation(libs.lyricist)
