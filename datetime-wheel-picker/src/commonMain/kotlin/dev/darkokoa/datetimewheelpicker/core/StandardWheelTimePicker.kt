@@ -63,10 +63,14 @@ internal fun StandardWheelTimePicker(
   val minutes = rememberMinutes(timeFormatter)
   val amPms = rememberAmPm(timeFormatter)
 
-  var snappedTime by remember { mutableStateOf(LocalTime(startTime.hour, startTime.minute)) }
+  val initialTime = remember(startTime, minTime, maxTime) {
+    LocalTime(startTime.hour, startTime.minute).coerceIn(minTime, maxTime)
+  }
+
+  var snappedTime by remember { mutableStateOf(initialTime) }
 
   var snappedAmPm by remember {
-    mutableStateOf(amPms.find { it.value == amPmValueFromTime(startTime) } ?: amPms[0])
+    mutableStateOf(amPms.find { it.value == amPmValueFromTime(initialTime) } ?: amPms[0])
   }
 
   fun resolveHour(index: Int): Int? =
@@ -103,8 +107,8 @@ internal fun StandardWheelTimePicker(
         selectedTextStyle = resolvedSelectedTextStyle,
         selectedTextColor = selectedTextColor,
         startIndex = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-          hours.find { it.value == startTime.hour }?.index ?: 0
-        } else amPmHours.find { it.value == localTimeToAmPmHour(startTime) }?.index ?: 0,
+          hours.find { it.value == initialTime.hour }?.index ?: 0
+        } else amPmHours.find { it.value == localTimeToAmPmHour(initialTime) }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
@@ -177,7 +181,7 @@ internal fun StandardWheelTimePicker(
         textColor = textColor,
         selectedTextStyle = resolvedSelectedTextStyle,
         selectedTextColor = selectedTextColor,
-        startIndex = minutes.find { it.value == startTime.minute }?.index ?: 0,
+        startIndex = minutes.find { it.value == initialTime.minute }?.index ?: 0,
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
@@ -242,7 +246,7 @@ internal fun StandardWheelTimePicker(
           textColor = textColor,
           selectedTextStyle = resolvedSelectedTextStyle,
           selectedTextColor = selectedTextColor,
-          startIndex = amPms.find { it.value == amPmValueFromTime(startTime) }?.index ?: 0,
+          startIndex = amPms.find { it.value == amPmValueFromTime(initialTime) }?.index ?: 0,
           selectorProperties = WheelPickerDefaults.selectorProperties(
             enabled = false
           ),

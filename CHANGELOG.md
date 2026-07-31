@@ -2,7 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.4.0 - Unreleased
+## 1.4.1 - Unreleased
+
+### Fixed
+
+- Wheel callbacks no longer fire on first composition: initially positioning
+  the wheels at `startDate`/`startTime` no longer triggers `onScrollChanged` /
+  `onSnappedDateChanged` ([#71](https://github.com/darkokoa/compose-datetime-wheel-picker/issues/71)).
+- Wheel callbacks no longer fire twice for a single scroll gesture: the brief
+  idle gap between the end of a drag and the start of the snap fling could be
+  misreported as a finished scroll ([#71](https://github.com/darkokoa/compose-datetime-wheel-picker/issues/71)).
+- `startDate`/`startTime` outside the `minDate`/`maxDate` (`minTime`/`maxTime`)
+  bounds is now coerced into range, keeping the initial wheel position
+  consistent with the reported callback values.
+- Date pickers now deduplicate consecutive `onSnappedDateChanged` notifications
+  that resolve to the same date, so multiple wheel columns reporting the same
+  snapped date only notify once.
+
+## 1.4.0 - 2026-07-28
 
 ### Breaking changes
 
