@@ -62,6 +62,7 @@ kotlin {
       implementation(compose.material3)
       implementation(compose.materialIconsExtended)
       implementation(libs.kotlinx.datetime)
+      implementation(libs.kermit)
     }
 
     androidMain.dependencies {
