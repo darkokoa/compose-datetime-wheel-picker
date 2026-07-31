@@ -12,7 +12,7 @@ plugins {
 kotlin {
   android {
     namespace = "dev.darkokoa.datetimewheelpicker.sample"
-    compileSdk = 36
+    compileSdk = 37
     minSdk = 24
 
     compilerOptions {
@@ -55,12 +55,12 @@ kotlin {
       }
     }
     commonMain.dependencies {
-      implementation(project(":datetime-wheel-picker"))
+      implementation(projects.datetimeWheelPicker)
 
-      implementation(compose.runtime)
+      implementation(libs.compose.runtime)
       implementation(libs.compose.foundation)
-      implementation(compose.material3)
-      implementation(compose.materialIconsExtended)
+      implementation(libs.compose.material3)
+      implementation(libs.compose.material.icons.extended)
       implementation(libs.kotlinx.datetime)
       implementation(libs.kermit)
     }
@@ -79,7 +79,7 @@ kotlin {
     }
 
     jsMain.dependencies {
-      implementation(compose.html.core)
+      implementation(libs.compose.html.core)
     }
 
     wasmJsMain.dependencies {
