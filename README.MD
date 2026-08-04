@@ -262,6 +262,44 @@ explicitly with `Modifier.height(128.dp)`.
 > intrinsic-measurement parents (`IntrinsicSize.Min`/`Max` will throw). Pass an explicit
 > `width`/`height` instead.
 
+## Barrel projection
+
+All pickers can optionally project their rows onto a cylinder. The feature is disabled by default,
+so existing callers retain the original wheel appearance. Enable it with `barrelProperties` and
+choose the maximum rotation at the top and bottom viewport edges in degrees:
+
+```kotlin
+WheelDateTimePicker(
+  barrelProperties = WheelPickerDefaults.barrelProperties(
+    enabled = true,
+    maxAngle = 70f,
+  ),
+) { }
+```
+
+`maxAngle` must be greater than 0 and at most 90 degrees. The same property is available on
+`WheelDatePicker`, `WheelTimePicker`, and `WheelTextPicker`.
+
+## Programmatic text-wheel scrolling
+
+`WheelTextPicker` accepts a hoisted `WheelPickerState`. It can animate to an item and reports
+whether a user or programmatic scroll, including its settled callback, is still in progress:
+
+```kotlin
+val state = rememberWheelPickerState(initialIndex = 5)
+val scope = rememberCoroutineScope()
+
+WheelTextPicker(
+  texts = values,
+  rowCount = 5,
+  state = state,
+)
+
+Button(onClick = { scope.launch { state.animateScrollToItem(0) } }) {
+  Text("First item")
+}
+```
+
 ## API Reference
 
 ### WheelDatePicker Parameters
@@ -280,6 +318,7 @@ explicitly with `Modifier.height(128.dp)`.
 | `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |
 | `selectedTextColor` | `Color` | `textColor` | Text color for the selected (centered) item |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
+| `barrelProperties` | `BarrelProperties` | Disabled | Optional cylindrical row projection and maximum edge angle |
 | `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
 | `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
 

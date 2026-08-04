@@ -45,6 +45,7 @@ internal fun CJKWheelDatePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
@@ -106,6 +107,7 @@ internal fun CJKWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
+              barrelProperties = barrelProperties,
               startIndex = dayOfMonths.find { it.value == initialDate.day }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newDayOfMonth = dayOfMonths.find { it.index == snappedIndex }?.value
@@ -159,6 +161,7 @@ internal fun CJKWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
+              barrelProperties = barrelProperties,
               startIndex = months.find { it.value == initialDate.month.number }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newMonth = months.find { it.index == snappedIndex }?.value
@@ -212,6 +215,7 @@ internal fun CJKWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                   enabled = false
                 ),
+                barrelProperties = barrelProperties,
                 startIndex = years.find { it.value == initialDate.year }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
                   val newYear = years.find { it.index == snappedIndex }?.value

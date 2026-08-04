@@ -110,6 +110,30 @@ class WheelPickerCallbackTest {
     onNodeWithText("item-6").assertIsDisplayed()
   }
 
+  @Test
+  fun stateRemainsInProgressUntilScrollFinishedCallbackReturns() = runComposeUiTest {
+    lateinit var state: WheelPickerState
+    val activeDuringCallback = mutableListOf<Boolean>()
+    setContent {
+      state = rememberWheelPickerState(initialIndex = 5)
+      WheelPicker(
+        modifier = Modifier.testTag("wheel"),
+        count = 10,
+        rowCount = 3,
+        viewportSize = viewportSize,
+        state = state,
+        onScrollFinished = {
+          activeDuringCallback += state.isScrollInProgress
+          null
+        },
+      ) { index, _ -> Text("item-$index") }
+    }
+    onNodeWithTag("wheel").performTouchInput { swipeUpOneItem() }
+    waitForIdle()
+    assertEquals(listOf(true), activeDuringCallback)
+    assertTrue(!state.isScrollInProgress)
+  }
+
   /**
    * Swipes up by exactly one item height, slowly enough that the snap fling settles on the
    * adjacent item instead of flinging across several items.
