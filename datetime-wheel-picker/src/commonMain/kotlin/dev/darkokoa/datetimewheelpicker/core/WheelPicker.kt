@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 
 @Composable
-internal fun WheelPicker(
+fun WheelPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   count: Int,
