@@ -12,8 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,8 +48,10 @@ fun WheelTextPicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+  state: WheelPickerState = rememberWheelPickerState(startIndex),
 ) {
   BoxWithConstraints(
     modifier = modifier,
@@ -74,8 +75,10 @@ fun WheelTextPicker(
       selectedTextStyle = selectedTextStyle,
       selectedTextColor = selectedTextColor,
       selectorProperties = selectorProperties,
+      barrelProperties = barrelProperties,
       onScrollChanged = onScrollChanged,
       onScrollFinished = onScrollFinished,
+      state = state,
     )
   }
 }
@@ -122,8 +125,10 @@ internal fun FixedSizeWheelTextPicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
+  state: WheelPickerState = rememberWheelPickerState(startIndex),
 ) {
   val defaultTextStyle = MaterialTheme.typography.titleMedium
   val resolvedTextStyle = remember(defaultTextStyle, textStyle) {
@@ -140,8 +145,10 @@ internal fun FixedSizeWheelTextPicker(
     count = texts.size,
     rowCount = rowCount,
     selectorProperties = selectorProperties,
+    barrelProperties = barrelProperties,
     onScrollFinished = onScrollFinished,
-    onScrollChanged = onScrollChanged
+    onScrollChanged = onScrollChanged,
+    state = state,
   ) { index, isSelected ->
     Text(
       text = texts[index],
@@ -169,6 +176,7 @@ internal fun WheelTextPickerWithSuffix(
   suffixTextColor: Color = selectedTextColor,
   textToSuffixSpacing: Dp = 8.dp,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -224,6 +232,7 @@ internal fun WheelTextPickerWithSuffix(
       count = texts.size,
       rowCount = rowCount,
       selectorProperties = selectorProperties,
+      barrelProperties = barrelProperties,
       onScrollFinished = onScrollFinished,
       onScrollChanged = onScrollChanged
     ) { index, isSelected ->

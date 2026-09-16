@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## 1.4.1 - Unreleased
 
+### Added
+
+- Added opt-in barrel projection to all picker types through `barrelProperties`. It is disabled by
+  default, and callers can configure the maximum edge angle.
+- Added hoistable `WheelPickerState` to `WheelTextPicker` for observing scroll activity and
+  animating to an item programmatically.
+
 ### Fixed
 
 - Wheel callbacks no longer fire on first composition: initially positioning

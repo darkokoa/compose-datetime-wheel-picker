@@ -1,5 +1,5 @@
 plugins {
-  alias(libs.plugins.android.application)
+  id("com.android.application")
   alias(libs.plugins.compose.compiler)
 }
 
