@@ -110,6 +110,30 @@ class WheelPickerCallbackTest {
     onNodeWithText("item-6").assertIsDisplayed()
   }
 
+  @Test
+  fun barrelProjectionKeepsSnappingAndCallbacksIntact() = runComposeUiTest {
+    val changed = mutableListOf<Int>()
+    val finished = mutableListOf<Int>()
+    setContent {
+      WheelPicker(
+        modifier = Modifier.testTag("wheel"),
+        count = 10,
+        rowCount = 3,
+        startIndex = 5,
+        viewportSize = viewportSize,
+        barrelProperties = WheelPickerDefaults.barrelProperties(enabled = true),
+        onScrollChanged = { changed += it },
+        onScrollFinished = { finished += it; null },
+      ) { index, _ -> Text("item-$index") }
+    }
+    onNodeWithText("item-5").assertIsDisplayed()
+    onNodeWithTag("wheel").performTouchInput { swipeUpOneItem() }
+    waitForIdle()
+    assertEquals(listOf(6), changed, "barrel projection must not alter onScrollChanged")
+    assertEquals(listOf(6), finished, "barrel projection must not alter onScrollFinished")
+    onNodeWithText("item-6").assertIsDisplayed()
+  }
+
   /**
    * Swipes up by exactly one item height, slowly enough that the snap fling settles on the
    * adjacent item instead of flinging across several items.

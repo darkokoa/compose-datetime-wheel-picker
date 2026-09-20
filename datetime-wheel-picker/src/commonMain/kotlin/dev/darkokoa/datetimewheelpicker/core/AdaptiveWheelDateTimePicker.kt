@@ -44,6 +44,7 @@ internal fun AdaptiveWheelDateTimePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onSnappedDateTimeChanged: (snappedDateTime: SnappedDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
 ) {
@@ -82,6 +83,7 @@ internal fun AdaptiveWheelDateTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        barrelProperties = barrelProperties,
         onSnappedDate = { snappedDate ->
 
           val newDateTime = when (snappedDate) {
@@ -147,6 +149,7 @@ internal fun AdaptiveWheelDateTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        barrelProperties = barrelProperties,
         onSnappedTime = { snappedTime, timeFormat ->
 
           val newDateTime = when (snappedTime) {
@@ -188,7 +191,6 @@ internal fun AdaptiveWheelDateTimePicker(
     }
   }
 }
-
 
 
 

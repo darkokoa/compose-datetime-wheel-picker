@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## 1.4.1 - Unreleased
 
+### Added
+
+- Opt-in barrel projection for all pickers via `barrelProperties`. When enabled, wheel rows are
+  projected onto a vertical cylinder for an iOS-style drum look; `maxAngle` controls the rotation
+  at the viewport edges. Disabled by default, so existing callers keep the flat appearance.
+  Based on the contribution by [@bnrdk](https://github.com/bnrdk) in
+  [#150](https://github.com/darkokoa/compose-datetime-wheel-picker/pull/150).
+
+### Changed
+
+- Wheel rows now use `CompositingStrategy.ModulateAlpha` for their fade, avoiding an offscreen
+  buffer per row while scrolling.
+
 ### Fixed
 
 - Wheel callbacks no longer fire on first composition: initially positioning

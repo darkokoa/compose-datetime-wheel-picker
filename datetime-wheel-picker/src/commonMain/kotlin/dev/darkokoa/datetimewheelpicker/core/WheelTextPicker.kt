@@ -49,6 +49,7 @@ fun WheelTextPicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -74,6 +75,7 @@ fun WheelTextPicker(
       selectedTextStyle = selectedTextStyle,
       selectedTextColor = selectedTextColor,
       selectorProperties = selectorProperties,
+      barrelProperties = barrelProperties,
       onScrollChanged = onScrollChanged,
       onScrollFinished = onScrollFinished,
     )
@@ -122,6 +124,7 @@ internal fun FixedSizeWheelTextPicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -140,6 +143,7 @@ internal fun FixedSizeWheelTextPicker(
     count = texts.size,
     rowCount = rowCount,
     selectorProperties = selectorProperties,
+    barrelProperties = barrelProperties,
     onScrollFinished = onScrollFinished,
     onScrollChanged = onScrollChanged
   ) { index, isSelected ->
@@ -169,6 +173,7 @@ internal fun WheelTextPickerWithSuffix(
   suffixTextColor: Color = selectedTextColor,
   textToSuffixSpacing: Dp = 8.dp,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -224,6 +229,7 @@ internal fun WheelTextPickerWithSuffix(
       count = texts.size,
       rowCount = rowCount,
       selectorProperties = selectorProperties,
+      barrelProperties = barrelProperties,
       onScrollFinished = onScrollFinished,
       onScrollChanged = onScrollChanged
     ) { index, isSelected ->
