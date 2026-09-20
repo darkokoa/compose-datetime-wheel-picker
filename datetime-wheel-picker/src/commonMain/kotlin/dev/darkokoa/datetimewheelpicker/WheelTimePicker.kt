@@ -62,7 +62,7 @@ fun WheelTimePicker(
     val effectiveSize = with(LocalDensity.current) {
       resolvePickerSize(
         constraints = constraints,
-        default = pickerDefaultSize(defaultWidth = 128.dp, rowCount = rowCount),
+        default = pickerDefaultSize(defaultWidth = 128.dp, rowCount = rowCount, barrelProperties = barrelProperties),
       )
     }
 

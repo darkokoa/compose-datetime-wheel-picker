@@ -6,10 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Opt-in barrel projection for all pickers via `barrelProperties`. When enabled, wheel rows are
-  projected onto a vertical cylinder for an iOS-style drum look; `maxAngle` controls the rotation
-  at the viewport edges. Disabled by default, so existing callers keep the flat appearance.
-  Based on the contribution by [@bnrdk](https://github.com/bnrdk) in
+- Opt-in barrel projection for all pickers via `barrelProperties`. When enabled, the wheel's
+  `rowCount` rows are laid out on a vertical cylinder for an iOS-style drum look; `maxAngle`
+  controls the rotation at the viewport edges. Disabled by default, so existing callers keep the
+  flat appearance. Based on the contribution by [@bnrdk](https://github.com/bnrdk) in
   [#150](https://github.com/darkokoa/compose-datetime-wheel-picker/pull/150).
 
 ### Changed

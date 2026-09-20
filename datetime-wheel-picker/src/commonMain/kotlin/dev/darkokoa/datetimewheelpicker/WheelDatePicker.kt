@@ -69,7 +69,7 @@ fun WheelDatePicker(
     val effectiveSize = with(LocalDensity.current) {
       resolvePickerSize(
         constraints = constraints,
-        default = pickerDefaultSize(defaultWidth = 256.dp, rowCount = rowCount),
+        default = pickerDefaultSize(defaultWidth = 256.dp, rowCount = rowCount, barrelProperties = barrelProperties),
       )
     }
 

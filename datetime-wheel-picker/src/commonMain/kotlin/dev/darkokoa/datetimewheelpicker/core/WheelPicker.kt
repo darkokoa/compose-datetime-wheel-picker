@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
@@ -51,8 +52,13 @@ internal fun WheelPicker(
   val viewportHeightPx = remember(viewportSize, density) {
     with(density) { viewportSize.height.toPx() }
   }
-  val singleViewPortHeightPx = remember(viewportHeightPx, rowCount) {
-    viewportHeightPx / rowCount
+  // In barrel mode the flat list is the unrolled surface of the drum: longer than the viewport,
+  // with each row taking the arc length it occupies on the cylinder. The projection folds it back
+  // into the viewport and the clip discards whatever is left over.
+  val rowHeight = barrelProperties.rowHeight(viewportSize.height, rowCount)
+  val listHeight = barrelProperties.listHeight(viewportSize.height)
+  val singleViewPortHeightPx = remember(rowHeight, density) {
+    with(density) { rowHeight.toPx() }
   }
   val snappedItemIndexState = remember(lazyListState) {
     derivedStateOf { calculateSnappedItemIndex(lazyListState) }
@@ -83,14 +89,27 @@ internal fun WheelPicker(
       }
   }
 
+  val contentPadding = if (barrelProperties.enabled) {
+    (listHeight - rowHeight) / 2
+  } else {
+    rowHeight * ((rowCount - 1) / 2)
+  }
+
   Box(
-    modifier = modifier,
+    modifier = modifier
+      .then(
+        if (barrelProperties.enabled) {
+          Modifier.size(viewportSize).clipToBounds()
+        } else {
+          Modifier
+        }
+      ),
     contentAlignment = Alignment.Center
   ) {
     if (selectorProperties.enabled().value) {
       Surface(
         modifier = Modifier
-          .size(viewportSize.width, viewportSize.height / rowCount),
+          .size(viewportSize.width, rowHeight),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
@@ -98,10 +117,10 @@ internal fun WheelPicker(
     }
     LazyColumn(
       modifier = Modifier
-        .height(viewportSize.height)
+        .requiredHeight(listHeight)
         .width(viewportSize.width),
       state = lazyListState,
-      contentPadding = PaddingValues(vertical = viewportSize.height / rowCount * ((rowCount - 1) / 2)),
+      contentPadding = PaddingValues(vertical = contentPadding),
       flingBehavior = flingBehavior
     ) {
       items(count) { index ->
@@ -110,7 +129,7 @@ internal fun WheelPicker(
         }
         Box(
           modifier = Modifier
-            .height(viewportSize.height / rowCount)
+            .height(rowHeight)
             .width(viewportSize.width)
             .graphicsLayer {
               // Each row draws a single, non-overlapping piece of content, so alpha can be
@@ -166,8 +185,9 @@ object WheelPickerDefaults {
    * Creates a [BarrelProperties] describing the optional cylindrical projection of wheel rows.
    *
    * Barrel projection is disabled by default so existing callers keep the original flat wheel.
-   * [maxAngle] is the rotation, in degrees, of the rows at the top and bottom viewport edges and
-   * must be in `(0, 90]`.
+   * When enabled, the picker's `rowCount` rows span the visible drum from rim to rim and
+   * [maxAngle] is the rotation, in degrees, of the drum surface at the viewport edges; it must be
+   * in `(0, 90]`. See [BarrelProperties].
    */
   fun barrelProperties(
     enabled: Boolean = false,

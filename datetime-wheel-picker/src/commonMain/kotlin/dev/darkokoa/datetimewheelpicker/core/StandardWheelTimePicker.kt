@@ -88,7 +88,7 @@ internal fun StandardWheelTimePicker(
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     if (selectorProperties.enabled().value) {
       Surface(
-        modifier = Modifier.size(viewportSize.width, viewportSize.height / rowCount),
+        modifier = Modifier.size(viewportSize.width, barrelProperties.rowHeight(viewportSize.height, rowCount)),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value

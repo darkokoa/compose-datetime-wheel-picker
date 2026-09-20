@@ -582,13 +582,13 @@ private fun DateTimeDemos(
       }
 
       DateTimeDemo.BARREL -> PickerDemoSection(
-        title = "Barrel projection, 7 rows",
+        title = "Barrel projection",
         callbackName = "onSnappedDateTime",
       ) { onSnapped, onSnappedChanged ->
         WheelDateTimePicker(
           startDateTime = initialDateTime,
           modifier = Modifier.size(280.dp, 240.dp),
-          rowCount = 7,
+          rowCount = 11,
           barrelProperties = WheelPickerDefaults.barrelProperties(
             enabled = true,
             maxAngle = 70f,

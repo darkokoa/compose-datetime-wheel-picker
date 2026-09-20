@@ -72,7 +72,7 @@ internal fun StandardWheelDatePicker(
     if (selectorProperties.enabled().value) {
       Surface(
         modifier = Modifier
-          .size(viewportSize.width, viewportSize.height / rowCount),
+          .size(viewportSize.width, barrelProperties.rowHeight(viewportSize.height, rowCount)),
         shape = selectorProperties.shape().value,
         color = selectorProperties.color().value,
         border = selectorProperties.border().value
