@@ -10,17 +10,13 @@ import androidx.compose.ui.unit.dp
 internal val DefaultWheelRowHeight: Dp = 128.dp / 3
 
 /**
- * Intrinsic picker size: [DefaultWheelRowHeight] per row. With barrel projection each row still
- * gets [DefaultWheelRowHeight] of drum surface, so the viewport is the unrolled length folded
- * back onto the cylinder and therefore shorter than the flat wheel with the same [rowCount].
+ * Intrinsic picker size: [DefaultWheelRowHeight] per row, regardless of barrel projection. A
+ * barrel keeps the same viewport as the flat wheel with the same [rowCount]; its rows are laid on
+ * a drum inside that viewport, so the centered row comes out taller and the rim rows compressed.
  */
-internal fun pickerDefaultSize(
-  defaultWidth: Dp,
-  rowCount: Int,
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
-): DpSize {
+internal fun pickerDefaultSize(defaultWidth: Dp, rowCount: Int): DpSize {
   require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
-  return DpSize(defaultWidth, DefaultWheelRowHeight * rowCount / barrelProperties.arcLengthRatio)
+  return DpSize(defaultWidth, DefaultWheelRowHeight * rowCount)
 }
 
 /**

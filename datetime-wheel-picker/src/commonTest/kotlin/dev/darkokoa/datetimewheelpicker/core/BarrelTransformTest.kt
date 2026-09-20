@@ -73,13 +73,13 @@ class BarrelTransformTest {
   }
 
   @Test
-  fun defaultSizeGivesEachRowTheDefaultArcLength() {
+  fun defaultSizeIsIndependentOfBarrelProjection() {
     val barrel = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 70f)
-    val size = pickerDefaultSize(256.dp, 11, barrel)
+    val size = pickerDefaultSize(256.dp, 11)
 
-    // Folding the default per-row length back onto the drum yields the default row height.
-    assertEquals(DefaultWheelRowHeight.value, barrel.rowHeight(size.height, 11).value, absoluteTolerance = 0.001f)
-    assertTrue(size.height < pickerDefaultSize(256.dp, 11).height)
+    // Same viewport as the flat wheel; the drum gives the centered row more than the flat row height.
+    assertEquals(DefaultWheelRowHeight * 11, size.height)
+    assertTrue(barrel.rowHeight(size.height, 11) > DefaultWheelRowHeight)
   }
 
   @Test
