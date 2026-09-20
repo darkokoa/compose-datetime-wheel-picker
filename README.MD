@@ -36,7 +36,7 @@ Arabic (العربية), Bengali (বাংলা), Chinese (中文), Czech (Če
 > **Contributions welcome**: If you find any translation errors or want to add support for a new language, please [open an issue](../../issues) or submit a pull request.
 
 ### 🎨 Visual Customization
-- Modifier-driven responsive sizing, configurable row count, inactive and selected text styles, and colors
+- Modifier-driven responsive sizing, fixed row count or fixed row height, inactive and selected text styles, and colors
 - Customizable selector appearance (shape, color, border)
 - Cylindrical barrel projection with a configurable rim angle
 - Material Design integration
@@ -189,7 +189,7 @@ WheelDateTimePicker(
     timeFormat = TimeFormat.HOUR_24
   ),
   modifier = Modifier.size(200.dp, 100.dp),
-  rowCount = 5,
+  rows = WheelRows.Count(5),
   textStyle = MaterialTheme.typography.titleSmall,
   textColor = Color(0xFFffc300),
   selectedTextStyle = MaterialTheme.typography.titleSmall.copy(
@@ -219,12 +219,14 @@ WheelDateTimePicker(
 Picker size is controlled entirely through `Modifier` (since 1.4.0). When the caller does not
 constrain an axis, the picker supplies its intrinsic default on that axis: 256.dp width for
 `WheelDatePicker`/`WheelDateTimePicker`, 128.dp for `WheelTimePicker`/`WheelTextPicker`, and a
-height of ~42.7.dp per row (`rowCount = 3` → exactly 128.dp). Larger `rowCount`s grow the wheel
-instead of squeezing rows.
+height that follows `rows`: ~42.7.dp per row for `WheelRows.Count` (the default `Count(3)` →
+exactly 128.dp), or seven rows for `WheelRows.Height`. Larger counts grow the wheel instead of
+squeezing rows.
 
 ```kotlin
 WheelDatePicker { }                                          // intrinsic 256 x 128.dp
-WheelDatePicker(rowCount = 5) { }                            // intrinsic height ~213.dp
+WheelDatePicker(rows = WheelRows.Count(5)) { }               // intrinsic height ~213.dp
+WheelDatePicker(rows = WheelRows.Height(32.dp)) { }          // intrinsic height 224.dp
 WheelDatePicker(modifier = Modifier.fillMaxWidth()) { }      // parent width, intrinsic height
 WheelDatePicker(modifier = Modifier.height(200.dp)) { }      // fixed height
 WheelDatePicker(modifier = Modifier.size(300.dp, 160.dp)) { }        // fixed size
@@ -256,24 +258,43 @@ BoxWithConstraints(Modifier.fillMaxWidth()) {
 WheelDatePicker(modifier = Modifier.fillMaxWidth().height(200.dp)) { }
 ```
 
-For `rowCount > 3`, callers that depended on the old squeezed 128.dp total height should state it
-explicitly with `Modifier.height(128.dp)`.
+For more than three rows, callers that depended on the old squeezed 128.dp total height should
+state it explicitly with `Modifier.height(128.dp)`.
 
 > **Known limitation**: the picker resolves its size via subcomposition and does not support
 > intrinsic-measurement parents (`IntrinsicSize.Min`/`Max` will throw). Pass an explicit
 > `width`/`height` instead.
 
+## Rows
+
+`rows` decides how the wheel divides its height. Together with the height and the barrel angle it
+fixes the geometry of the drum, and you choose which quantity stays constant:
+
+```kotlin
+WheelDatePicker(rows = WheelRows.Count(5)) { }        // exactly five rows from rim to rim
+WheelDatePicker(rows = WheelRows.Height(32.dp)) { }   // 32.dp rows, as many as fit
+```
+
+- **`WheelRows.Count(n)`** (default `Count(3)`) shows exactly `n` rows on the drum from rim to
+  rim, the outermost foreshortened against the edge. The row height follows from the picker
+  height, so a taller picker gets taller rows, and the selector is sized to the centered row.
+- **`WheelRows.Height(h)`** keeps every row and the selector `h` tall whatever the picker height,
+  and shows as many rows as fit; the number is usually fractional, with the outermost rows cut off
+  at the rim exactly like a native iOS picker. Use it when you want the wheel to grow and shrink
+  with its container without the text changing size. iOS uses 32pt rows in a 216pt picker.
+
 ## Barrel projection
 
 Wheel rows are laid out on a vertical cylinder, giving the wheel the curved, drum-like appearance
-of a native picker. `rowCount` keeps its meaning: it is the number of rows visible on the drum
-from rim to rim, the outermost ones foreshortened against the edge.
+of a native picker.
 
 How strongly the drum bends is controlled by `rimAngle`, the rotation in degrees of the drum
 surface where it meets the top and bottom edges of the viewport. When you do not pass
-`barrelProperties`, the picker uses `WheelPickerDefaults.barrelPropertiesFor(rowCount)`, which
-adds 13° per row away from the center and caps at 70°: a 3-row wheel stays gently curved while a
-7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(rimAngle)`
+`barrelProperties`, the picker uses `WheelPickerDefaults.barrelPropertiesFor(rows)`. For
+`WheelRows.Count` that adds 13° per row away from the center and caps at 70°, so a 3-row wheel
+stays gently curved while a 7-row or taller wheel gets the full drum with every row readable. For
+`WheelRows.Height` it is the full 90°, since no row count is promised. Pass
+`WheelPickerDefaults.barrelProperties(rimAngle)`
 with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
 of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
 wheel with no projection at all. `fadeStrength`, in `[0, 1]`, scales how much rows dim as they turn toward
@@ -283,15 +304,17 @@ angle, so it has no effect on a flat wheel.
 ```kotlin
 WheelDateTimePicker(
   modifier = Modifier.height(240.dp),
-  rowCount = 11,
+  rows = WheelRows.Count(11),
   barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fadeStrength = 0.8f),
 ) { snappedDateTime -> }
 ```
 
-The picker always occupies exactly the height you give it (or the intrinsic default of `128.dp / 3`
-per row); the cylinder is sized to fit. Because the outer rows are compressed, the centered row
-gets more room than `height / rowCount`, and the selector is sized to match it. Sizing, snapping,
-and callbacks are unaffected by the angle. The same parameter is available on `WheelDatePicker`,
+The picker always occupies exactly the height you give it (or its intrinsic default); the
+cylinder is sized to fit. With `WheelRows.Count` the outer rows are compressed, so the centered
+row gets more room than `height / count` and the selector is sized to match it; with
+`WheelRows.Height` the row and selector height are fixed and the angle only changes how many rows
+are visible. Sizing, snapping, and callbacks are unaffected by the angle. The same parameter is
+available on `WheelDatePicker`,
 `WheelTimePicker`, and `WheelTextPicker`.
 
 ## API Reference
@@ -306,13 +329,13 @@ and callbacks are unaffected by the angle. The same parameter is available on `W
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default (256.dp × 128.dp at 3 rows). See [Sizing](#sizing) |
-| `rowCount` | `Int` | `3` | Number of visible rows on the drum, from rim to rim |
+| `rows` | `WheelRows` | `WheelRows.Count(3)` | Exact row count, or a fixed row height. See [Rows](#rows) |
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
 | `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |
 | `selectedTextColor` | `Color` | `textColor` | Text color for the selected (centered) item |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
-| `barrelProperties` | `BarrelProperties` | `WheelPickerDefaults.barrelPropertiesFor(rowCount)` | Rim angle and edge fade of the cylindrical row projection. See [Barrel projection](#barrel-projection) |
+| `barrelProperties` | `BarrelProperties` | `WheelPickerDefaults.barrelPropertiesFor(rows)` | Rim angle and edge fade of the cylindrical row projection. See [Barrel projection](#barrel-projection) |
 | `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
 | `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
 
@@ -348,7 +371,7 @@ and callbacks are unaffected by the angle. The same parameter is available on `W
 | `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 128.dp wide (narrower than date picker). See [Sizing](#sizing) |
-| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, barrelProperties, etc. |
+| Other params | - | Same as `WheelDatePicker` | rows, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, barrelProperties, etc. |
 
 **TimeFormat**:
 - `TimeFormat.HOUR_24` - 24-hour format (00:00 - 23:59)
@@ -367,7 +390,7 @@ and callbacks are unaffected by the angle. The same parameter is available on `W
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 256.dp × 128.dp at 3 rows. See [Sizing](#sizing) |
 | `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
 | `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
-| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, barrelProperties |
+| Other params | - | Same as `WheelDatePicker` | rows, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, barrelProperties |
 
 ### Styling the selected item
 

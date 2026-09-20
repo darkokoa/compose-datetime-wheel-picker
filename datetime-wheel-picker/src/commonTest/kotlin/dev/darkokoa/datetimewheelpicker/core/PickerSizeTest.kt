@@ -2,6 +2,7 @@ package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlin.test.Test
@@ -12,8 +13,8 @@ class PickerSizeTest {
 
   private val density = Density(1f)
 
-  private val dateDefault = pickerDefaultSize(defaultWidth = 256.dp, rowCount = 3)
-  private val timeDefault = pickerDefaultSize(defaultWidth = 128.dp, rowCount = 3)
+  private val dateDefault = pickerDefaultSize(defaultWidth = 256.dp, rows = WheelRows.Count(3))
+  private val timeDefault = pickerDefaultSize(defaultWidth = 128.dp, rows = WheelRows.Count(3))
 
   private fun resolve(constraints: Constraints, default: DpSize = dateDefault): DpSize =
     with(density) { resolvePickerSize(constraints, default) }
@@ -87,18 +88,25 @@ class PickerSizeTest {
 
   @Test
   fun defaultSizeAtThreeRowsIsExactly128Tall() {
-    assertEquals(128.dp, pickerDefaultSize(256.dp, 3).height)
+    assertEquals(128.dp, pickerDefaultSize(256.dp, WheelRows.Count(3)).height)
   }
 
   @Test
   fun defaultSizeScalesWithRowCount() {
-    assertEquals(DefaultWheelRowHeight * 5, pickerDefaultSize(256.dp, 5).height)
-    assertEquals(DefaultWheelRowHeight * 7, pickerDefaultSize(128.dp, 7).height)
+    assertEquals(DefaultWheelRowHeight * 5, pickerDefaultSize(256.dp, WheelRows.Count(5)).height)
+    assertEquals(DefaultWheelRowHeight * 7, pickerDefaultSize(128.dp, WheelRows.Count(7)).height)
   }
 
   @Test
-  fun nonPositiveRowCountFails() {
-    assertFailsWith<IllegalArgumentException> { pickerDefaultSize(256.dp, 0) }
-    assertFailsWith<IllegalArgumentException> { pickerDefaultSize(256.dp, -1) }
+  fun heightRowsDefaultToSevenRowsOfViewport() {
+    assertEquals(32.dp * 7, pickerDefaultSize(256.dp, WheelRows.Height(32.dp)).height)
+  }
+
+  @Test
+  fun invalidRowsFail() {
+    assertFailsWith<IllegalArgumentException> { WheelRows.Count(0) }
+    assertFailsWith<IllegalArgumentException> { WheelRows.Count(-1) }
+    assertFailsWith<IllegalArgumentException> { WheelRows.Height(0.dp) }
+    assertFailsWith<IllegalArgumentException> { WheelRows.Height(Dp.Infinity) }
   }
 }

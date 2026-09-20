@@ -27,7 +27,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalTestApi::class)
 class WheelPickerCallbackTest {
 
-  // viewportSize height 300.dp with rowCount 3 => each item is exactly 100.dp tall.
+  // viewportSize height 300.dp with 3 rows and a flat wheel => each item is exactly 100.dp tall.
   private val viewportSize = DpSize(120.dp, 300.dp)
   private val itemHeight = 100.dp
 
@@ -38,7 +38,7 @@ class WheelPickerCallbackTest {
     setContent {
       WheelPicker(
         count = 10,
-        rowCount = 3,
+        rows = WheelRows.Count(3),
         startIndex = 5,
         viewportSize = viewportSize,
         onScrollChanged = { changed += it },
@@ -59,7 +59,7 @@ class WheelPickerCallbackTest {
       WheelPicker(
         modifier = Modifier.testTag("wheel"),
         count = 10,
-        rowCount = 3,
+        rows = WheelRows.Count(3),
         startIndex = 5,
         viewportSize = viewportSize,
         onScrollChanged = { changed += it },
@@ -80,7 +80,7 @@ class WheelPickerCallbackTest {
       WheelPicker(
         modifier = Modifier.testTag("wheel"),
         count = 31,
-        rowCount = 3,
+        rows = WheelRows.Count(3),
         startIndex = 29,
         viewportSize = viewportSize,
         // Simulates a date picker correction, e.g. Jan 31 -> Feb snapping back to day 28.
@@ -100,7 +100,7 @@ class WheelPickerCallbackTest {
       WheelPicker(
         modifier = Modifier.testTag("wheel"),
         count = 10,
-        rowCount = 3,
+        rows = WheelRows.Count(3),
         startIndex = 5,
         viewportSize = viewportSize,
         onScrollFinished = { finished += it; it },
@@ -120,7 +120,7 @@ class WheelPickerCallbackTest {
       WheelPicker(
         modifier = Modifier.testTag("wheel"),
         count = 10,
-        rowCount = 3,
+        rows = WheelRows.Count(3),
         startIndex = 5,
         viewportSize = viewportSize,
         barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 70f),
@@ -141,7 +141,7 @@ class WheelPickerCallbackTest {
     setContent {
       WheelPicker(
         count = 10,
-        rowCount = 3,
+        rows = WheelRows.Count(3),
         startIndex = 5,
         viewportSize = viewportSize,
         barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 70f),
@@ -158,6 +158,31 @@ class WheelPickerCallbackTest {
     assertTrue(below.height < center.height, "row below should be foreshortened: $below vs $center")
     assertEquals(above.height.value, below.height.value, absoluteTolerance = 0.01f, "projection must be symmetric: $above vs $below")
     assertTrue(above.top >= 0.dp && below.bottom <= viewportSize.height, "rows must stay on the drum")
+  }
+
+  @Test
+  fun heightRowsSnapByRowHeightNotViewport() = runComposeUiTest {
+    val changed = mutableListOf<Int>()
+    val finished = mutableListOf<Int>()
+    setContent {
+      WheelPicker(
+        modifier = Modifier.testTag("wheel"),
+        count = 10,
+        // 100.dp rows in a 300.dp flat viewport: geometrically identical to Count(3) at 0°.
+        rows = WheelRows.Height(itemHeight),
+        startIndex = 5,
+        viewportSize = viewportSize,
+        barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 0f),
+        onScrollChanged = { changed += it },
+        onScrollFinished = { finished += it; null },
+      ) { index, _ -> Text("item-$index") }
+    }
+    onNodeWithText("item-5").assertIsDisplayed()
+    onNodeWithTag("wheel").performTouchInput { swipeUpOneItem() }
+    waitForIdle()
+    assertEquals(listOf(6), changed)
+    assertEquals(listOf(6), finished)
+    onNodeWithText("item-6").assertIsDisplayed()
   }
 
   /**

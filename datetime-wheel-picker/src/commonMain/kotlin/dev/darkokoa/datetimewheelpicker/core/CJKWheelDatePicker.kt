@@ -37,13 +37,13 @@ internal fun CJKWheelDatePicker(
     cjkSuffixConfig = CjkSuffixConfig.ShowAll
   ),
   viewportSize: DpSize = DpSize(256.dp, 128.dp),
-  rowCount: Int = 3,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
@@ -75,7 +75,7 @@ internal fun CJKWheelDatePicker(
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     WheelSelector(
       width = viewportSize.width,
-      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      height = rows.rowHeight(viewportSize.height, barrelProperties),
       properties = selectorProperties,
     )
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(viewportSize.width)) {
@@ -91,7 +91,7 @@ internal fun CJKWheelDatePicker(
               texts = dayOfMonths.map { it.text },
               suffix = if (dateFormatter.cjkSuffixConfig.showDaySuffix) strings.daySuffix else "",
               textToSuffixSpacing = dateFormatter.cjkSuffixConfig.daySuffixSpacing,
-              rowCount = rowCount,
+              rows = rows,
               textStyle = textStyle,
               textColor = textColor,
               selectedTextStyle = selectedTextStyle,
@@ -145,7 +145,7 @@ internal fun CJKWheelDatePicker(
               texts = months.map { it.text },
               suffix = if (dateFormatter.cjkSuffixConfig.showMonthSuffix) strings.monthSuffix else "",
               textToSuffixSpacing = dateFormatter.cjkSuffixConfig.monthSuffixSpacing,
-              rowCount = rowCount,
+              rows = rows,
               textStyle = textStyle,
               textColor = textColor,
               selectedTextStyle = selectedTextStyle,
@@ -199,7 +199,7 @@ internal fun CJKWheelDatePicker(
                 texts = years.map { it.text },
                 suffix = if (dateFormatter.cjkSuffixConfig.showYearSuffix) strings.yearSuffix else "",
                 textToSuffixSpacing = dateFormatter.cjkSuffixConfig.yearSuffixSpacing,
-                rowCount = rowCount,
+                rows = rows,
                 textStyle = textStyle,
                 textColor = textColor,
                 selectedTextStyle = selectedTextStyle,

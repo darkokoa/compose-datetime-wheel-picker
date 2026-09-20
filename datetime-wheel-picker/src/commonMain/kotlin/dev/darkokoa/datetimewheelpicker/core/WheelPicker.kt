@@ -31,15 +31,14 @@ internal fun WheelPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   count: Int,
-  rowCount: Int,
+  rows: WheelRows,
   viewportSize: DpSize = DpSize(128.dp, 128.dp),
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int, isSelected: Boolean) -> Unit,
 ) {
-  require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
   require(viewportSize.height.isFinite && viewportSize.height > 0.dp) {
     "viewportSize.height must be finite and positive, was ${viewportSize.height}"
   }
@@ -54,7 +53,7 @@ internal fun WheelPicker(
   // The flat list is the unrolled surface of the drum: longer than the viewport, with each row
   // taking the arc length it occupies on the cylinder. The projection folds it back into the
   // viewport and the clip discards whatever is left over.
-  val rowHeight = barrelProperties.rowHeight(viewportSize.height, rowCount)
+  val rowHeight = rows.rowHeight(viewportSize.height, barrelProperties)
   val listHeight = barrelProperties.listHeight(viewportSize.height)
   val singleViewPortHeightPx = remember(rowHeight, density) {
     with(density) { rowHeight.toPx() }
@@ -88,7 +87,8 @@ internal fun WheelPicker(
       }
   }
 
-  val contentPadding = (listHeight - rowHeight) / 2
+  // A Height row taller than the whole drum still needs a non-negative padding to center on.
+  val contentPadding = ((listHeight - rowHeight) / 2).coerceAtLeast(0.dp)
 
   Box(
     modifier = modifier.size(viewportSize).clipToBounds(),
@@ -149,11 +149,10 @@ object WheelPickerDefaults {
   /**
    * Creates a [BarrelProperties] describing the cylindrical projection of wheel rows.
    *
-   * The picker's `rowCount` rows span the visible drum from rim to rim and [rimAngle] is the
-   * rotation, in degrees, of the drum surface at the viewport edges, in `[0, 90]`. `90` matches
-   * a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor] to let the angle follow
-   * the row count instead. [fadeStrength], in `[0, 1]`, scales how much rows dim as they turn
-   * toward the rim. See [BarrelProperties].
+   * [rimAngle] is the rotation, in degrees, of the drum surface at the viewport edges, in
+   * `[0, 90]`. `90` matches a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor]
+   * to let the angle follow the picker's [WheelRows] instead. [fadeStrength], in `[0, 1]`, scales
+   * how much rows dim as they turn toward the rim. See [BarrelProperties].
    */
   fun barrelProperties(
     rimAngle: Float,
@@ -161,16 +160,20 @@ object WheelPickerDefaults {
   ): BarrelProperties = BarrelProperties(rimAngle = rimAngle, fadeStrength = fadeStrength)
 
   /**
-   * The [BarrelProperties] a picker uses when none is passed: a rim angle suited to [rowCount].
+   * The [BarrelProperties] a picker uses when none is passed: a rim angle suited to [rows].
    *
-   * Each row away from the center adds 13 degrees, so a 3-row wheel stays gently curved at 26°
-   * while 7-row or taller wheels reach the 70° cap, at which point every row is still readable.
+   * For [WheelRows.Count], each row away from the center adds 13 degrees, so a 3-row wheel stays
+   * gently curved at 26° while 7-row or taller wheels reach the 70° cap, at which point every row
+   * is still readable. [WheelRows.Height] wheels do not promise a row count, so they use the full
+   * 90° half cylinder of a native iOS picker.
    */
-  fun barrelPropertiesFor(rowCount: Int): BarrelProperties {
-    require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
-    val rimAngle = (AUTO_RIM_DEGREES_PER_ROW * (rowCount - 1))
-      .coerceIn(AUTO_RIM_DEGREES_PER_ROW, MAX_AUTO_RIM_ANGLE)
-    return BarrelProperties(rimAngle = rimAngle, fadeStrength = DEFAULT_BARREL_FADE)
+  fun barrelPropertiesFor(rows: WheelRows): BarrelProperties = when (rows) {
+    is WheelRows.Count -> BarrelProperties(
+      rimAngle = (AUTO_RIM_DEGREES_PER_ROW * (rows.count - 1))
+        .coerceIn(AUTO_RIM_DEGREES_PER_ROW, MAX_AUTO_RIM_ANGLE),
+      fadeStrength = DEFAULT_BARREL_FADE,
+    )
+    is WheelRows.Height -> BarrelProperties(rimAngle = 90f, fadeStrength = DEFAULT_BARREL_FADE)
   }
 
   @Composable
