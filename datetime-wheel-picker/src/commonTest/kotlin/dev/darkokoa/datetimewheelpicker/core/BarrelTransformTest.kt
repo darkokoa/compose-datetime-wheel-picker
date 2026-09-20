@@ -42,6 +42,44 @@ class BarrelTransformTest {
   }
 
   @Test
+  fun fadeIsValidatedAndDefaultsToFull() {
+    assertEquals(1f, WheelPickerDefaults.barrelProperties(maxAngle = 45f).fade)
+    assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(5).fade)
+    assertEquals(0.4f, WheelPickerDefaults.barrelProperties(maxAngle = 45f, fade = 0.4f).fade)
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fade = -0.1f) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fade = 1.1f) }
+  }
+
+  @Test
+  fun fadeBlendsBetweenOpaqueAndCosineSquared() {
+    val angle = 60f
+    val cos2 = cos(angle / 180f * PI).toFloat().let { it * it }
+    fun alphaAt(fade: Float) = calculateBarrelTransform(
+      // At maxAngle 90 the radius is half the viewport, so an arc of R·θ lands at angle θ.
+      distanceToCenterPx = 120f * (angle / 180f * PI).toFloat(),
+      viewportHeightPx = 240f,
+      maxAngle = 90f,
+      fade = fade,
+    ).alpha
+
+    assertEquals(cos2, alphaAt(1f), absoluteTolerance = 0.0001f)
+    assertEquals(1f, alphaAt(0f), absoluteTolerance = 0.0001f)
+    assertEquals(1f - 0.5f * (1f - cos2), alphaAt(0.5f), absoluteTolerance = 0.0001f)
+  }
+
+  @Test
+  fun rowsBehindTheRimStayHiddenRegardlessOfFade() {
+    val transform = calculateBarrelTransform(
+      distanceToCenterPx = 240f,
+      viewportHeightPx = 240f,
+      maxAngle = 90f,
+      fade = 0f,
+    )
+
+    assertEquals(0f, transform.alpha)
+  }
+
+  @Test
   fun propertiesUseValueEquality() {
     val a = WheelPickerDefaults.barrelProperties(maxAngle = 60f)
     val b = WheelPickerDefaults.barrelProperties(maxAngle = 60f)
@@ -49,6 +87,7 @@ class BarrelTransformTest {
     assertEquals(a, b)
     assertEquals(a.hashCode(), b.hashCode())
     assertNotEquals(a, a.copy(maxAngle = 30f))
+    assertNotEquals(a, a.copy(fade = 0.5f))
     assertEquals(WheelPickerDefaults.barrelPropertiesFor(3), a.copy(maxAngle = 26f))
   }
 

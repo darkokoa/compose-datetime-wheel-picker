@@ -14,7 +14,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
@@ -120,9 +119,6 @@ internal fun WheelPicker(
             .height(rowHeight)
             .width(viewportSize.width)
             .graphicsLayer {
-              // Each row draws a single, non-overlapping piece of content, so alpha can be
-              // modulated per draw call instead of compositing through an offscreen buffer.
-              compositingStrategy = CompositingStrategy.ModulateAlpha
               val centerIndex = lazyListState.firstVisibleItemIndex
               val centerIndexOffset = lazyListState.firstVisibleItemScrollOffset
               val distanceToCenterIndex = index - centerIndex
@@ -131,6 +127,7 @@ internal fun WheelPicker(
                 distanceToCenterPx = distanceToIndexSnap,
                 viewportHeightPx = viewportHeightPx,
                 maxAngle = barrelProperties.maxAngle,
+                fade = barrelProperties.fade,
               )
               alpha = transform.alpha
               rotationX = transform.rotationX
@@ -168,9 +165,13 @@ object WheelPickerDefaults {
    * The picker's `rowCount` rows span the visible drum from rim to rim and [maxAngle] is the
    * rotation, in degrees, of the drum surface at the viewport edges, in `[0, 90]`. `90` matches
    * a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor] to let the angle follow
-   * the row count instead. See [BarrelProperties].
+   * the row count instead. [fade], in `[0, 1]`, scales how much rows dim as they turn toward the
+   * rim. See [BarrelProperties].
    */
-  fun barrelProperties(maxAngle: Float): BarrelProperties = BarrelProperties(maxAngle = maxAngle)
+  fun barrelProperties(
+    maxAngle: Float,
+    fade: Float = DEFAULT_BARREL_FADE,
+  ): BarrelProperties = BarrelProperties(maxAngle = maxAngle, fade = fade)
 
   /**
    * The [BarrelProperties] a picker uses when none is passed: a rim angle suited to [rowCount].
@@ -182,7 +183,7 @@ object WheelPickerDefaults {
     require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
     val maxAngle = (AUTO_BARREL_DEGREES_PER_ROW * (rowCount - 1))
       .coerceIn(AUTO_BARREL_DEGREES_PER_ROW, MAX_AUTO_BARREL_ANGLE)
-    return BarrelProperties(maxAngle = maxAngle)
+    return BarrelProperties(maxAngle = maxAngle, fade = DEFAULT_BARREL_FADE)
   }
 
   @Composable

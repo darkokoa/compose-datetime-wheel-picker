@@ -10,6 +10,9 @@ import kotlin.math.sin
 /** Maximum rim angle the automatic default ever picks; larger values start hiding rows behind the rim. */
 internal const val MAX_AUTO_BARREL_ANGLE = 70f
 
+/** Fade applied unless the caller asks otherwise: the full `cos²` falloff. */
+internal const val DEFAULT_BARREL_FADE = 1f
+
 /** Degrees of drum surface the automatic default gives each row away from the center. */
 internal const val AUTO_BARREL_DEGREES_PER_ROW = 13f
 
@@ -38,28 +41,38 @@ private const val HALF_PI = (PI / 2).toFloat()
  * edges of the viewport. Must be in `[0, 90]`. Larger values bend the wheel more and compress the
  * outer rows harder; `90` shows the full half cylinder, matching a native iOS picker, and `0`
  * disables the projection entirely for a flat, evenly spaced wheel.
+ * @property fade How strongly rows fade as they turn away from the viewer, in `[0, 1]`. At `1` a
+ * row's alpha is `cos²` of its angle on the drum, so rim rows all but disappear; at `0` every row
+ * stays fully opaque and only the geometry conveys depth. Values in between blend linearly.
  */
 @Immutable
 class BarrelProperties internal constructor(
   val maxAngle: Float,
+  val fade: Float,
 ) {
   init {
     require(maxAngle >= 0f && maxAngle <= 90f) {
       "maxAngle must be in [0, 90], was $maxAngle"
     }
+    require(fade >= 0f && fade <= 1f) {
+      "fade must be in [0, 1], was $fade"
+    }
   }
 
-  fun copy(maxAngle: Float = this.maxAngle): BarrelProperties = BarrelProperties(maxAngle = maxAngle)
+  fun copy(
+    maxAngle: Float = this.maxAngle,
+    fade: Float = this.fade,
+  ): BarrelProperties = BarrelProperties(maxAngle = maxAngle, fade = fade)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is BarrelProperties) return false
-    return maxAngle == other.maxAngle
+    return maxAngle == other.maxAngle && fade == other.fade
   }
 
-  override fun hashCode(): Int = maxAngle.hashCode()
+  override fun hashCode(): Int = 31 * maxAngle.hashCode() + fade.hashCode()
 
-  override fun toString(): String = "BarrelProperties(maxAngle=$maxAngle)"
+  override fun toString(): String = "BarrelProperties(maxAngle=$maxAngle, fade=$fade)"
 }
 
 /**
@@ -109,19 +122,21 @@ internal class BarrelTransform(
  * length, so the row's angle is simply `distance / radius`, where the radius is chosen so that
  * a row rotated by [maxAngle] lands exactly on the viewport edge. The displayed Y position follows
  * the cylinder's sine curve, the row plane is rotated tangent to the cylinder, and its depth is
- * conveyed by perspective scaling. Alpha follows `cos²` of the angle: near rows stay crisp, rim
- * rows dim quickly, and anything behind the rim is fully transparent.
+ * conveyed by perspective scaling. Alpha blends between opaque and `cos²` of the angle by [fade]:
+ * at full fade near rows stay crisp, rim rows dim quickly, and anything behind the rim is fully
+ * transparent whatever the fade.
  *
  * A [maxAngle] of `0` is a flat wheel: every row is returned untouched.
  *
- * Inputs are expected to be validated by the caller: [viewportHeightPx] positive and [maxAngle]
- * in `[0, 90]` (see [BarrelProperties]). This function runs every frame for every visible row, so
- * it deliberately performs no validation.
+ * Inputs are expected to be validated by the caller: [viewportHeightPx] positive, [maxAngle] in
+ * `[0, 90]` and [fade] in `[0, 1]` (see [BarrelProperties]). This function runs every frame for
+ * every visible row, so it deliberately performs no validation.
  */
 internal fun calculateBarrelTransform(
   distanceToCenterPx: Float,
   viewportHeightPx: Float,
   maxAngle: Float,
+  fade: Float = 1f,
 ): BarrelTransform {
   val cameraDistance = viewportHeightPx * CAMERA_DISTANCE_MULTIPLIER
   if (maxAngle == 0f) {
@@ -152,7 +167,7 @@ internal fun calculateBarrelTransform(
   val depth = radius * (1f - cosAngle)
 
   return BarrelTransform(
-    alpha = cosAngle * cosAngle,
+    alpha = 1f - fade * (1f - cosAngle * cosAngle),
     rotationX = -angleRadians.toDegrees(),
     translationY = projectedDistance - distanceToCenterPx,
     scale = cameraDistance / (cameraDistance + depth),

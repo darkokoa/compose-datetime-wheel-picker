@@ -276,13 +276,14 @@ adds 13° per row away from the center and caps at 70°: a 3-row wheel stays gen
 7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(maxAngle)`
 with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
 of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
-wheel with no projection at all.
+wheel with no projection at all. `fade`, in `[0, 1]`, scales how much rows dim as they turn toward
+the rim: `1` (default) is a `cos²` falloff, `0` keeps every row opaque.
 
 ```kotlin
 WheelDateTimePicker(
   modifier = Modifier.height(240.dp),
   rowCount = 11,
-  barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 90f),
+  barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 90f, fade = 0.8f),
 ) { snappedDateTime -> }
 ```
 
@@ -310,7 +311,7 @@ and callbacks are unaffected by the angle. The same parameter is available on `W
 | `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |
 | `selectedTextColor` | `Color` | `textColor` | Text color for the selected (centered) item |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
-| `barrelProperties` | `BarrelProperties` | `WheelPickerDefaults.barrelPropertiesFor(rowCount)` | Rim angle of the cylindrical row projection. See [Barrel projection](#barrel-projection) |
+| `barrelProperties` | `BarrelProperties` | `WheelPickerDefaults.barrelPropertiesFor(rowCount)` | Rim angle and edge fade of the cylindrical row projection. See [Barrel projection](#barrel-projection) |
 | `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
 | `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
 
