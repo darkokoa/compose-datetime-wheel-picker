@@ -51,7 +51,7 @@ fun WheelTimePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onSnappedTimeChanged: (snappedTime: LocalTime) -> Unit = {},
   onSnappedTime: (snappedTime: LocalTime) -> Unit = {},
 ) {

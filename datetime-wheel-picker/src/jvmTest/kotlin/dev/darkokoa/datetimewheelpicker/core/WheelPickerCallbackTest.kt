@@ -121,7 +121,7 @@ class WheelPickerCallbackTest {
         rowCount = 3,
         startIndex = 5,
         viewportSize = viewportSize,
-        barrelProperties = WheelPickerDefaults.barrelProperties(enabled = true),
+        barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 70f),
         onScrollChanged = { changed += it },
         onScrollFinished = { finished += it; null },
       ) { index, _ -> Text("item-$index") }

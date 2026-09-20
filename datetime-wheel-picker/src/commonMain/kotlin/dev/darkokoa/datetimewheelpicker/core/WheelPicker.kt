@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isFinite
-import kotlin.math.abs
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -35,7 +34,7 @@ internal fun WheelPicker(
   rowCount: Int,
   viewportSize: DpSize = DpSize(128.dp, 128.dp),
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
   content: @Composable LazyItemScope.(index: Int, isSelected: Boolean) -> Unit,
@@ -52,9 +51,9 @@ internal fun WheelPicker(
   val viewportHeightPx = remember(viewportSize, density) {
     with(density) { viewportSize.height.toPx() }
   }
-  // In barrel mode the flat list is the unrolled surface of the drum: longer than the viewport,
-  // with each row taking the arc length it occupies on the cylinder. The projection folds it back
-  // into the viewport and the clip discards whatever is left over.
+  // The flat list is the unrolled surface of the drum: longer than the viewport, with each row
+  // taking the arc length it occupies on the cylinder. The projection folds it back into the
+  // viewport and the clip discards whatever is left over.
   val rowHeight = barrelProperties.rowHeight(viewportSize.height, rowCount)
   val listHeight = barrelProperties.listHeight(viewportSize.height)
   val singleViewPortHeightPx = remember(rowHeight, density) {
@@ -89,21 +88,10 @@ internal fun WheelPicker(
       }
   }
 
-  val contentPadding = if (barrelProperties.enabled) {
-    (listHeight - rowHeight) / 2
-  } else {
-    rowHeight * ((rowCount - 1) / 2)
-  }
+  val contentPadding = (listHeight - rowHeight) / 2
 
   Box(
-    modifier = modifier
-      .then(
-        if (barrelProperties.enabled) {
-          Modifier.size(viewportSize).clipToBounds()
-        } else {
-          Modifier
-        }
-      ),
+    modifier = modifier.size(viewportSize).clipToBounds(),
     contentAlignment = Alignment.Center
   ) {
     if (selectorProperties.enabled().value) {
@@ -139,24 +127,17 @@ internal fun WheelPicker(
               val centerIndexOffset = lazyListState.firstVisibleItemScrollOffset
               val distanceToCenterIndex = index - centerIndex
               val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeightPx - centerIndexOffset
-              if (barrelProperties.enabled) {
-                val transform = calculateBarrelTransform(
-                  distanceToCenterPx = distanceToIndexSnap,
-                  viewportHeightPx = viewportHeightPx,
-                  maxAngle = barrelProperties.maxAngle,
-                )
-                alpha = transform.alpha
-                rotationX = transform.rotationX
-                translationY = transform.translationY
-                scaleX = transform.scale
-                scaleY = transform.scale
-                cameraDistance = transform.cameraDistance
-              } else {
-                val distanceToIndexSnapAbs = abs(distanceToIndexSnap)
-                alpha = if (distanceToIndexSnapAbs <= singleViewPortHeightPx)
-                  1.2f - (distanceToIndexSnapAbs / singleViewPortHeightPx) else 0.2f
-                rotationX = -20f * (distanceToIndexSnap / singleViewPortHeightPx)
-              }
+              val transform = calculateBarrelTransform(
+                distanceToCenterPx = distanceToIndexSnap,
+                viewportHeightPx = viewportHeightPx,
+                maxAngle = barrelProperties.maxAngle,
+              )
+              alpha = transform.alpha
+              rotationX = transform.rotationX
+              translationY = transform.translationY
+              scaleX = transform.scale
+              scaleY = transform.scale
+              cameraDistance = transform.cameraDistance
             },
           contentAlignment = Alignment.Center
         ) {
@@ -182,20 +163,27 @@ private fun calculateSnappedItemIndex(lazyListState: LazyListState): Int {
 
 object WheelPickerDefaults {
   /**
-   * Creates a [BarrelProperties] describing the optional cylindrical projection of wheel rows.
+   * Creates a [BarrelProperties] describing the cylindrical projection of wheel rows.
    *
-   * Barrel projection is disabled by default so existing callers keep the original flat wheel.
-   * When enabled, the picker's `rowCount` rows span the visible drum from rim to rim and
-   * [maxAngle] is the rotation, in degrees, of the drum surface at the viewport edges; it must be
-   * in `(0, 90]`. See [BarrelProperties].
+   * The picker's `rowCount` rows span the visible drum from rim to rim and [maxAngle] is the
+   * rotation, in degrees, of the drum surface at the viewport edges, in `[0, 90]`. `90` matches
+   * a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor] to let the angle follow
+   * the row count instead. See [BarrelProperties].
    */
-  fun barrelProperties(
-    enabled: Boolean = false,
-    maxAngle: Float = DEFAULT_BARREL_MAX_ANGLE,
-  ): BarrelProperties = BarrelProperties(
-    enabled = enabled,
-    maxAngle = maxAngle,
-  )
+  fun barrelProperties(maxAngle: Float): BarrelProperties = BarrelProperties(maxAngle = maxAngle)
+
+  /**
+   * The [BarrelProperties] a picker uses when none is passed: a rim angle suited to [rowCount].
+   *
+   * Each row away from the center adds 13 degrees, so a 3-row wheel stays gently curved at 26°
+   * while 7-row or taller wheels reach the 70° cap, at which point every row is still readable.
+   */
+  fun barrelPropertiesFor(rowCount: Int): BarrelProperties {
+    require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
+    val maxAngle = (AUTO_BARREL_DEGREES_PER_ROW * (rowCount - 1))
+      .coerceIn(AUTO_BARREL_DEGREES_PER_ROW, MAX_AUTO_BARREL_ANGLE)
+    return BarrelProperties(maxAngle = maxAngle)
+  }
 
   @Composable
   fun selectorProperties(

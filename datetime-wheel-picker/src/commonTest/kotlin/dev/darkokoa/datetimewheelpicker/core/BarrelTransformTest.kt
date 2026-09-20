@@ -8,7 +8,6 @@ import kotlin.math.sin
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -17,24 +16,25 @@ class BarrelTransformTest {
   private val rad70 = (70.0 * PI / 180).toFloat()
 
   @Test
-  fun barrelProjectionIsDisabledByDefault() {
-    val properties = WheelPickerDefaults.barrelProperties()
-
-    assertFalse(properties.enabled)
-    assertEquals(70f, properties.maxAngle)
+  fun defaultAngleFollowsRowCount() {
+    assertEquals(13f, WheelPickerDefaults.barrelPropertiesFor(1).maxAngle)
+    assertEquals(26f, WheelPickerDefaults.barrelPropertiesFor(3).maxAngle)
+    assertEquals(52f, WheelPickerDefaults.barrelPropertiesFor(5).maxAngle)
+    assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(7).maxAngle)
+    assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(11).maxAngle)
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelPropertiesFor(0) }
   }
 
   @Test
   fun maxAngleIsValidatedOnConstruction() {
-    val properties = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 45f)
-
-    assertTrue(properties.enabled)
-    assertEquals(45f, properties.maxAngle)
+    assertEquals(45f, WheelPickerDefaults.barrelProperties(maxAngle = 45f).maxAngle)
+    assertEquals(0f, WheelPickerDefaults.barrelProperties(maxAngle = 0f).maxAngle)
+    assertEquals(90f, WheelPickerDefaults.barrelProperties(maxAngle = 90f).maxAngle)
     assertFailsWith<IllegalArgumentException> {
-      WheelPickerDefaults.barrelProperties(maxAngle = 0f)
+      WheelPickerDefaults.barrelProperties(maxAngle = -0.1f)
     }
     assertFailsWith<IllegalArgumentException> {
-      WheelPickerDefaults.barrelProperties(maxAngle = 91f)
+      WheelPickerDefaults.barrelProperties(maxAngle = 90.1f)
     }
     assertFailsWith<IllegalArgumentException> {
       WheelPickerDefaults.barrelProperties(maxAngle = 45f).copy(maxAngle = -1f)
@@ -43,27 +43,33 @@ class BarrelTransformTest {
 
   @Test
   fun propertiesUseValueEquality() {
-    val a = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 60f)
-    val b = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 60f)
+    val a = WheelPickerDefaults.barrelProperties(maxAngle = 60f)
+    val b = WheelPickerDefaults.barrelProperties(maxAngle = 60f)
 
     assertEquals(a, b)
     assertEquals(a.hashCode(), b.hashCode())
-    assertNotEquals(a, a.copy(enabled = false))
     assertNotEquals(a, a.copy(maxAngle = 30f))
+    assertEquals(WheelPickerDefaults.barrelPropertiesFor(3), a.copy(maxAngle = 26f))
   }
 
   @Test
   fun flatWheelKeepsViewportGeometry() {
-    val flat = WheelPickerDefaults.barrelProperties()
+    val flat = WheelPickerDefaults.barrelProperties(maxAngle = 0f)
 
     assertEquals(1f, flat.arcLengthRatio)
     assertEquals(240.dp, flat.listHeight(240.dp))
     assertEquals(240.dp / 7, flat.rowHeight(240.dp, 7))
+
+    val transform = calculateBarrelTransform(distanceToCenterPx = 100f, viewportHeightPx = 240f, maxAngle = 0f)
+    assertEquals(1f, transform.alpha)
+    assertEquals(0f, transform.rotationX)
+    assertEquals(0f, transform.translationY)
+    assertEquals(1f, transform.scale)
   }
 
   @Test
-  fun barrelListIsTheUnrolledDrumSurface() {
-    val barrel = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 70f)
+  fun listIsTheUnrolledDrumSurface() {
+    val barrel = WheelPickerDefaults.barrelProperties(maxAngle = 70f)
     val expectedRatio = rad70 / sin(rad70)
 
     assertEquals(expectedRatio, barrel.arcLengthRatio, absoluteTolerance = 0.0001f)
@@ -73,19 +79,19 @@ class BarrelTransformTest {
   }
 
   @Test
-  fun defaultSizeIsIndependentOfBarrelProjection() {
-    val barrel = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 70f)
+  fun defaultSizeIsIndependentOfBarrelAngle() {
     val size = pickerDefaultSize(256.dp, 11)
 
-    // Same viewport as the flat wheel; the drum gives the centered row more than the flat row height.
+    // Same viewport whatever the angle; the drum gives the centered row more than the flat row height.
     assertEquals(DefaultWheelRowHeight * 11, size.height)
-    assertTrue(barrel.rowHeight(size.height, 11) > DefaultWheelRowHeight)
+    assertTrue(WheelPickerDefaults.barrelPropertiesFor(11).rowHeight(size.height, 11) > DefaultWheelRowHeight)
+    assertEquals(DefaultWheelRowHeight, WheelPickerDefaults.barrelProperties(maxAngle = 0f).rowHeight(size.height, 11))
   }
 
   @Test
   fun rowsSpanTheDrumFromRimToRim() {
     // Eleven rows in a 240px viewport: the outermost row center sits just inside the rim.
-    val barrel = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 70f)
+    val barrel = WheelPickerDefaults.barrelProperties(maxAngle = 70f)
     val rowHeightPx = 240f * barrel.arcLengthRatio / 11
 
     val outer = calculateBarrelTransform(
@@ -122,7 +128,7 @@ class BarrelTransformTest {
 
   @Test
   fun rowsRotateAndCompressTowardTheRim() {
-    val barrel = WheelPickerDefaults.barrelProperties(enabled = true, maxAngle = 70f)
+    val barrel = WheelPickerDefaults.barrelProperties(maxAngle = 70f)
     val rowHeightPx = 240f * barrel.arcLengthRatio / 11
     val transform = calculateBarrelTransform(
       distanceToCenterPx = rowHeightPx,

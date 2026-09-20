@@ -38,7 +38,7 @@ Arabic (العربية), Bengali (বাংলা), Chinese (中文), Czech (Če
 ### 🎨 Visual Customization
 - Modifier-driven responsive sizing, configurable row count, inactive and selected text styles, and colors
 - Customizable selector appearance (shape, color, border)
-- Optional barrel projection for an iOS-style cylindrical drum look
+- Cylindrical barrel projection with a configurable rim angle
 - Material Design integration
 
 ### ⏰ Time Picker Features
@@ -265,33 +265,32 @@ explicitly with `Modifier.height(128.dp)`.
 
 ## Barrel projection
 
-By default the wheel is flat: rows tilt slightly and fade as they move away from the center.
-Enable `barrelProperties` to lay the rows out on a vertical cylinder instead, giving the wheel the
-curved, drum-like appearance of a native iOS picker.
+Wheel rows are laid out on a vertical cylinder, giving the wheel the curved, drum-like appearance
+of a native picker. `rowCount` keeps its meaning: it is the number of rows visible on the drum
+from rim to rim, the outermost ones foreshortened against the edge.
+
+How strongly the drum bends is controlled by `maxAngle`, the rotation in degrees of the drum
+surface where it meets the top and bottom edges of the viewport. When you do not pass
+`barrelProperties`, the picker uses `WheelPickerDefaults.barrelPropertiesFor(rowCount)`, which
+adds 13° per row away from the center and caps at 70°: a 3-row wheel stays gently curved while a
+7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(maxAngle)`
+with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
+of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
+wheel with no projection at all.
 
 ```kotlin
 WheelDateTimePicker(
   modifier = Modifier.height(240.dp),
   rowCount = 11,
-  barrelProperties = WheelPickerDefaults.barrelProperties(
-    enabled = true,
-    maxAngle = 70f, // default
-  ),
+  barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 90f),
 ) { snappedDateTime -> }
 ```
 
-`rowCount` keeps its meaning: it is the number of rows visible on the drum from rim to rim, the
-outermost ones foreshortened against the edge. `maxAngle` is the rotation, in degrees, of the drum
-surface where it meets the top and bottom edges of the viewport; it must be in `(0, 90]`, and
-larger values bend the wheel more. A native iOS picker shows roughly eleven rows, so that is a
-good starting point.
-
-The picker always occupies exactly the height you give it; the cylinder is sized to fit. Because
-the outer rows are compressed, the centered rows of a barrel get more room than the same
-`rowCount` would on a flat wheel, and the intrinsic default height (used when you do not
-constrain the height) is correspondingly shorter. Sizing, snapping, and callbacks otherwise behave
-exactly as in flat mode. The same parameter is available on `WheelDatePicker`, `WheelTimePicker`,
-and `WheelTextPicker`.
+The picker always occupies exactly the height you give it (or the intrinsic default of 42.67.dp
+per row); the cylinder is sized to fit. Because the outer rows are compressed, the centered row
+gets more room than `height / rowCount`, and the selector is sized to match it. Sizing, snapping,
+and callbacks are unaffected by the angle. The same parameter is available on `WheelDatePicker`,
+`WheelTimePicker`, and `WheelTextPicker`.
 
 ## API Reference
 
@@ -305,13 +304,13 @@ and `WheelTextPicker`.
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default (256.dp × 128.dp at 3 rows). See [Sizing](#sizing) |
-| `rowCount` | `Int` | `3` | Number of visible rows in the wheel (on the drum, from rim to rim, when barrel projection is enabled) |
+| `rowCount` | `Int` | `3` | Number of visible rows on the drum, from rim to rim |
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
 | `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |
 | `selectedTextColor` | `Color` | `textColor` | Text color for the selected (centered) item |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
-| `barrelProperties` | `BarrelProperties` | Disabled | Optional cylindrical row projection and its rim angle. See [Barrel projection](#barrel-projection) |
+| `barrelProperties` | `BarrelProperties` | `WheelPickerDefaults.barrelPropertiesFor(rowCount)` | Rim angle of the cylindrical row projection. See [Barrel projection](#barrel-projection) |
 | `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
 | `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
 

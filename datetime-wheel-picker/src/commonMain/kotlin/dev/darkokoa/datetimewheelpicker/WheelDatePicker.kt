@@ -58,7 +58,7 @@ fun WheelDatePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onSnappedDateChanged: (snappedDate: LocalDate) -> Unit = {},
   onSnappedDate: (snappedDate: LocalDate) -> Unit = {},
 ) {
