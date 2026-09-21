@@ -58,40 +58,41 @@ private const val HALF_PI = (PI / 2).toFloat()
  * edges of the viewport. Must be in `[0, 90]`. Larger values bend the wheel more and compress the
  * outer rows harder; `90` shows the full half cylinder, matching a native iOS picker, and `0`
  * disables the projection entirely for a flat, evenly spaced wheel.
- * @property fade How strongly rows fade as they turn away from the viewer, in `[0, 1]`. At `1` a
- * row's alpha is `cos²` of its angle on the drum, so rim rows all but disappear; at `0` every row
- * stays fully opaque and only the geometry conveys depth. Values in between blend linearly. The
- * fade follows the angle, so a flat wheel (`rimAngle` of `0`) has nothing to fade and shows every
- * row opaque whatever this value.
+ * @property fadeStrength How strongly rows fade as they turn away from the viewer, in `[0, 1]`.
+ * At `1` a row's alpha is `cos²` of its angle on the drum, so rim rows all but disappear; at `0`
+ * every row stays fully opaque and only the geometry conveys depth. Values in between blend
+ * linearly. The fade follows the angle, so a flat wheel (`rimAngle` of `0`) has nothing to fade
+ * and shows every row opaque whatever this value.
  */
 @Immutable
 class BarrelProperties internal constructor(
   val rimAngle: Float,
-  val fade: Float,
+  val fadeStrength: Float,
 ) {
   init {
     require(rimAngle >= 0f && rimAngle <= 90f) {
       "rimAngle must be in [0, 90], was $rimAngle"
     }
-    require(fade >= 0f && fade <= 1f) {
-      "fade must be in [0, 1], was $fade"
+    require(fadeStrength >= 0f && fadeStrength <= 1f) {
+      "fadeStrength must be in [0, 1], was $fadeStrength"
     }
   }
 
   fun copy(
     rimAngle: Float = this.rimAngle,
-    fade: Float = this.fade,
-  ): BarrelProperties = BarrelProperties(rimAngle = rimAngle, fade = fade)
+    fadeStrength: Float = this.fadeStrength,
+  ): BarrelProperties = BarrelProperties(rimAngle = rimAngle, fadeStrength = fadeStrength)
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is BarrelProperties) return false
-    return rimAngle == other.rimAngle && fade == other.fade
+    return rimAngle == other.rimAngle && fadeStrength == other.fadeStrength
   }
 
-  override fun hashCode(): Int = 31 * rimAngle.hashCode() + fade.hashCode()
+  override fun hashCode(): Int = 31 * rimAngle.hashCode() + fadeStrength.hashCode()
 
-  override fun toString(): String = "BarrelProperties(rimAngle=$rimAngle, fade=$fade)"
+  override fun toString(): String =
+    "BarrelProperties(rimAngle=$rimAngle, fadeStrength=$fadeStrength)"
 }
 
 /**
@@ -153,9 +154,9 @@ private val HiddenTransform = BarrelTransform(alpha = 0f, rotationX = 0f, transl
  * the cylinder's sine curve, the row plane is rotated tangent to the cylinder, and its depth is
  * conveyed by a uniform scale from a viewer [EYE_DISTANCE_MULTIPLIER] viewport heights in front of
  * the center row (the platform's own per-layer camera is left orthographic, see
- * [ORTHOGRAPHIC_CAMERA_DISTANCE]). Alpha blends between opaque and `cos²` of the angle by [fade]:
- * at full fade near rows stay crisp, rim rows dim quickly, and anything behind the rim is fully
- * transparent whatever the fade.
+ * [ORTHOGRAPHIC_CAMERA_DISTANCE]). Alpha blends between opaque and `cos²` of the angle by
+ * [fadeStrength]: at full strength near rows stay crisp, rim rows dim quickly, and anything behind
+ * the rim is fully transparent whatever the strength.
  *
  * The position is deliberately an orthographic projection while only the size is perspective:
  * the scale pivots on the row's own center and never moves it. A true perspective would also
@@ -168,14 +169,14 @@ private val HiddenTransform = BarrelTransform(alpha = 0f, rotationX = 0f, transl
  * A [rimAngle] of `0` is a flat wheel: every row is returned untouched.
  *
  * Inputs are expected to be validated by the caller: [viewportHeightPx] positive, [rimAngle] in
- * `[0, 90]` and [fade] in `[0, 1]` (see [BarrelProperties]). This function runs every frame for
- * every visible row, so it deliberately performs no validation.
+ * `[0, 90]` and [fadeStrength] in `[0, 1]` (see [BarrelProperties]). This function runs every
+ * frame for every visible row, so it deliberately performs no validation.
  */
 internal fun calculateBarrelTransform(
   distanceToCenterPx: Float,
   viewportHeightPx: Float,
   rimAngle: Float,
-  fade: Float = DEFAULT_BARREL_FADE,
+  fadeStrength: Float = DEFAULT_BARREL_FADE,
 ): BarrelTransform {
   if (rimAngle == 0f) return IdentityTransform
 
@@ -191,7 +192,7 @@ internal fun calculateBarrelTransform(
   val eyeDistance = viewportHeightPx * EYE_DISTANCE_MULTIPLIER
 
   return BarrelTransform(
-    alpha = 1f - fade * (1f - cosAngle * cosAngle),
+    alpha = 1f - fadeStrength * (1f - cosAngle * cosAngle),
     rotationX = -angleRadians.toDegrees(),
     translationY = projectedDistance - distanceToCenterPx,
     scale = eyeDistance / (eyeDistance + depth),

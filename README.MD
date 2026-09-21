@@ -276,7 +276,7 @@ adds 13° per row away from the center and caps at 70°: a 3-row wheel stays gen
 7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(rimAngle)`
 with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
 of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
-wheel with no projection at all. `fade`, in `[0, 1]`, scales how much rows dim as they turn toward
+wheel with no projection at all. `fadeStrength`, in `[0, 1]`, scales how much rows dim as they turn toward
 the rim: `1` (default) is a `cos²` falloff, `0` keeps every row opaque. The fade follows the
 angle, so it has no effect on a flat wheel.
 
@@ -284,7 +284,7 @@ angle, so it has no effect on a flat wheel.
 WheelDateTimePicker(
   modifier = Modifier.height(240.dp),
   rowCount = 11,
-  barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fade = 0.8f),
+  barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fadeStrength = 0.8f),
 ) { snappedDateTime -> }
 ```
 

@@ -43,23 +43,23 @@ class BarrelTransformTest {
 
   @Test
   fun fadeIsValidatedAndDefaultsToFull() {
-    assertEquals(1f, WheelPickerDefaults.barrelProperties(rimAngle = 45f).fade)
-    assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(5).fade)
-    assertEquals(0.4f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fade = 0.4f).fade)
-    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fade = -0.1f) }
-    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fade = 1.1f) }
+    assertEquals(1f, WheelPickerDefaults.barrelProperties(rimAngle = 45f).fadeStrength)
+    assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(5).fadeStrength)
+    assertEquals(0.4f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fadeStrength = 0.4f).fadeStrength)
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = -0.1f) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = 1.1f) }
   }
 
   @Test
   fun fadeBlendsBetweenOpaqueAndCosineSquared() {
     val angle = 60f
     val cos2 = cos(angle / 180f * PI).toFloat().let { it * it }
-    fun alphaAt(fade: Float) = calculateBarrelTransform(
+    fun alphaAt(fadeStrength: Float) = calculateBarrelTransform(
       // At rimAngle 90 the radius is half the viewport, so an arc of R·θ lands at angle θ.
       distanceToCenterPx = 120f * (angle / 180f * PI).toFloat(),
       viewportHeightPx = 240f,
       rimAngle = 90f,
-      fade = fade,
+      fadeStrength = fadeStrength,
     ).alpha
 
     assertEquals(cos2, alphaAt(1f), absoluteTolerance = 0.0001f)
@@ -73,7 +73,7 @@ class BarrelTransformTest {
       distanceToCenterPx = 240f,
       viewportHeightPx = 240f,
       rimAngle = 90f,
-      fade = 0f,
+      fadeStrength = 0f,
     )
 
     assertEquals(0f, transform.alpha)
@@ -87,7 +87,7 @@ class BarrelTransformTest {
     assertEquals(a, b)
     assertEquals(a.hashCode(), b.hashCode())
     assertNotEquals(a, a.copy(rimAngle = 30f))
-    assertNotEquals(a, a.copy(fade = 0.5f))
+    assertNotEquals(a, a.copy(fadeStrength = 0.5f))
     assertEquals(WheelPickerDefaults.barrelPropertiesFor(3), a.copy(rimAngle = 26f))
   }
 

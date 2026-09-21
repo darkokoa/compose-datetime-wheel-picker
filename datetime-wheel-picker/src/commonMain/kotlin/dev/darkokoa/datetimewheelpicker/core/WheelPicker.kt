@@ -120,7 +120,7 @@ internal fun WheelPicker(
                 distanceToCenterPx = distanceToIndexSnap,
                 viewportHeightPx = viewportHeightPx,
                 rimAngle = barrelProperties.rimAngle,
-                fade = barrelProperties.fade,
+                fadeStrength = barrelProperties.fadeStrength,
               ).applyTo(this)
             },
           contentAlignment = Alignment.Center
@@ -152,13 +152,13 @@ object WheelPickerDefaults {
    * The picker's `rowCount` rows span the visible drum from rim to rim and [rimAngle] is the
    * rotation, in degrees, of the drum surface at the viewport edges, in `[0, 90]`. `90` matches
    * a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor] to let the angle follow
-   * the row count instead. [fade], in `[0, 1]`, scales how much rows dim as they turn toward the
-   * rim. See [BarrelProperties].
+   * the row count instead. [fadeStrength], in `[0, 1]`, scales how much rows dim as they turn
+   * toward the rim. See [BarrelProperties].
    */
   fun barrelProperties(
     rimAngle: Float,
-    fade: Float = DEFAULT_BARREL_FADE,
-  ): BarrelProperties = BarrelProperties(rimAngle = rimAngle, fade = fade)
+    fadeStrength: Float = DEFAULT_BARREL_FADE,
+  ): BarrelProperties = BarrelProperties(rimAngle = rimAngle, fadeStrength = fadeStrength)
 
   /**
    * The [BarrelProperties] a picker uses when none is passed: a rim angle suited to [rowCount].
@@ -170,7 +170,7 @@ object WheelPickerDefaults {
     require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
     val rimAngle = (AUTO_RIM_DEGREES_PER_ROW * (rowCount - 1))
       .coerceIn(AUTO_RIM_DEGREES_PER_ROW, MAX_AUTO_RIM_ANGLE)
-    return BarrelProperties(rimAngle = rimAngle, fade = DEFAULT_BARREL_FADE)
+    return BarrelProperties(rimAngle = rimAngle, fadeStrength = DEFAULT_BARREL_FADE)
   }
 
   @Composable
