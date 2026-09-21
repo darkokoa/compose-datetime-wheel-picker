@@ -103,6 +103,16 @@ class PickerSizeTest {
   }
 
   @Test
+  fun evenCountRoundsUpToTheNextOdd() {
+    assertEquals(1, WheelRows.Count(1).count)
+    assertEquals(3, WheelRows.Count(2).count)
+    assertEquals(5, WheelRows.Count(4).count)
+    assertEquals(7, WheelRows.Count(7).count)
+    assertEquals(WheelRows.Count(5), WheelRows.Count(4))
+    assertEquals(DefaultWheelRowHeight * 5, pickerDefaultSize(256.dp, WheelRows.Count(4)).height)
+  }
+
+  @Test
   fun invalidRowsFail() {
     assertFailsWith<IllegalArgumentException> { WheelRows.Count(0) }
     assertFailsWith<IllegalArgumentException> { WheelRows.Count(-1) }

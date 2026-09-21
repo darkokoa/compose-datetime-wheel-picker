@@ -32,12 +32,19 @@ sealed interface WheelRows {
    * A wheel showing exactly [count] rows from rim to rim, the outermost foreshortened against the
    * edge. The intrinsic picker height is `128.dp / 3` per row, so the default three rows measure
    * the historical 128.dp.
+   *
+   * The selected row sits at the center of the drum with as many rows above it as below, so
+   * [count] is always odd. An even request is rounded up to the next odd number, `Count(4)` being
+   * the same as `Count(5)`, rather than leaving half a row cut off at each rim.
    */
   @Immutable
-  class Count(val count: Int) : WheelRows {
+  class Count(count: Int) : WheelRows {
     init {
       require(count > 0) { "count must be positive, was $count" }
     }
+
+    /** Rows on the drum from rim to rim. Always odd; see the class description. */
+    val count: Int = if (count % 2 == 0) count + 1 else count
 
     override fun equals(other: Any?): Boolean = other is Count && other.count == count
     override fun hashCode(): Int = count
