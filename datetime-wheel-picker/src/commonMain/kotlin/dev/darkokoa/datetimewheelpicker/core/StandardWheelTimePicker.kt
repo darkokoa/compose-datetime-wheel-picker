@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,14 +85,11 @@ internal fun StandardWheelTimePicker(
   fun resolveAmPm(index: Int) = amPms.find { if (index == 2) it.index == 1 else it.index == index }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
-    if (selectorProperties.enabled().value) {
-      Surface(
-        modifier = Modifier.size(viewportSize.width, barrelProperties.rowHeight(viewportSize.height, rowCount)),
-        shape = selectorProperties.shape().value,
-        color = selectorProperties.color().value,
-        border = selectorProperties.border().value
-      ) {}
-    }
+    WheelSelector(
+      width = viewportSize.width,
+      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      properties = selectorProperties,
+    )
     Row(modifier = Modifier.height(viewportSize.height)) {
       //Hour
       FixedSizeWheelTextPicker(

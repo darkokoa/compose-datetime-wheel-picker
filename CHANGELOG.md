@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
   the previous per-row tilt and fade. `rowCount` rows span the drum from rim to rim, the centered
   row is slightly taller than `height / rowCount`, and picker sizes are unchanged. The rim angle
   is configurable through the new `barrelProperties` parameter
-  (`WheelPickerDefaults.barrelProperties(maxAngle, fade)`, angle `0` to `90`, fade `0` to `1`);
+  (`WheelPickerDefaults.barrelProperties(rimAngle, fade)`, angle `0` to `90`, fade `0` to `1`);
   the default
   `WheelPickerDefaults.barrelPropertiesFor(rowCount)` keeps 3-row wheels gently curved and gives
   7-row or taller wheels the full drum. Pass `90f` for the iOS look or `0f` for a flat wheel with

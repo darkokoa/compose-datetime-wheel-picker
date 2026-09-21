@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.TouchInjectionScope
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performTouchInput
@@ -14,6 +15,7 @@ import androidx.compose.ui.test.swipe
 import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.height
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -121,7 +123,7 @@ class WheelPickerCallbackTest {
         rowCount = 3,
         startIndex = 5,
         viewportSize = viewportSize,
-        barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 70f),
+        barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 70f),
         onScrollChanged = { changed += it },
         onScrollFinished = { finished += it; null },
       ) { index, _ -> Text("item-$index") }
@@ -132,6 +134,30 @@ class WheelPickerCallbackTest {
     assertEquals(listOf(6), changed, "barrel projection must not alter onScrollChanged")
     assertEquals(listOf(6), finished, "barrel projection must not alter onScrollFinished")
     onNodeWithText("item-6").assertIsDisplayed()
+  }
+
+  @Test
+  fun barrelProjectionForeshortensRowsTowardTheRim() = runComposeUiTest {
+    setContent {
+      WheelPicker(
+        count = 10,
+        rowCount = 3,
+        startIndex = 5,
+        viewportSize = viewportSize,
+        barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 70f),
+      ) { index, _ -> Text("item-$index") }
+    }
+    waitForIdle()
+    val center = onNodeWithText("item-5").getBoundsInRoot()
+    val above = onNodeWithText("item-4").getBoundsInRoot()
+    val below = onNodeWithText("item-6").getBoundsInRoot()
+
+    // The centered row is untouched; its neighbours are tilted and scaled, so they come out
+    // shorter on screen and stay within the viewport.
+    assertTrue(above.height < center.height, "row above should be foreshortened: $above vs $center")
+    assertTrue(below.height < center.height, "row below should be foreshortened: $below vs $center")
+    assertEquals(above.height.value, below.height.value, absoluteTolerance = 0.01f, "projection must be symmetric: $above vs $below")
+    assertTrue(above.top >= 0.dp && below.bottom <= viewportSize.height, "rows must stay on the drum")
   }
 
   /**

@@ -589,7 +589,7 @@ private fun DateTimeDemos(
           startDateTime = initialDateTime,
           modifier = Modifier.size(280.dp, 240.dp),
           rowCount = 11,
-          barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 90f),
+          barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f),
           onSnappedDateTime = { dateTime ->
             logPickerCallback("Barrel date time picker", "onSnappedDateTime", dateTime)
             onSnapped(dateTime.toString())

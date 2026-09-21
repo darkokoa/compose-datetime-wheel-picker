@@ -269,25 +269,26 @@ Wheel rows are laid out on a vertical cylinder, giving the wheel the curved, dru
 of a native picker. `rowCount` keeps its meaning: it is the number of rows visible on the drum
 from rim to rim, the outermost ones foreshortened against the edge.
 
-How strongly the drum bends is controlled by `maxAngle`, the rotation in degrees of the drum
+How strongly the drum bends is controlled by `rimAngle`, the rotation in degrees of the drum
 surface where it meets the top and bottom edges of the viewport. When you do not pass
 `barrelProperties`, the picker uses `WheelPickerDefaults.barrelPropertiesFor(rowCount)`, which
 adds 13° per row away from the center and caps at 70°: a 3-row wheel stays gently curved while a
-7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(maxAngle)`
+7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(rimAngle)`
 with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
 of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
 wheel with no projection at all. `fade`, in `[0, 1]`, scales how much rows dim as they turn toward
-the rim: `1` (default) is a `cos²` falloff, `0` keeps every row opaque.
+the rim: `1` (default) is a `cos²` falloff, `0` keeps every row opaque. The fade follows the
+angle, so it has no effect on a flat wheel.
 
 ```kotlin
 WheelDateTimePicker(
   modifier = Modifier.height(240.dp),
   rowCount = 11,
-  barrelProperties = WheelPickerDefaults.barrelProperties(maxAngle = 90f, fade = 0.8f),
+  barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fade = 0.8f),
 ) { snappedDateTime -> }
 ```
 
-The picker always occupies exactly the height you give it (or the intrinsic default of 42.67.dp
+The picker always occupies exactly the height you give it (or the intrinsic default of `128.dp / 3`
 per row); the cylinder is sized to fit. Because the outer rows are compressed, the centered row
 gets more room than `height / rowCount`, and the selector is sized to match it. Sizing, snapping,
 and callbacks are unaffected by the angle. The same parameter is available on `WheelDatePicker`,

@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isFinite
@@ -93,15 +94,7 @@ internal fun WheelPicker(
     modifier = modifier.size(viewportSize).clipToBounds(),
     contentAlignment = Alignment.Center
   ) {
-    if (selectorProperties.enabled().value) {
-      Surface(
-        modifier = Modifier
-          .size(viewportSize.width, rowHeight),
-        shape = selectorProperties.shape().value,
-        color = selectorProperties.color().value,
-        border = selectorProperties.border().value
-      ) {}
-    }
+    WheelSelector(width = viewportSize.width, height = rowHeight, properties = selectorProperties)
     LazyColumn(
       modifier = Modifier
         .requiredHeight(listHeight)
@@ -123,18 +116,12 @@ internal fun WheelPicker(
               val centerIndexOffset = lazyListState.firstVisibleItemScrollOffset
               val distanceToCenterIndex = index - centerIndex
               val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeightPx - centerIndexOffset
-              val transform = calculateBarrelTransform(
+              calculateBarrelTransform(
                 distanceToCenterPx = distanceToIndexSnap,
                 viewportHeightPx = viewportHeightPx,
-                maxAngle = barrelProperties.maxAngle,
+                rimAngle = barrelProperties.rimAngle,
                 fade = barrelProperties.fade,
-              )
-              alpha = transform.alpha
-              rotationX = transform.rotationX
-              translationY = transform.translationY
-              scaleX = transform.scale
-              scaleY = transform.scale
-              cameraDistance = transform.cameraDistance
+              ).applyTo(this)
             },
           contentAlignment = Alignment.Center
         ) {
@@ -162,16 +149,16 @@ object WheelPickerDefaults {
   /**
    * Creates a [BarrelProperties] describing the cylindrical projection of wheel rows.
    *
-   * The picker's `rowCount` rows span the visible drum from rim to rim and [maxAngle] is the
+   * The picker's `rowCount` rows span the visible drum from rim to rim and [rimAngle] is the
    * rotation, in degrees, of the drum surface at the viewport edges, in `[0, 90]`. `90` matches
    * a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor] to let the angle follow
    * the row count instead. [fade], in `[0, 1]`, scales how much rows dim as they turn toward the
    * rim. See [BarrelProperties].
    */
   fun barrelProperties(
-    maxAngle: Float,
+    rimAngle: Float,
     fade: Float = DEFAULT_BARREL_FADE,
-  ): BarrelProperties = BarrelProperties(maxAngle = maxAngle, fade = fade)
+  ): BarrelProperties = BarrelProperties(rimAngle = rimAngle, fade = fade)
 
   /**
    * The [BarrelProperties] a picker uses when none is passed: a rim angle suited to [rowCount].
@@ -181,9 +168,9 @@ object WheelPickerDefaults {
    */
   fun barrelPropertiesFor(rowCount: Int): BarrelProperties {
     require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
-    val maxAngle = (AUTO_BARREL_DEGREES_PER_ROW * (rowCount - 1))
-      .coerceIn(AUTO_BARREL_DEGREES_PER_ROW, MAX_AUTO_BARREL_ANGLE)
-    return BarrelProperties(maxAngle = maxAngle, fade = DEFAULT_BARREL_FADE)
+    val rimAngle = (AUTO_RIM_DEGREES_PER_ROW * (rowCount - 1))
+      .coerceIn(AUTO_RIM_DEGREES_PER_ROW, MAX_AUTO_RIM_ANGLE)
+    return BarrelProperties(rimAngle = rimAngle, fade = DEFAULT_BARREL_FADE)
   }
 
   @Composable
@@ -198,6 +185,26 @@ object WheelPickerDefaults {
     color = color,
     border = border
   )
+}
+
+/**
+ * The highlight drawn behind the centered row of a wheel, or nothing when [properties] disables
+ * it. [height] should be the picker's row height (see [BarrelProperties.rowHeight]) so the
+ * highlight matches the centered row on the drum; the caller centers it in the viewport.
+ */
+@Composable
+internal fun WheelSelector(
+  width: Dp,
+  height: Dp,
+  properties: SelectorProperties,
+) {
+  if (!properties.enabled().value) return
+  Surface(
+    modifier = Modifier.size(width, height),
+    shape = properties.shape().value,
+    color = properties.color().value,
+    border = properties.border().value,
+  ) {}
 }
 
 interface SelectorProperties {

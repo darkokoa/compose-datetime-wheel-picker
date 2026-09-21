@@ -2,10 +2,8 @@ package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,15 +52,11 @@ internal fun AdaptiveWheelDateTimePicker(
   val yearTexts = remember(yearsRange) { yearsRange?.map { it.toString() } ?: listOf() }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
-    if (selectorProperties.enabled().value) {
-      Surface(
-        modifier = Modifier
-          .size(viewportSize.width, barrelProperties.rowHeight(viewportSize.height, rowCount)),
-        shape = selectorProperties.shape().value,
-        color = selectorProperties.color().value,
-        border = selectorProperties.border().value
-      ) {}
-    }
+    WheelSelector(
+      width = viewportSize.width,
+      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      properties = selectorProperties,
+    )
     Row {
       //Date
       AdaptiveWheelDatePicker(
