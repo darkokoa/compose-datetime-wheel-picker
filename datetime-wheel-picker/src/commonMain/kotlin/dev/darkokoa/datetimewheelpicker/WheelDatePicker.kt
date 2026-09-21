@@ -20,7 +20,6 @@ import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.WheelRows
-import dev.darkokoa.datetimewheelpicker.core.legacyRowCount
 import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
@@ -133,7 +132,7 @@ fun WheelDatePicker(
   maxDate = maxDate,
   yearsRange = yearsRange,
   dateFormatter = dateFormatter,
-  rows = legacyRowCount(rowCount),
+  rows = WheelRows.Count(rowCount),
   textStyle = textStyle,
   textColor = textColor,
   selectorProperties = selectorProperties,

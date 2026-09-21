@@ -10,14 +10,30 @@ import kotlin.test.assertNotEquals
 class WheelRowsTest {
 
   @Test
-  fun countMustBePositiveAndOdd() {
+  fun countMustBePositive() {
     assertEquals(1, WheelRows.Count(1).count)
     assertEquals(3, WheelRows.Count(3).count)
-    assertEquals(7, WheelRows.Count(7).count)
     assertFailsWith<IllegalArgumentException> { WheelRows.Count(0) }
     assertFailsWith<IllegalArgumentException> { WheelRows.Count(-1) }
-    assertFailsWith<IllegalArgumentException> { WheelRows.Count(2) }
-    assertFailsWith<IllegalArgumentException> { WheelRows.Count(4) }
+  }
+
+  @Test
+  fun evenCountKeepsItsValueButLaysOutAsTheNextOdd() {
+    // The object stays honest about what was asked...
+    assertEquals(4, WheelRows.Count(4).count)
+    assertEquals("WheelRows.Count(4)", WheelRows.Count(4).toString())
+    assertNotEquals(WheelRows.Count(4), WheelRows.Count(5))
+    // ...while every geometric quantity uses the odd row count.
+    assertEquals(5, WheelRows.Count(4).drumRows)
+    assertEquals(3, WheelRows.Count(2).drumRows)
+    assertEquals(7, WheelRows.Count(7).drumRows)
+    assertEquals(WheelRows.Count(5).intrinsicHeight, WheelRows.Count(4).intrinsicHeight)
+    val flat = WheelPickerDefaults.barrelProperties(rimAngle = 0f)
+    assertEquals(WheelRows.Count(5).rowHeight(240.dp, flat), WheelRows.Count(4).rowHeight(240.dp, flat))
+    assertEquals(
+      WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)),
+      WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(4)),
+    )
   }
 
   @Test
@@ -47,14 +63,5 @@ class WheelRowsTest {
     assertEquals(128.dp, WheelRows.Count(3).intrinsicHeight)
     assertEquals(DefaultWheelRowHeight * 5, WheelRows.Count(5).intrinsicHeight)
     assertEquals(32.dp * DEFAULT_HEIGHT_MODE_ROWS, WheelRows.Height(32.dp).intrinsicHeight)
-  }
-
-  @Test
-  fun legacyRowCountRoundsEvenCountsUpAndRejectsTheRest() {
-    assertEquals(WheelRows.Count(3), legacyRowCount(3))
-    assertEquals(WheelRows.Count(3), legacyRowCount(2))
-    assertEquals(WheelRows.Count(5), legacyRowCount(4))
-    assertFailsWith<IllegalArgumentException> { legacyRowCount(0) }
-    assertFailsWith<IllegalArgumentException> { legacyRowCount(-2) }
   }
 }

@@ -20,7 +20,6 @@ import dev.darkokoa.datetimewheelpicker.core.MIN
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.WheelRows
-import dev.darkokoa.datetimewheelpicker.core.legacyRowCount
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import dev.darkokoa.datetimewheelpicker.core.now
@@ -119,7 +118,7 @@ fun WheelTimePicker(
   minTime = minTime,
   maxTime = maxTime,
   timeFormatter = timeFormatter,
-  rows = legacyRowCount(rowCount),
+  rows = WheelRows.Count(rowCount),
   textStyle = textStyle,
   textColor = textColor,
   selectorProperties = selectorProperties,

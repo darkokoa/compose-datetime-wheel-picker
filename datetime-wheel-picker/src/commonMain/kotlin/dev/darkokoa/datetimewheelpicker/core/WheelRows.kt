@@ -29,23 +29,19 @@ internal const val DEFAULT_HEIGHT_MODE_ROWS = 7
 sealed interface WheelRows {
 
   /**
-   * A wheel showing exactly [count] rows from rim to rim, the outermost foreshortened against the
-   * edge. The intrinsic picker height is `128.dp / 3` per row, so the default three rows measure
-   * the historical 128.dp.
+   * A wheel showing [count] rows from rim to rim, the outermost foreshortened against the edge.
+   * The intrinsic picker height is `128.dp / 3` per row, so the default three rows measure the
+   * historical 128.dp.
    *
    * The selected row sits at the center of the drum with as many whole rows above it as below,
-   * so [count] must be odd: an even count could only be honored by cutting half a row off at
-   * each rim, which is neither `count` rows nor `count + 1`.
-   *
-   * @throws IllegalArgumentException if [count] is not a positive odd number.
+   * so the drum always holds an odd number of rows. An even [count] is laid out as the next odd
+   * number, `Count(4)` showing the same five rows as `Count(5)`, rather than cutting half a row
+   * off at each rim. [count] itself is kept as given for equality and display.
    */
   @Immutable
   class Count(val count: Int) : WheelRows {
     init {
       require(count > 0) { "count must be positive, was $count" }
-      require(count % 2 == 1) {
-        "count must be odd so the selected row sits at the center, was $count"
-      }
     }
 
     override fun equals(other: Any?): Boolean = other is Count && other.count == count
@@ -73,28 +69,27 @@ sealed interface WheelRows {
 }
 
 /**
+ * Rows actually laid out on the drum for a [WheelRows.Count]: the requested count, or the next
+ * odd number when it is even, so the selected row is centered with whole rows on both sides.
+ * All geometry goes through this rather than [WheelRows.Count.count].
+ */
+internal val WheelRows.Count.drumRows: Int
+  get() = if (count % 2 == 0) count + 1 else count
+
+/**
  * Height of a single row in the flat list backing the wheel. This is the arc length each row
  * occupies on the drum, which is also the on-screen height of the centered row since the
  * projection is linear near the center. Use it for the selector too.
  */
 internal fun WheelRows.rowHeight(viewportHeight: Dp, barrelProperties: BarrelProperties): Dp =
   when (this) {
-    is WheelRows.Count -> barrelProperties.listHeight(viewportHeight) / count
+    is WheelRows.Count -> barrelProperties.listHeight(viewportHeight) / drumRows
     is WheelRows.Height -> rowHeight
   }
 
 /** Height a picker takes on an axis the caller left unconstrained. */
 internal val WheelRows.intrinsicHeight: Dp
   get() = when (this) {
-    is WheelRows.Count -> DefaultWheelRowHeight * count
+    is WheelRows.Count -> DefaultWheelRowHeight * drumRows
     is WheelRows.Height -> rowHeight * DEFAULT_HEIGHT_MODE_ROWS
   }
-
-/**
- * Maps a 1.3.x `rowCount` to [WheelRows.Count] for the hidden binary-compatibility overloads.
- * Those callers could pass an even count, which [WheelRows.Count] rejects; rounding up to the
- * next odd number keeps old binaries rendering instead of throwing, with the selected row now
- * properly centered.
- */
-internal fun legacyRowCount(rowCount: Int): WheelRows.Count =
-  WheelRows.Count(if (rowCount > 0 && rowCount % 2 == 0) rowCount + 1 else rowCount)

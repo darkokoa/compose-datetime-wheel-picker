@@ -169,7 +169,7 @@ object WheelPickerDefaults {
    */
   fun barrelPropertiesFor(rows: WheelRows): BarrelProperties = when (rows) {
     is WheelRows.Count -> BarrelProperties(
-      rimAngle = (AUTO_RIM_DEGREES_PER_ROW * (rows.count - 1))
+      rimAngle = (AUTO_RIM_DEGREES_PER_ROW * (rows.drumRows - 1))
         .coerceIn(AUTO_RIM_DEGREES_PER_ROW, MAX_AUTO_RIM_ANGLE),
       fadeStrength = DEFAULT_BARREL_FADE,
     )

@@ -278,8 +278,9 @@ WheelDatePicker(rows = WheelRows.Height(32.dp)) { }   // 32.dp rows, as many as 
 - **`WheelRows.Count(n)`** (default `Count(3)`) shows exactly `n` rows on the drum from rim to
   rim, the outermost foreshortened against the edge. The row height follows from the picker
   height, so a taller picker gets taller rows, and the selector is sized to the centered row.
-  `n` must be odd so the selected row sits at the center with whole rows on both sides;
-  `Count(4)` throws.
+  The drum always holds an odd number of rows so the selected row sits at the center with whole
+  rows on both sides; an even `n` is laid out as the next odd number (`Count(4)` shows the same
+  five rows as `Count(5)`, while `Count(4).count` stays `4`).
 - **`WheelRows.Height(h)`** keeps every row and the selector `h` tall whatever the picker height,
   and shows as many rows as fit; the number is usually fractional, with the outermost rows cut off
   at the rim exactly like a native iOS picker. Use it when you want the wheel to grow and shrink
@@ -331,7 +332,7 @@ available on `WheelDatePicker`,
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default (256.dp × 128.dp at 3 rows). See [Sizing](#sizing) |
-| `rows` | `WheelRows` | `WheelRows.Count(3)` | Exact (odd) row count, or a fixed row height. See [Rows](#rows) |
+| `rows` | `WheelRows` | `WheelRows.Count(3)` | Row count (even counts lay out as the next odd), or a fixed row height. See [Rows](#rows) |
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
 | `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |

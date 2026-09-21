@@ -104,7 +104,7 @@ fun WheelTextPicker(
   modifier = modifier.size(size.width, size.height),
   startIndex = startIndex,
   texts = texts,
-  rows = legacyRowCount(rowCount),
+  rows = WheelRows.Count(rowCount),
   textStyle = style,
   textColor = color,
   selectorProperties = selectorProperties,
