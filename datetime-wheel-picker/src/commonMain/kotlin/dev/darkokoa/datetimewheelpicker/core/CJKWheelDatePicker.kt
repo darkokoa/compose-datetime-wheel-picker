@@ -74,8 +74,9 @@ internal fun CJKWheelDatePicker(
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     WheelSelector(
-      width = viewportSize.width,
-      height = rows.rowHeight(viewportSize.height, barrelProperties),
+      viewportSize = viewportSize,
+      rows = rows,
+      barrelProperties = barrelProperties,
       properties = selectorProperties,
     )
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.width(viewportSize.width)) {

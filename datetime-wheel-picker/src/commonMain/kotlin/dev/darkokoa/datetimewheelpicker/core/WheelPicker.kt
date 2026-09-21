@@ -173,7 +173,10 @@ object WheelPickerDefaults {
         .coerceIn(AUTO_RIM_DEGREES_PER_ROW, MAX_AUTO_RIM_ANGLE),
       fadeStrength = DEFAULT_BARREL_FADE,
     )
-    is WheelRows.Height -> BarrelProperties(rimAngle = 90f, fadeStrength = DEFAULT_BARREL_FADE)
+    is WheelRows.Height -> BarrelProperties(
+      rimAngle = HEIGHT_MODE_RIM_ANGLE,
+      fadeStrength = DEFAULT_BARREL_FADE,
+    )
   }
 
   @Composable
@@ -192,8 +195,25 @@ object WheelPickerDefaults {
 
 /**
  * The highlight drawn behind the centered row of a wheel, or nothing when [properties] disables
- * it. [height] should be the picker's row height (see [BarrelProperties.rowHeight]) so the
- * highlight matches the centered row on the drum; the caller centers it in the viewport.
+ * it. It spans the [viewportSize] width and is as tall as one row of [rows] on the drum described
+ * by [barrelProperties] (see [WheelRows.rowHeight]); the caller centers it in the viewport.
+ */
+@Composable
+internal fun WheelSelector(
+  viewportSize: DpSize,
+  rows: WheelRows,
+  barrelProperties: BarrelProperties,
+  properties: SelectorProperties,
+) = WheelSelector(
+  width = viewportSize.width,
+  height = rows.rowHeight(viewportSize.height, barrelProperties),
+  properties = properties,
+)
+
+/**
+ * The highlight drawn behind the centered row of a wheel, or nothing when [properties] disables
+ * it. [height] should be the picker's row height (see [WheelRows.rowHeight]) so the highlight
+ * matches the centered row on the drum; the caller centers it in the viewport.
  */
 @Composable
 internal fun WheelSelector(

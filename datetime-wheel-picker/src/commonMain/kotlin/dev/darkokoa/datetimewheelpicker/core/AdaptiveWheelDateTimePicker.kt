@@ -53,8 +53,9 @@ internal fun AdaptiveWheelDateTimePicker(
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     WheelSelector(
-      width = viewportSize.width,
-      height = rows.rowHeight(viewportSize.height, barrelProperties),
+      viewportSize = viewportSize,
+      rows = rows,
+      barrelProperties = barrelProperties,
       properties = selectorProperties,
     )
     Row {

@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.4.1 - Unreleased
+## 1.5.0 - Unreleased
 
 ### Changed
 
@@ -10,10 +10,11 @@ All notable changes to this project will be documented in this file.
   behavior (default `Count(3)`); the new `WheelRows.Height(h)` fixes the row and selector height
   instead and shows as many rows as fit, like a native iOS picker, with an intrinsic height of
   seven rows and a default rim angle of 90°. `WheelPickerDefaults.barrelPropertiesFor` now takes
-  a `WheelRows`. Migration: `rowCount = 5` → `rows = WheelRows.Count(5)`. Even counts are
-  rounded up to the next odd number (`Count(4)` is `Count(5)`) so the selected row always sits at
-  the center with whole rows on both sides; previously an even `rowCount` left the snapped row
-  half a row above the selector.
+  a `WheelRows`. Migration: `rowCount = 5` → `rows = WheelRows.Count(5)`. The count must be odd
+  so the selected row sits at the center with whole rows on both sides; `Count(4)` throws.
+  Previously an even `rowCount` rendered half a row cut off at each rim. The hidden 1.3.x
+  binary-compatibility overloads round an even `rowCount` up to the next odd number instead of
+  throwing. `WheelTextPicker.rows` now defaults to `Count(3)` like the other pickers.
 - **Wheel rows are now laid out on a cylinder ("barrel projection") in all pickers**, replacing
   the previous per-row tilt and fade. With `WheelRows.Count` the rows span the drum from rim to
   rim, the centered row is slightly taller than `height / count`, and picker sizes are unchanged.

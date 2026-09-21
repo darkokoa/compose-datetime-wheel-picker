@@ -1,6 +1,11 @@
 package dev.darkokoa.datetimewheelpicker.core
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
@@ -164,12 +169,14 @@ class WheelPickerCallbackTest {
   fun heightRowsSnapByRowHeightNotViewport() = runComposeUiTest {
     val changed = mutableListOf<Int>()
     val finished = mutableListOf<Int>()
+    // 60.dp rows in a 300.dp flat viewport: five rows, so a viewport-derived row height (100.dp)
+    // would be wrong. Swiping exactly one 60.dp row must advance by exactly one item.
+    val rowHeight = 60.dp
     setContent {
       WheelPicker(
         modifier = Modifier.testTag("wheel"),
         count = 10,
-        // 100.dp rows in a 300.dp flat viewport: geometrically identical to Count(3) at 0°.
-        rows = WheelRows.Height(itemHeight),
+        rows = WheelRows.Height(rowHeight),
         startIndex = 5,
         viewportSize = viewportSize,
         barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 0f),
@@ -178,10 +185,61 @@ class WheelPickerCallbackTest {
       ) { index, _ -> Text("item-$index") }
     }
     onNodeWithText("item-5").assertIsDisplayed()
-    onNodeWithTag("wheel").performTouchInput { swipeUpOneItem() }
+    onNodeWithTag("wheel").performTouchInput { swipeUp(distance = rowHeight.toPx()) }
     waitForIdle()
     assertEquals(listOf(6), changed)
     assertEquals(listOf(6), finished)
+    onNodeWithText("item-6").assertIsDisplayed()
+  }
+
+  @Test
+  fun heightRowsKeepTheirHeightWhateverTheViewport() = runComposeUiTest {
+    val rowHeight = 40.dp
+    var viewportHeight by mutableStateOf(300.dp)
+    setContent {
+      WheelPicker(
+        count = 10,
+        rows = WheelRows.Height(rowHeight),
+        startIndex = 5,
+        viewportSize = DpSize(120.dp, viewportHeight),
+        // Default barrel for Height rows: the full 90° drum.
+      ) { index, _ -> Box(Modifier.fillMaxSize().testTag("row-$index")) }
+    }
+    waitForIdle()
+    // The centered row is not transformed, so its on-screen bounds are the flat row height. Its
+    // center may sit a pixel off: the unrolled list height (300 * pi / 2) and the padding that
+    // centers the row in it are rounded to pixels independently.
+    val tall = onNodeWithTag("row-5").getBoundsInRoot()
+    assertEquals(rowHeight.value, tall.height.value, absoluteTolerance = 0.5f, "row height at 300.dp: $tall")
+    assertEquals(150f, ((tall.top + tall.bottom) / 2).value, absoluteTolerance = 1f, "row must be centered: $tall")
+
+    viewportHeight = 200.dp
+    waitForIdle()
+    val short = onNodeWithTag("row-5").getBoundsInRoot()
+    assertEquals(rowHeight.value, short.height.value, absoluteTolerance = 0.5f, "row height at 200.dp: $short")
+    assertEquals(100f, ((short.top + short.bottom) / 2).value, absoluteTolerance = 1f, "row must be centered: $short")
+  }
+
+  @Test
+  fun heightRowTallerThanTheDrumStillRenders() = runComposeUiTest {
+    val changed = mutableListOf<Int>()
+    setContent {
+      WheelPicker(
+        modifier = Modifier.testTag("wheel"),
+        count = 10,
+        // A 400.dp row in a 300.dp flat drum: the centering padding would go negative.
+        rows = WheelRows.Height(400.dp),
+        startIndex = 5,
+        viewportSize = viewportSize,
+        barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 0f),
+        onScrollChanged = { changed += it },
+      ) { index, _ -> Text("item-$index") }
+    }
+    waitForIdle()
+    onNodeWithText("item-5").assertIsDisplayed()
+    onNodeWithTag("wheel").performTouchInput { swipeUp(distance = 400.dp.toPx()) }
+    waitForIdle()
+    assertEquals(listOf(6), changed)
     onNodeWithText("item-6").assertIsDisplayed()
   }
 
@@ -189,10 +247,13 @@ class WheelPickerCallbackTest {
    * Swipes up by exactly one item height, slowly enough that the snap fling settles on the
    * adjacent item instead of flinging across several items.
    */
-  private fun TouchInjectionScope.swipeUpOneItem() {
+  private fun TouchInjectionScope.swipeUpOneItem() = swipeUp(distance = itemHeight.toPx())
+
+  /** Swipes up by [distance] pixels, slowly enough that the snap fling settles on the adjacent item. */
+  private fun TouchInjectionScope.swipeUp(distance: Float) {
     swipe(
       start = center,
-      end = center - Offset(0f, itemHeight.toPx()),
+      end = center - Offset(0f, distance),
       durationMillis = 1000
     )
   }

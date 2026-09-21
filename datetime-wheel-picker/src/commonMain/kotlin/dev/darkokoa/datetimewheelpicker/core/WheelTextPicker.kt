@@ -30,10 +30,9 @@ import androidx.compose.ui.unit.dp
  * A wheel picker over arbitrary [texts].
  *
  * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
- * intrinsic default — 128.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` or seven rows for
- * `WheelRows.Height`. Standard Compose constraints
- * override or clamp the default; see the README "Sizing" section for examples and migration
- * notes.
+ * intrinsic default — 128.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` (128.dp at the
+ * default three rows) or seven rows for `WheelRows.Height`. Standard Compose constraints override
+ * or clamp the default; see the README "Sizing" section for examples and migration notes.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`
@@ -44,7 +43,7 @@ fun WheelTextPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   texts: List<String>,
-  rows: WheelRows,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
@@ -105,7 +104,7 @@ fun WheelTextPicker(
   modifier = modifier.size(size.width, size.height),
   startIndex = startIndex,
   texts = texts,
-  rows = WheelRows.Count(rowCount),
+  rows = legacyRowCount(rowCount),
   textStyle = style,
   textColor = color,
   selectorProperties = selectorProperties,

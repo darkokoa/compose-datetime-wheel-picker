@@ -22,6 +22,13 @@ internal const val DEFAULT_BARREL_FADE = 1f
 internal const val AUTO_RIM_DEGREES_PER_ROW = 13f
 
 /**
+ * Rim angle the automatic default gives a [WheelRows.Height] wheel: the full half cylinder of a
+ * native iOS picker. Such a wheel promises no row count, so there is no outermost row that has to
+ * stay readable at the rim.
+ */
+internal const val HEIGHT_MODE_RIM_ANGLE = 90f
+
+/**
  * Distance from the viewer to the drum surface at the center row, as a multiple of the viewport
  * height. It only feeds the depth scale that shrinks rows as they recede; see
  * [calculateBarrelTransform].

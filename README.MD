@@ -278,8 +278,8 @@ WheelDatePicker(rows = WheelRows.Height(32.dp)) { }   // 32.dp rows, as many as 
 - **`WheelRows.Count(n)`** (default `Count(3)`) shows exactly `n` rows on the drum from rim to
   rim, the outermost foreshortened against the edge. The row height follows from the picker
   height, so a taller picker gets taller rows, and the selector is sized to the centered row.
-  `n` is always odd so the selected row sits at the center with whole rows on both sides; an
-  even `n` is rounded up (`Count(4)` behaves as `Count(5)`).
+  `n` must be odd so the selected row sits at the center with whole rows on both sides;
+  `Count(4)` throws.
 - **`WheelRows.Height(h)`** keeps every row and the selector `h` tall whatever the picker height,
   and shows as many rows as fit; the number is usually fractional, with the outermost rows cut off
   at the rim exactly like a native iOS picker. Use it when you want the wheel to grow and shrink

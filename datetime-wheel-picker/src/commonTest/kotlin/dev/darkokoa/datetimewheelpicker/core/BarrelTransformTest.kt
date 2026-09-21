@@ -20,11 +20,9 @@ class BarrelTransformTest {
     assertEquals(13f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(1)).rimAngle)
     assertEquals(26f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(3)).rimAngle)
     assertEquals(52f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)).rimAngle)
-    // Even counts round up, so Count(4) gets the 5-row angle.
-    assertEquals(52f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(4)).rimAngle)
     assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(7)).rimAngle)
     assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(11)).rimAngle)
-    assertEquals(90f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Height(32.dp)).rimAngle)
+    assertEquals(HEIGHT_MODE_RIM_ANGLE, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Height(32.dp)).rimAngle)
   }
 
   @Test

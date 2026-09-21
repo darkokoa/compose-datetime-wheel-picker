@@ -33,18 +33,20 @@ sealed interface WheelRows {
    * edge. The intrinsic picker height is `128.dp / 3` per row, so the default three rows measure
    * the historical 128.dp.
    *
-   * The selected row sits at the center of the drum with as many rows above it as below, so
-   * [count] is always odd. An even request is rounded up to the next odd number, `Count(4)` being
-   * the same as `Count(5)`, rather than leaving half a row cut off at each rim.
+   * The selected row sits at the center of the drum with as many whole rows above it as below,
+   * so [count] must be odd: an even count could only be honored by cutting half a row off at
+   * each rim, which is neither `count` rows nor `count + 1`.
+   *
+   * @throws IllegalArgumentException if [count] is not a positive odd number.
    */
   @Immutable
-  class Count(count: Int) : WheelRows {
+  class Count(val count: Int) : WheelRows {
     init {
       require(count > 0) { "count must be positive, was $count" }
+      require(count % 2 == 1) {
+        "count must be odd so the selected row sits at the center, was $count"
+      }
     }
-
-    /** Rows on the drum from rim to rim. Always odd; see the class description. */
-    val count: Int = if (count % 2 == 0) count + 1 else count
 
     override fun equals(other: Any?): Boolean = other is Count && other.count == count
     override fun hashCode(): Int = count
@@ -87,3 +89,12 @@ internal val WheelRows.intrinsicHeight: Dp
     is WheelRows.Count -> DefaultWheelRowHeight * count
     is WheelRows.Height -> rowHeight * DEFAULT_HEIGHT_MODE_ROWS
   }
+
+/**
+ * Maps a 1.3.x `rowCount` to [WheelRows.Count] for the hidden binary-compatibility overloads.
+ * Those callers could pass an even count, which [WheelRows.Count] rejects; rounding up to the
+ * next odd number keeps old binaries rendering instead of throwing, with the selected row now
+ * properly centered.
+ */
+internal fun legacyRowCount(rowCount: Int): WheelRows.Count =
+  WheelRows.Count(if (rowCount > 0 && rowCount % 2 == 0) rowCount + 1 else rowCount)

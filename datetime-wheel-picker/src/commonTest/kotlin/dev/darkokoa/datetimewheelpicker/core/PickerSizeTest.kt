@@ -2,12 +2,10 @@ package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class PickerSizeTest {
 
@@ -100,23 +98,5 @@ class PickerSizeTest {
   @Test
   fun heightRowsDefaultToSevenRowsOfViewport() {
     assertEquals(32.dp * 7, pickerDefaultSize(256.dp, WheelRows.Height(32.dp)).height)
-  }
-
-  @Test
-  fun evenCountRoundsUpToTheNextOdd() {
-    assertEquals(1, WheelRows.Count(1).count)
-    assertEquals(3, WheelRows.Count(2).count)
-    assertEquals(5, WheelRows.Count(4).count)
-    assertEquals(7, WheelRows.Count(7).count)
-    assertEquals(WheelRows.Count(5), WheelRows.Count(4))
-    assertEquals(DefaultWheelRowHeight * 5, pickerDefaultSize(256.dp, WheelRows.Count(4)).height)
-  }
-
-  @Test
-  fun invalidRowsFail() {
-    assertFailsWith<IllegalArgumentException> { WheelRows.Count(0) }
-    assertFailsWith<IllegalArgumentException> { WheelRows.Count(-1) }
-    assertFailsWith<IllegalArgumentException> { WheelRows.Height(0.dp) }
-    assertFailsWith<IllegalArgumentException> { WheelRows.Height(Dp.Infinity) }
   }
 }

@@ -20,6 +20,7 @@ import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
 import dev.darkokoa.datetimewheelpicker.core.WheelRows
+import dev.darkokoa.datetimewheelpicker.core.legacyRowCount
 import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
@@ -33,9 +34,9 @@ import kotlinx.datetime.LocalDate
  * A wheel date picker.
  *
  * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
- * intrinsic default — 256.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` (128.dp at the default three
- * rows) or seven rows for `WheelRows.Height`. Standard Compose constraints override or clamp the default; see the README "Sizing"
- * section for examples and migration notes.
+ * intrinsic default — 256.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` (128.dp at the
+ * default three rows) or seven rows for `WheelRows.Height`. Standard Compose constraints override
+ * or clamp the default; see the README "Sizing" section for examples and migration notes.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`
@@ -132,7 +133,7 @@ fun WheelDatePicker(
   maxDate = maxDate,
   yearsRange = yearsRange,
   dateFormatter = dateFormatter,
-  rows = WheelRows.Count(rowCount),
+  rows = legacyRowCount(rowCount),
   textStyle = textStyle,
   textColor = textColor,
   selectorProperties = selectorProperties,
