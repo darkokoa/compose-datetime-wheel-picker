@@ -2,10 +2,8 @@ package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +39,7 @@ internal fun StandardWheelDatePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
@@ -68,15 +67,11 @@ internal fun StandardWheelDatePicker(
   val years = rememberFormattedYears(yearsRange, dateFormatter)
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
-    if (selectorProperties.enabled().value) {
-      Surface(
-        modifier = Modifier
-          .size(viewportSize.width, viewportSize.height / rowCount),
-        shape = selectorProperties.shape().value,
-        color = selectorProperties.color().value,
-        border = selectorProperties.border().value
-      ) {}
-    }
+    WheelSelector(
+      width = viewportSize.width,
+      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      properties = selectorProperties,
+    )
     Row {
       dateFormatter.dateOrder.fields.forEach { dateField ->
         when (dateField) {
@@ -95,6 +90,7 @@ internal fun StandardWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
+              barrelProperties = barrelProperties,
               startIndex = dayOfMonths.find { it.value == initialDate.day }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newDayOfMonth = dayOfMonths.find { it.index == snappedIndex }?.value
@@ -143,6 +139,7 @@ internal fun StandardWheelDatePicker(
               selectorProperties = WheelPickerDefaults.selectorProperties(
                 enabled = false
               ),
+              barrelProperties = barrelProperties,
               startIndex = months.find { it.value == initialDate.month.number }?.index ?: 0,
               onScrollFinished = { snappedIndex ->
                 val newMonth = months.find { it.index == snappedIndex }?.value
@@ -197,6 +194,7 @@ internal fun StandardWheelDatePicker(
                 selectorProperties = WheelPickerDefaults.selectorProperties(
                   enabled = false
                 ),
+                barrelProperties = barrelProperties,
                 startIndex = years.find { it.value == initialDate.year }?.index ?: 0,
                 onScrollFinished = { snappedIndex ->
                   val newYear = years.find { it.index == snappedIndex }?.value

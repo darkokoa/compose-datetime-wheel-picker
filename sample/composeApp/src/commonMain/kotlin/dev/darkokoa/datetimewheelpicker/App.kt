@@ -95,6 +95,7 @@ private enum class DateDemo(override val title: String) : DemoVariant {
 private enum class DateTimeDemo(override val title: String) : DemoVariant {
   DEFAULT("Default"),
   CUSTOM("Custom"),
+  BARREL("Barrel"),
 }
 
 private enum class SizingDemo(override val title: String) : DemoVariant {
@@ -575,6 +576,26 @@ private fun DateTimeDemos(
           },
           onSnappedDateTimeChanged = { dateTime ->
             logPickerCallback("Custom date time picker", "onSnappedDateTimeChanged", dateTime)
+            onSnappedChanged(dateTime.toString())
+          },
+        )
+      }
+
+      DateTimeDemo.BARREL -> PickerDemoSection(
+        title = "Barrel projection",
+        callbackName = "onSnappedDateTime",
+      ) { onSnapped, onSnappedChanged ->
+        WheelDateTimePicker(
+          startDateTime = initialDateTime,
+          modifier = Modifier.size(280.dp, 240.dp),
+          rowCount = 11,
+          barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f),
+          onSnappedDateTime = { dateTime ->
+            logPickerCallback("Barrel date time picker", "onSnappedDateTime", dateTime)
+            onSnapped(dateTime.toString())
+          },
+          onSnappedDateTimeChanged = { dateTime ->
+            logPickerCallback("Barrel date time picker", "onSnappedDateTimeChanged", dateTime)
             onSnappedChanged(dateTime.toString())
           },
         )

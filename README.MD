@@ -38,6 +38,7 @@ Arabic (العربية), Bengali (বাংলা), Chinese (中文), Czech (Če
 ### 🎨 Visual Customization
 - Modifier-driven responsive sizing, configurable row count, inactive and selected text styles, and colors
 - Customizable selector appearance (shape, color, border)
+- Cylindrical barrel projection with a configurable rim angle
 - Material Design integration
 
 ### ⏰ Time Picker Features
@@ -262,6 +263,37 @@ explicitly with `Modifier.height(128.dp)`.
 > intrinsic-measurement parents (`IntrinsicSize.Min`/`Max` will throw). Pass an explicit
 > `width`/`height` instead.
 
+## Barrel projection
+
+Wheel rows are laid out on a vertical cylinder, giving the wheel the curved, drum-like appearance
+of a native picker. `rowCount` keeps its meaning: it is the number of rows visible on the drum
+from rim to rim, the outermost ones foreshortened against the edge.
+
+How strongly the drum bends is controlled by `rimAngle`, the rotation in degrees of the drum
+surface where it meets the top and bottom edges of the viewport. When you do not pass
+`barrelProperties`, the picker uses `WheelPickerDefaults.barrelPropertiesFor(rowCount)`, which
+adds 13° per row away from the center and caps at 70°: a 3-row wheel stays gently curved while a
+7-row or taller wheel gets the full drum. Pass `WheelPickerDefaults.barrelProperties(rimAngle)`
+with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
+of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
+wheel with no projection at all. `fadeStrength`, in `[0, 1]`, scales how much rows dim as they turn toward
+the rim: `1` (default) is a `cos²` falloff, `0` keeps every row opaque. The fade follows the
+angle, so it has no effect on a flat wheel.
+
+```kotlin
+WheelDateTimePicker(
+  modifier = Modifier.height(240.dp),
+  rowCount = 11,
+  barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fadeStrength = 0.8f),
+) { snappedDateTime -> }
+```
+
+The picker always occupies exactly the height you give it (or the intrinsic default of `128.dp / 3`
+per row); the cylinder is sized to fit. Because the outer rows are compressed, the centered row
+gets more room than `height / rowCount`, and the selector is sized to match it. Sizing, snapping,
+and callbacks are unaffected by the angle. The same parameter is available on `WheelDatePicker`,
+`WheelTimePicker`, and `WheelTextPicker`.
+
 ## API Reference
 
 ### WheelDatePicker Parameters
@@ -274,12 +306,13 @@ explicitly with `Modifier.height(128.dp)`.
 | `yearsRange` | `IntRange?` | `IntRange(minDate.year, maxDate.year)` | Year range to display. **Set to `null` to hide year picker** |
 | `dateFormatter` | `DateFormatter` | Auto-detected | Controls date order, month style, and CJK suffixes |
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Unconstrained axes use the intrinsic default (256.dp × 128.dp at 3 rows). See [Sizing](#sizing) |
-| `rowCount` | `Int` | `3` | Number of visible rows in the wheel |
+| `rowCount` | `Int` | `3` | Number of visible rows on the drum, from rim to rim |
 | `textStyle` | `TextStyle` | `MaterialTheme.typography.titleMedium` | Text styling for inactive items |
 | `textColor` | `Color` | `LocalContentColor.current` | Text color for inactive items |
 | `selectedTextStyle` | `TextStyle` | `textStyle` | Text styling for the selected (centered) item |
 | `selectedTextColor` | `Color` | `textColor` | Text color for the selected (centered) item |
 | `selectorProperties` | `SelectorProperties` | Default | Selector appearance (shape, color, border) |
+| `barrelProperties` | `BarrelProperties` | `WheelPickerDefaults.barrelPropertiesFor(rowCount)` | Rim angle and edge fade of the cylindrical row projection. See [Barrel projection](#barrel-projection) |
 | `onSnappedDateChanged` | `(LocalDate) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date changes (live updates) |
 | `onSnappedDate` | `(LocalDate) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date |
 
@@ -315,7 +348,7 @@ explicitly with `Modifier.height(128.dp)`.
 | `maxTime` | `LocalTime` | `LocalTime.MAX` | Maximum selectable time |
 | `timeFormatter` | `TimeFormatter` | Auto-detected | Controls 12/24 hour format (auto: AM/PM for en-US/GB, 24h for others) |
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 128.dp wide (narrower than date picker). See [Sizing](#sizing) |
-| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, etc. |
+| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, barrelProperties, etc. |
 
 **TimeFormat**:
 - `TimeFormat.HOUR_24` - 24-hour format (00:00 - 23:59)
@@ -334,7 +367,7 @@ explicitly with `Modifier.height(128.dp)`.
 | `modifier` | `Modifier` | `Modifier` | Sizing and placement. Intrinsic default 256.dp × 128.dp at 3 rows. See [Sizing](#sizing) |
 | `onSnappedDateTimeChanged` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **during scrolling** every time the snapped date-time changes (live updates) |
 | `onSnappedDateTime` | `(LocalDateTime) -> Unit` | `{}` | Callback fired **when scrolling settles** on the final selected date-time |
-| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties |
+| Other params | - | Same as `WheelDatePicker` | rowCount, textStyle, textColor, selectedTextStyle, selectedTextColor, selectorProperties, barrelProperties |
 
 ### Styling the selected item
 

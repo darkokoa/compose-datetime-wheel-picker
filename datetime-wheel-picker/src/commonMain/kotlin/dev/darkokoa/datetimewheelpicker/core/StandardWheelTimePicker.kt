@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,7 @@ internal fun StandardWheelTimePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
@@ -85,14 +85,11 @@ internal fun StandardWheelTimePicker(
   fun resolveAmPm(index: Int) = amPms.find { if (index == 2) it.index == 1 else it.index == index }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
-    if (selectorProperties.enabled().value) {
-      Surface(
-        modifier = Modifier.size(viewportSize.width, viewportSize.height / rowCount),
-        shape = selectorProperties.shape().value,
-        color = selectorProperties.color().value,
-        border = selectorProperties.border().value
-      ) {}
-    }
+    WheelSelector(
+      width = viewportSize.width,
+      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      properties = selectorProperties,
+    )
     Row(modifier = Modifier.height(viewportSize.height)) {
       //Hour
       FixedSizeWheelTextPicker(
@@ -112,6 +109,7 @@ internal fun StandardWheelTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        barrelProperties = barrelProperties,
         onScrollFinished = { snappedIndex ->
 
           val newHour = resolveHour(snappedIndex)
@@ -185,6 +183,7 @@ internal fun StandardWheelTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        barrelProperties = barrelProperties,
         onScrollFinished = { snappedIndex ->
 
           val newMinute = minutes.find { it.index == snappedIndex }?.value
@@ -250,6 +249,7 @@ internal fun StandardWheelTimePicker(
           selectorProperties = WheelPickerDefaults.selectorProperties(
             enabled = false
           ),
+          barrelProperties = barrelProperties,
           onScrollFinished = { snappedIndex ->
 
             val newAmPm = resolveAmPm(snappedIndex)

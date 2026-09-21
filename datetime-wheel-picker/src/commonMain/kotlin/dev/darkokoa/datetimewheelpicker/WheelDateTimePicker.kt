@@ -14,6 +14,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.AdaptiveWheelDateTimePicker
+import dev.darkokoa.datetimewheelpicker.core.BarrelProperties
 import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
@@ -60,6 +61,7 @@ fun WheelDateTimePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onSnappedDateTimeChanged: (snappedDateTime: LocalDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: LocalDateTime) -> Unit = {},
 ) {
@@ -70,7 +72,7 @@ fun WheelDateTimePicker(
     val effectiveSize = with(LocalDensity.current) {
       resolvePickerSize(
         constraints = constraints,
-        default = pickerDefaultSize(defaultWidth = 256.dp, rowCount = rowCount),
+        default = pickerDefaultSize(defaultWidth = 256.dp, rowCount = rowCount)
       )
     }
 
@@ -89,6 +91,7 @@ fun WheelDateTimePicker(
       selectedTextStyle = selectedTextStyle,
       selectedTextColor = selectedTextColor,
       selectorProperties = selectorProperties,
+      barrelProperties = barrelProperties,
       onSnappedDateTime = { snappedDateTime ->
         onSnappedDateTime(snappedDateTime.snappedLocalDateTime)
         snappedDateTime.snappedIndex

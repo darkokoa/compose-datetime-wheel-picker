@@ -2,10 +2,8 @@ package dev.darkokoa.datetimewheelpicker.core
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +42,7 @@ internal fun AdaptiveWheelDateTimePicker(
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
   onSnappedDateTimeChanged: (snappedDateTime: SnappedDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
 ) {
@@ -53,15 +52,11 @@ internal fun AdaptiveWheelDateTimePicker(
   val yearTexts = remember(yearsRange) { yearsRange?.map { it.toString() } ?: listOf() }
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
-    if (selectorProperties.enabled().value) {
-      Surface(
-        modifier = Modifier
-          .size(viewportSize.width, viewportSize.height / rowCount),
-        shape = selectorProperties.shape().value,
-        color = selectorProperties.color().value,
-        border = selectorProperties.border().value
-      ) {}
-    }
+    WheelSelector(
+      width = viewportSize.width,
+      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      properties = selectorProperties,
+    )
     Row {
       //Date
       AdaptiveWheelDatePicker(
@@ -82,6 +77,7 @@ internal fun AdaptiveWheelDateTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        barrelProperties = barrelProperties,
         onSnappedDate = { snappedDate ->
 
           val newDateTime = when (snappedDate) {
@@ -147,6 +143,7 @@ internal fun AdaptiveWheelDateTimePicker(
         selectorProperties = WheelPickerDefaults.selectorProperties(
           enabled = false
         ),
+        barrelProperties = barrelProperties,
         onSnappedTime = { snappedTime, timeFormat ->
 
           val newDateTime = when (snappedTime) {
@@ -188,7 +185,6 @@ internal fun AdaptiveWheelDateTimePicker(
     }
   }
 }
-
 
 
 
