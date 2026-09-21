@@ -81,7 +81,7 @@ internal val WheelRows.Count.drumRows: Int
  * occupies on the drum, which is also the on-screen height of the centered row since the
  * projection is linear near the center. Use it for the selector too.
  */
-internal fun WheelRows.rowHeight(viewportHeight: Dp, barrelProperties: BarrelProperties): Dp =
+internal fun WheelRows.resolveRowHeight(viewportHeight: Dp, barrelProperties: BarrelProperties): Dp =
   when (this) {
     is WheelRows.Count -> barrelProperties.listHeight(viewportHeight) / drumRows
     is WheelRows.Height -> rowHeight

@@ -4,17 +4,25 @@ All notable changes to this project will be documented in this file.
 
 ## 1.5.0 - Unreleased
 
+### Breaking changes
+
+- **`rowCount: Int` is replaced by `rows: WheelRows`** on `WheelDatePicker`, `WheelTimePicker`,
+  `WheelDateTimePicker`, and `WheelTextPicker`. `WheelRows.Count(n)` is the previous behavior
+  (default `Count(3)`); migrate with `rowCount = 5` → `rows = WheelRows.Count(5)`. The drum
+  always holds an odd number of rows so the selected row sits at the center with whole rows on
+  both sides: an even count is laid out as the next odd number (`Count(4)` shows the same five
+  rows as `Count(5)`; `Count(4).count` stays `4`). Previously an even `rowCount` rendered half a
+  row cut off at each rim. `WheelTextPicker.rows` now defaults to `Count(3)` like the other
+  pickers.
+
+### Added
+
+- **`WheelRows.Height(h)`** fixes the row and selector height instead of the row count and shows
+  as many rows as fit, like a native iOS picker. Its intrinsic picker height is seven rows and
+  its default rim angle is 90°. See the README "Rows" section.
+
 ### Changed
 
-- **`rowCount: Int` is replaced by `rows: WheelRows`.** `WheelRows.Count(n)` is the previous
-  behavior (default `Count(3)`); the new `WheelRows.Height(h)` fixes the row and selector height
-  instead and shows as many rows as fit, like a native iOS picker, with an intrinsic height of
-  seven rows and a default rim angle of 90°. `WheelPickerDefaults.barrelPropertiesFor` now takes
-  a `WheelRows`. Migration: `rowCount = 5` → `rows = WheelRows.Count(5)`. The drum always holds
-  an odd number of rows so the selected row sits at the center with whole rows on both sides: an
-  even count is laid out as the next odd number (`Count(4)` shows the same five rows as
-  `Count(5)`; `Count(4).count` stays `4`). Previously an even `rowCount` rendered half a row cut
-  off at each rim. `WheelTextPicker.rows` now defaults to `Count(3)` like the other pickers.
 - **Wheel rows are now laid out on a cylinder ("barrel projection") in all pickers**, replacing
   the previous per-row tilt and fade. With `WheelRows.Count` the rows span the drum from rim to
   rim, the centered row is slightly taller than `height / count`, and picker sizes are unchanged.

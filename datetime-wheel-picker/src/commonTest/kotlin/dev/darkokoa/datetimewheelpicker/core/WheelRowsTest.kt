@@ -29,7 +29,7 @@ class WheelRowsTest {
     assertEquals(7, WheelRows.Count(7).drumRows)
     assertEquals(WheelRows.Count(5).intrinsicHeight, WheelRows.Count(4).intrinsicHeight)
     val flat = WheelPickerDefaults.barrelProperties(rimAngle = 0f)
-    assertEquals(WheelRows.Count(5).rowHeight(240.dp, flat), WheelRows.Count(4).rowHeight(240.dp, flat))
+    assertEquals(WheelRows.Count(5).resolveRowHeight(240.dp, flat), WheelRows.Count(4).resolveRowHeight(240.dp, flat))
     assertEquals(
       WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)),
       WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(4)),

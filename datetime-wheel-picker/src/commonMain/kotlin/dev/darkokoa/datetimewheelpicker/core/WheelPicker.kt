@@ -53,9 +53,9 @@ internal fun WheelPicker(
   // The flat list is the unrolled surface of the drum: longer than the viewport, with each row
   // taking the arc length it occupies on the cylinder. The projection folds it back into the
   // viewport and the clip discards whatever is left over.
-  val rowHeight = rows.rowHeight(viewportSize.height, barrelProperties)
+  val rowHeight = rows.resolveRowHeight(viewportSize.height, barrelProperties)
   val listHeight = barrelProperties.listHeight(viewportSize.height)
-  val singleViewPortHeightPx = remember(rowHeight, density) {
+  val rowHeightPx = remember(rowHeight, density) {
     with(density) { rowHeight.toPx() }
   }
   val snappedItemIndexState = remember(lazyListState) {
@@ -115,7 +115,7 @@ internal fun WheelPicker(
               val centerIndex = lazyListState.firstVisibleItemIndex
               val centerIndexOffset = lazyListState.firstVisibleItemScrollOffset
               val distanceToCenterIndex = index - centerIndex
-              val distanceToIndexSnap = distanceToCenterIndex * singleViewPortHeightPx - centerIndexOffset
+              val distanceToIndexSnap = distanceToCenterIndex * rowHeightPx - centerIndexOffset
               calculateBarrelTransform(
                 distanceToCenterPx = distanceToIndexSnap,
                 viewportHeightPx = viewportHeightPx,
@@ -196,7 +196,7 @@ object WheelPickerDefaults {
 /**
  * The highlight drawn behind the centered row of a wheel, or nothing when [properties] disables
  * it. It spans the [viewportSize] width and is as tall as one row of [rows] on the drum described
- * by [barrelProperties] (see [WheelRows.rowHeight]); the caller centers it in the viewport.
+ * by [barrelProperties] (see [WheelRows.resolveRowHeight]); the caller centers it in the viewport.
  */
 @Composable
 internal fun WheelSelector(
@@ -206,13 +206,13 @@ internal fun WheelSelector(
   properties: SelectorProperties,
 ) = WheelSelector(
   width = viewportSize.width,
-  height = rows.rowHeight(viewportSize.height, barrelProperties),
+  height = rows.resolveRowHeight(viewportSize.height, barrelProperties),
   properties = properties,
 )
 
 /**
  * The highlight drawn behind the centered row of a wheel, or nothing when [properties] disables
- * it. [height] should be the picker's row height (see [WheelRows.rowHeight]) so the highlight
+ * it. [height] should be the picker's row height (see [WheelRows.resolveRowHeight]) so the highlight
  * matches the centered row on the drum; the caller centers it in the viewport.
  */
 @Composable
