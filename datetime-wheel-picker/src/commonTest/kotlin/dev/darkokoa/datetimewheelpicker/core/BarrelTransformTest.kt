@@ -47,8 +47,32 @@ class BarrelTransformTest {
     assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)).fadeStrength)
     assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Height(32.dp)).fadeStrength)
     assertEquals(0.4f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fadeStrength = 0.4f).fadeStrength)
+    assertEquals(20f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fadeStrength = 20f).fadeStrength)
     assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = -0.1f) }
-    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = 1.1f) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = Float.NaN) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = Float.POSITIVE_INFINITY) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = Float.NEGATIVE_INFINITY) }
+    assertFailsWith<IllegalArgumentException> {
+      WheelPickerDefaults.barrelProperties(45f).copy(fadeStrength = Float.POSITIVE_INFINITY)
+    }
+  }
+
+  @Test
+  fun strongerFadeReachesZeroBeforeTheEdgeAndStaysClamped() {
+    // Half the viewport is 120px, so halfway to the edge is 60px.
+    fun alphaAt(distancePx: Float, fadeStrength: Float) =
+      calculateBarrelTransform(
+        distanceToCenterPx = distancePx,
+        viewportHeightPx = 240f,
+        rimAngle = 0f,
+        fadeStrength = fadeStrength,
+      ).alpha
+
+    assertEquals(0f, alphaAt(60f, fadeStrength = 4f), absoluteTolerance = 0.0001f)
+    assertEquals(0.75f, alphaAt(30f, fadeStrength = 4f), absoluteTolerance = 0.0001f)
+    assertEquals(1f, alphaAt(0f, fadeStrength = 20f))
+    assertEquals(0f, alphaAt(60f, fadeStrength = 20f))
+    assertEquals(0f, alphaAt(120f, fadeStrength = 20f))
   }
 
   @Test

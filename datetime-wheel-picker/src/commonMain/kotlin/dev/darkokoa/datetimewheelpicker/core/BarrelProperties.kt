@@ -63,13 +63,16 @@ private const val HALF_PI = (PI / 2).toFloat()
  * edges of the viewport. Must be in `[0, 90]`. Larger values bend the wheel more and compress the
  * outer rows harder; `90` shows the full half cylinder, matching a native iOS picker, and `0`
  * disables the projection entirely for a flat, evenly spaced wheel.
- * @property fadeStrength How strongly rows fade toward the top and bottom edges of the viewport,
- * in `[0, 1]`. A row's alpha is `1 - fadeStrength · t²`, where `t` is its on-screen distance
- * from the center as a fraction of half the viewport height: at `1` a row is fully transparent
- * by the time it reaches the edge, at `0` every row stays opaque and only the geometry conveys
- * depth. The fade follows the projected position rather than the drum angle, so it looks the
- * same on a gently curved wheel as on a full drum and also applies to a flat wheel; on a 90°
- * drum it coincides with `cos²` of the row's angle.
+ * @property fadeStrength How strongly rows fade toward the top and bottom edges of the viewport.
+ * Must be non-negative and finite; there is no upper bound. A row's alpha is
+ * `1 - fadeStrength · t²`, clamped to `[0, 1]`, where `t` is its on-screen distance from the
+ * center as a fraction of half the viewport height. `0` keeps every row opaque and only the
+ * geometry conveys depth. `1` (the default) reaches full transparency exactly at the edge, `4`
+ * reaches it halfway there, and above about `10` even a tall drum leaves just the center row or
+ * two visible. Once the nearest neighboring row is already invisible, a larger value changes
+ * nothing: alpha cannot go below zero. The fade follows the projected position rather than the
+ * drum angle, so it looks the same on a gently curved wheel as on a full drum and also applies
+ * to a flat wheel; on a 90° drum at strength `1` it coincides with `cos²` of the row's angle.
  */
 @Immutable
 class BarrelProperties internal constructor(
@@ -80,8 +83,8 @@ class BarrelProperties internal constructor(
     require(rimAngle >= 0f && rimAngle <= 90f) {
       "rimAngle must be in [0, 90], was $rimAngle"
     }
-    require(fadeStrength >= 0f && fadeStrength <= 1f) {
-      "fadeStrength must be in [0, 1], was $fadeStrength"
+    require(fadeStrength >= 0f && fadeStrength.isFinite()) {
+      "fadeStrength must be non-negative and finite, was $fadeStrength"
     }
   }
 
@@ -146,8 +149,9 @@ private val HiddenTransform = BarrelTransform(alpha = 0f, rotationX = 0f, transl
 
 /**
  * Alpha of a row whose on-screen center is [edgeFraction] of the way from the viewport center to
- * its edge: opaque at the center, `1 - fadeStrength` at the edge, quadratic in between so the
- * rows next to the center stay crisp and the fade accelerates toward the edge.
+ * its edge: `1 - fadeStrength · t²`, clamped to `[0, 1]`. The square keeps rows near the center
+ * crisper than a linear fade and accelerates toward the edge; once the result would go below
+ * zero the row is fully transparent.
  */
 private fun edgeFade(edgeFraction: Float, fadeStrength: Float): Float =
   (1f - fadeStrength * edgeFraction * edgeFraction).coerceIn(0f, 1f)
@@ -176,8 +180,8 @@ private fun edgeFade(edgeFraction: Float, fadeStrength: Float): Float =
  * A [rimAngle] of `0` is a flat wheel: rows keep their geometry and only the fade applies.
  *
  * Inputs are expected to be validated by the caller: [viewportHeightPx] positive, [rimAngle] in
- * `[0, 90]` and [fadeStrength] in `[0, 1]` (see [BarrelProperties]). This function runs every
- * frame for every visible row, so it deliberately performs no validation.
+ * `[0, 90]`, and [fadeStrength] non-negative and finite (see [BarrelProperties]). This function
+ * runs every frame for every visible row, so it deliberately performs no validation.
  */
 internal fun calculateBarrelTransform(
   distanceToCenterPx: Float,
