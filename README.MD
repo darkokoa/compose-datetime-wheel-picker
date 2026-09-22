@@ -300,9 +300,11 @@ stays gently curved while a 7-row or taller wheel gets the full drum with every 
 `WheelPickerDefaults.barrelProperties(rimAngle)`
 with a value in `[0, 90]` to fix it. `90` shows the full half cylinder, matching iOS, at the cost
 of the outermost rows becoming nearly unreadable against the rim; `0` is a flat, evenly spaced
-wheel with no projection at all. `fadeStrength`, in `[0, 1]`, scales how much rows dim as they turn toward
-the rim: `1` (default) is a `cos²` falloff, `0` keeps every row opaque. The fade follows the
-angle, so it has no effect on a flat wheel.
+wheel with no projection at all. `fadeStrength`, in `[0, 1]`, is how transparent rows become by
+the time they reach the top and bottom edges: `1` (default) fades them out completely, `0` keeps
+every row opaque. The fade follows a row's on-screen distance from the center, quadratically so
+the rows next to the selection stay crisp, and is independent of the angle: a gently curved
+3-row wheel and a flat wheel fade just like a full drum.
 
 ```kotlin
 WheelDateTimePicker(

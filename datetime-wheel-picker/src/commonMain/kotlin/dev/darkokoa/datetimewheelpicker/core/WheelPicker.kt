@@ -151,8 +151,9 @@ object WheelPickerDefaults {
    *
    * [rimAngle] is the rotation, in degrees, of the drum surface at the viewport edges, in
    * `[0, 90]`. `90` matches a native iOS picker; `0` is a flat wheel. Use [barrelPropertiesFor]
-   * to let the angle follow the picker's [WheelRows] instead. [fadeStrength], in `[0, 1]`, scales
-   * how much rows dim as they turn toward the rim. See [BarrelProperties].
+   * to let the angle follow the picker's [WheelRows] instead. [fadeStrength], in `[0, 1]`, is
+   * how transparent rows become by the time they reach the top and bottom edges. See
+   * [BarrelProperties].
    */
   fun barrelProperties(
     rimAngle: Float,
