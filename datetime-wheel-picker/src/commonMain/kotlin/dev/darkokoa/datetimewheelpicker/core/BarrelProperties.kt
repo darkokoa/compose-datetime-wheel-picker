@@ -22,6 +22,13 @@ internal const val DEFAULT_BARREL_FADE = 1f
 internal const val AUTO_RIM_DEGREES_PER_ROW = 13f
 
 /**
+ * Rim angle the automatic default gives a [WheelRows.Height] wheel: the full half cylinder of a
+ * native iOS picker. Such a wheel promises no row count, so there is no outermost row that has to
+ * stay readable at the rim.
+ */
+internal const val HEIGHT_MODE_RIM_ANGLE = 90f
+
+/**
  * Distance from the viewer to the drum surface at the center row, as a multiple of the viewport
  * height. It only feeds the depth scale that shrinks rows as they recede; see
  * [calculateBarrelTransform].
@@ -45,14 +52,13 @@ private const val HALF_PI = (PI / 2).toFloat()
 /**
  * Controls the cylindrical ("barrel") projection applied to wheel rows.
  *
- * The wheel's `rowCount` rows are laid out on the front of a vertical cylinder whose rim
- * coincides with the top and bottom edges of the viewport. Rows tilt away from the viewer, bunch
- * up toward the rim, and fade out as they leave it, giving the wheel the look of a physical drum.
- * `rowCount` keeps its meaning: it is the number of rows spanning the visible drum from rim to
- * rim, the outermost ones partially foreshortened.
+ * The wheel's rows are laid out on the front of a vertical cylinder whose rim coincides with the
+ * top and bottom edges of the viewport. Rows tilt away from the viewer, bunch up toward the rim,
+ * and fade out as they leave it, giving the wheel the look of a physical drum. See [WheelRows]
+ * for how the rows are sized on that drum.
  *
  * Create instances through [WheelPickerDefaults.barrelProperties], or let
- * [WheelPickerDefaults.barrelPropertiesFor] pick an angle suited to the row count.
+ * [WheelPickerDefaults.barrelPropertiesFor] pick an angle suited to the rows.
  *
  * @property rimAngle Rotation, in degrees, of the drum surface where it meets the top and bottom
  * edges of the viewport. Must be in `[0, 90]`. Larger values bend the wheel more and compress the
@@ -112,14 +118,6 @@ internal val BarrelProperties.arcLengthRatio: Float
  * which is longer than [viewportHeight] unless the wheel is flat.
  */
 internal fun BarrelProperties.listHeight(viewportHeight: Dp): Dp = viewportHeight * arcLengthRatio
-
-/**
- * Height of a single row in the flat list backing the wheel. This is the arc length each row
- * occupies on the drum, which is also the on-screen height of the centered row since the
- * projection is linear near the center. Use it for the selector too.
- */
-internal fun BarrelProperties.rowHeight(viewportHeight: Dp, rowCount: Int): Dp =
-  listHeight(viewportHeight) / rowCount
 
 /**
  * Per-row graphics layer values produced by [calculateBarrelTransform]; [scale] applies to both

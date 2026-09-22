@@ -2,19 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.4.1 - Unreleased
+## 1.5.0 - Unreleased
+
+### Breaking changes
+
+- **`rowCount: Int` is replaced by `rows: WheelRows`** on `WheelDatePicker`, `WheelTimePicker`,
+  `WheelDateTimePicker`, and `WheelTextPicker`. `WheelRows.Count(n)` is the previous behavior
+  (default `Count(3)`); migrate with `rowCount = 5` → `rows = WheelRows.Count(5)`. The drum
+  always holds an odd number of rows so the selected row sits at the center with whole rows on
+  both sides: an even count is laid out as the next odd number (`Count(4)` shows the same five
+  rows as `Count(5)`; `Count(4).count` stays `4`). Previously an even `rowCount` rendered half a
+  row cut off at each rim. `WheelTextPicker.rows` now defaults to `Count(3)` like the other
+  pickers.
+
+### Added
+
+- **`WheelRows.Height(h)`** fixes the row and selector height instead of the row count and shows
+  as many rows as fit, like a native iOS picker. Its intrinsic picker height is seven rows and
+  its default rim angle is 90°. See the README "Rows" section.
 
 ### Changed
 
 - **Wheel rows are now laid out on a cylinder ("barrel projection") in all pickers**, replacing
-  the previous per-row tilt and fade. `rowCount` rows span the drum from rim to rim, the centered
-  row is slightly taller than `height / rowCount`, and picker sizes are unchanged. The rim angle
-  is configurable through the new `barrelProperties` parameter, created with
+  the previous per-row tilt and fade. With `WheelRows.Count` the rows span the drum from rim to
+  rim, the centered row is slightly taller than `height / count`, and picker sizes are unchanged.
+  The rim angle is configurable through the new `barrelProperties` parameter, created with
   `WheelPickerDefaults.barrelProperties(rimAngle, fadeStrength)` (angle `0` to `90`, strength `0`
-  to `1`). The default `WheelPickerDefaults.barrelPropertiesFor(rowCount)` keeps 3-row wheels
-  gently curved and gives 7-row or taller wheels the full drum. Pass `90f` for the iOS look or
-  `0f` for a flat wheel with no projection. This also fixes rows more than four positions from
-  the center rendering mirrored in the old implementation. Based on the contribution by
+  to `1`). The default `WheelPickerDefaults.barrelPropertiesFor(rows)` keeps 3-row wheels gently
+  curved and gives 7-row or taller wheels the full drum. Pass `90f` for the iOS look or `0f` for a
+  flat wheel with no projection. This also fixes rows more than four positions from the center
+  rendering mirrored in the old implementation. Based on the contribution by
   [@bnrdk](https://github.com/bnrdk) in
   [#150](https://github.com/darkokoa/compose-datetime-wheel-picker/pull/150).
 

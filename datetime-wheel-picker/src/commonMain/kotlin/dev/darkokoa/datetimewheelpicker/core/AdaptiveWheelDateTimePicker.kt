@@ -36,13 +36,13 @@ internal fun AdaptiveWheelDateTimePicker(
   ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   viewportSize: DpSize = DpSize(256.dp, 128.dp),
-  rowCount: Int = 3,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onSnappedDateTimeChanged: (snappedDateTime: SnappedDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: SnappedDateTime) -> Int? = { _ -> null },
 ) {
@@ -53,8 +53,9 @@ internal fun AdaptiveWheelDateTimePicker(
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     WheelSelector(
-      width = viewportSize.width,
-      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      viewportSize = viewportSize,
+      rows = rows,
+      barrelProperties = barrelProperties,
       properties = selectorProperties,
     )
     Row {
@@ -69,7 +70,7 @@ internal fun AdaptiveWheelDateTimePicker(
           width = if (yearsRange == null) viewportSize.width * 3 / 6 else viewportSize.width * 3 / 5,
           height = viewportSize.height
         ),
-        rowCount = rowCount,
+        rows = rows,
         textStyle = textStyle,
         textColor = textColor,
         selectedTextStyle = selectedTextStyle,
@@ -135,7 +136,7 @@ internal fun AdaptiveWheelDateTimePicker(
           width = if (yearsRange == null) viewportSize.width * 3 / 6 else viewportSize.width * 2 / 5,
           height = viewportSize.height
         ),
-        rowCount = rowCount,
+        rows = rows,
         textStyle = textStyle,
         textColor = textColor,
         selectedTextStyle = selectedTextStyle,

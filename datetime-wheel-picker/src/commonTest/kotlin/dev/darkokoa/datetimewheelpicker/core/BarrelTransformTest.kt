@@ -16,13 +16,13 @@ class BarrelTransformTest {
   private val rad70 = (70.0 * PI / 180).toFloat()
 
   @Test
-  fun defaultAngleFollowsRowCount() {
-    assertEquals(13f, WheelPickerDefaults.barrelPropertiesFor(1).rimAngle)
-    assertEquals(26f, WheelPickerDefaults.barrelPropertiesFor(3).rimAngle)
-    assertEquals(52f, WheelPickerDefaults.barrelPropertiesFor(5).rimAngle)
-    assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(7).rimAngle)
-    assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(11).rimAngle)
-    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelPropertiesFor(0) }
+  fun defaultAngleFollowsRows() {
+    assertEquals(13f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(1)).rimAngle)
+    assertEquals(26f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(3)).rimAngle)
+    assertEquals(52f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)).rimAngle)
+    assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(7)).rimAngle)
+    assertEquals(70f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(11)).rimAngle)
+    assertEquals(HEIGHT_MODE_RIM_ANGLE, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Height(32.dp)).rimAngle)
   }
 
   @Test
@@ -44,7 +44,8 @@ class BarrelTransformTest {
   @Test
   fun fadeIsValidatedAndDefaultsToFull() {
     assertEquals(1f, WheelPickerDefaults.barrelProperties(rimAngle = 45f).fadeStrength)
-    assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(5).fadeStrength)
+    assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)).fadeStrength)
+    assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Height(32.dp)).fadeStrength)
     assertEquals(0.4f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fadeStrength = 0.4f).fadeStrength)
     assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = -0.1f) }
     assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = 1.1f) }
@@ -88,7 +89,7 @@ class BarrelTransformTest {
     assertEquals(a.hashCode(), b.hashCode())
     assertNotEquals(a, a.copy(rimAngle = 30f))
     assertNotEquals(a, a.copy(fadeStrength = 0.5f))
-    assertEquals(WheelPickerDefaults.barrelPropertiesFor(3), a.copy(rimAngle = 26f))
+    assertEquals(WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(3)), a.copy(rimAngle = 26f))
   }
 
   @Test
@@ -97,7 +98,8 @@ class BarrelTransformTest {
 
     assertEquals(1f, flat.arcLengthRatio)
     assertEquals(240.dp, flat.listHeight(240.dp))
-    assertEquals(240.dp / 7, flat.rowHeight(240.dp, 7))
+    assertEquals(240.dp / 7, WheelRows.Count(7).resolveRowHeight(240.dp, flat))
+    assertEquals(32.dp, WheelRows.Height(32.dp).resolveRowHeight(240.dp, flat))
 
     val transform = calculateBarrelTransform(distanceToCenterPx = 100f, viewportHeightPx = 240f, rimAngle = 0f)
     assertEquals(1f, transform.alpha)
@@ -113,18 +115,21 @@ class BarrelTransformTest {
 
     assertEquals(expectedRatio, barrel.arcLengthRatio, absoluteTolerance = 0.0001f)
     assertEquals(240.dp * expectedRatio, barrel.listHeight(240.dp))
-    assertEquals(240.dp * expectedRatio / 11, barrel.rowHeight(240.dp, 11))
-    assertTrue(barrel.rowHeight(240.dp, 11) > 240.dp / 11)
+    assertEquals(240.dp * expectedRatio / 11, WheelRows.Count(11).resolveRowHeight(240.dp, barrel))
+    assertTrue(WheelRows.Count(11).resolveRowHeight(240.dp, barrel) > 240.dp / 11)
+    // Height rows ignore the angle entirely.
+    assertEquals(32.dp, WheelRows.Height(32.dp).resolveRowHeight(240.dp, barrel))
   }
 
   @Test
   fun defaultSizeIsIndependentOfBarrelAngle() {
-    val size = pickerDefaultSize(256.dp, 11)
+    val rows = WheelRows.Count(11)
+    val size = pickerDefaultSize(256.dp, rows)
 
     // Same viewport whatever the angle; the drum gives the centered row more than the flat row height.
     assertEquals(DefaultWheelRowHeight * 11, size.height)
-    assertTrue(WheelPickerDefaults.barrelPropertiesFor(11).rowHeight(size.height, 11) > DefaultWheelRowHeight)
-    assertEquals(DefaultWheelRowHeight, WheelPickerDefaults.barrelProperties(rimAngle = 0f).rowHeight(size.height, 11))
+    assertTrue(rows.resolveRowHeight(size.height, WheelPickerDefaults.barrelPropertiesFor(rows)) > DefaultWheelRowHeight)
+    assertEquals(DefaultWheelRowHeight, rows.resolveRowHeight(size.height, WheelPickerDefaults.barrelProperties(rimAngle = 0f)))
   }
 
   @Test

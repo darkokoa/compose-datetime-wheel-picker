@@ -30,9 +30,9 @@ import androidx.compose.ui.unit.dp
  * A wheel picker over arbitrary [texts].
  *
  * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
- * intrinsic default — 128.dp wide, `(128.dp / 3) * rowCount` tall. Standard Compose constraints
- * override or clamp the default; see the README "Sizing" section for examples and migration
- * notes.
+ * intrinsic default — 128.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` (128.dp at the
+ * default three rows) or seven rows for `WheelRows.Height`. Standard Compose constraints override
+ * or clamp the default; see the README "Sizing" section for examples and migration notes.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`
@@ -43,13 +43,13 @@ fun WheelTextPicker(
   modifier: Modifier = Modifier,
   startIndex: Int = 0,
   texts: List<String>,
-  rowCount: Int,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -60,7 +60,7 @@ fun WheelTextPicker(
     val effectiveSize = with(LocalDensity.current) {
       resolvePickerSize(
         constraints = constraints,
-        default = pickerDefaultSize(defaultWidth = 128.dp, rowCount = rowCount)
+        default = pickerDefaultSize(defaultWidth = 128.dp, rows = rows)
       )
     }
 
@@ -69,7 +69,7 @@ fun WheelTextPicker(
       startIndex = startIndex,
       viewportSize = effectiveSize,
       texts = texts,
-      rowCount = rowCount,
+      rows = rows,
       textStyle = textStyle,
       textColor = textColor,
       selectedTextStyle = selectedTextStyle,
@@ -104,7 +104,7 @@ fun WheelTextPicker(
   modifier = modifier.size(size.width, size.height),
   startIndex = startIndex,
   texts = texts,
-  rowCount = rowCount,
+  rows = WheelRows.Count(rowCount),
   textStyle = style,
   textColor = color,
   selectorProperties = selectorProperties,
@@ -118,13 +118,13 @@ internal fun FixedSizeWheelTextPicker(
   startIndex: Int = 0,
   viewportSize: DpSize,
   texts: List<String>,
-  rowCount: Int,
+  rows: WheelRows,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -141,7 +141,7 @@ internal fun FixedSizeWheelTextPicker(
     startIndex = startIndex,
     viewportSize = viewportSize,
     count = texts.size,
-    rowCount = rowCount,
+    rows = rows,
     selectorProperties = selectorProperties,
     barrelProperties = barrelProperties,
     onScrollFinished = onScrollFinished,
@@ -163,7 +163,7 @@ internal fun WheelTextPickerWithSuffix(
   startIndex: Int = 0,
   viewportSize: DpSize,
   texts: List<String>,
-  rowCount: Int,
+  rows: WheelRows,
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
@@ -173,7 +173,7 @@ internal fun WheelTextPickerWithSuffix(
   suffixTextColor: Color = selectedTextColor,
   textToSuffixSpacing: Dp = 8.dp,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onScrollChanged: (snappedIndex: Int) -> Unit = {},
   onScrollFinished: (snappedIndex: Int) -> Int? = { null },
 ) {
@@ -227,7 +227,7 @@ internal fun WheelTextPickerWithSuffix(
       startIndex = startIndex,
       viewportSize = viewportSize,
       count = texts.size,
-      rowCount = rowCount,
+      rows = rows,
       selectorProperties = selectorProperties,
       barrelProperties = barrelProperties,
       onScrollFinished = onScrollFinished,

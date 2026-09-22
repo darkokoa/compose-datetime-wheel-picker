@@ -19,6 +19,7 @@ import dev.darkokoa.datetimewheelpicker.core.CYB3R_1N1T_ZOLL
 import dev.darkokoa.datetimewheelpicker.core.EPOCH
 import dev.darkokoa.datetimewheelpicker.core.SelectorProperties
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.core.WheelRows
 import dev.darkokoa.datetimewheelpicker.core.format.CjkSuffixConfig
 import dev.darkokoa.datetimewheelpicker.core.format.DateFormatter
 import dev.darkokoa.datetimewheelpicker.core.format.MonthDisplayStyle
@@ -34,9 +35,9 @@ import kotlinx.datetime.LocalDateTime
  * A wheel date-time picker.
  *
  * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
- * intrinsic default — 256.dp wide, `(128.dp / 3) * rowCount` tall (128.dp at the default three
- * rows). Standard Compose constraints override or clamp the default; see the README "Sizing"
- * section for examples and migration notes.
+ * intrinsic default — 256.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` (128.dp at the
+ * default three rows) or seven rows for `WheelRows.Height`. Standard Compose constraints override
+ * or clamp the default; see the README "Sizing" section for examples and migration notes.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`
@@ -55,13 +56,13 @@ fun WheelDateTimePicker(
     cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
-  rowCount: Int = 3,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onSnappedDateTimeChanged: (snappedDateTime: LocalDateTime) -> Unit = {},
   onSnappedDateTime: (snappedDateTime: LocalDateTime) -> Unit = {},
 ) {
@@ -72,7 +73,7 @@ fun WheelDateTimePicker(
     val effectiveSize = with(LocalDensity.current) {
       resolvePickerSize(
         constraints = constraints,
-        default = pickerDefaultSize(defaultWidth = 256.dp, rowCount = rowCount)
+        default = pickerDefaultSize(defaultWidth = 256.dp, rows = rows)
       )
     }
 
@@ -85,7 +86,7 @@ fun WheelDateTimePicker(
       dateFormatter = dateFormatter,
       timeFormatter = timeFormatter,
       viewportSize = effectiveSize,
-      rowCount = rowCount,
+      rows = rows,
       textStyle = textStyle,
       textColor = textColor,
       selectedTextStyle = selectedTextStyle,
@@ -137,7 +138,7 @@ fun WheelDateTimePicker(
   yearsRange = yearsRange,
   dateFormatter = dateFormatter,
   timeFormatter = timeFormatter,
-  rowCount = rowCount,
+  rows = WheelRows.Count(rowCount),
   textStyle = textStyle,
   textColor = textColor,
   selectorProperties = selectorProperties,

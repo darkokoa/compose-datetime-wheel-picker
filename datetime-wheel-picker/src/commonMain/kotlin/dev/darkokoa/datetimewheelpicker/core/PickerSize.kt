@@ -6,18 +6,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
-/** Per-row height of the default wheel viewport: 3 rows == the historical 128.dp default. */
-internal val DefaultWheelRowHeight: Dp = 128.dp / 3
-
 /**
- * Intrinsic picker size: [DefaultWheelRowHeight] per row of viewport, independent of the barrel
- * angle. The rows are laid on a drum inside that viewport, so the centered row comes out taller
- * than [DefaultWheelRowHeight] and the rim rows compressed.
+ * Intrinsic picker size: [defaultWidth] by the height [rows] asks for when unconstrained. The
+ * barrel angle plays no part; the rows are laid on a drum inside that viewport.
  */
-internal fun pickerDefaultSize(defaultWidth: Dp, rowCount: Int): DpSize {
-  require(rowCount > 0) { "rowCount must be positive, was $rowCount" }
-  return DpSize(defaultWidth, DefaultWheelRowHeight * rowCount)
-}
+internal fun pickerDefaultSize(defaultWidth: Dp, rows: WheelRows): DpSize =
+  DpSize(defaultWidth, rows.intrinsicHeight)
 
 /**
  * Resolves the effective picker viewport from the incoming [constraints] and the picker's

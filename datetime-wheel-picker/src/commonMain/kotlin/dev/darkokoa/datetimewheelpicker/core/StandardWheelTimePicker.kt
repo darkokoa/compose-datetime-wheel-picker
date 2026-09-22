@@ -34,13 +34,13 @@ internal fun StandardWheelTimePicker(
   maxTime: LocalTime = LocalTime.MAX,
   timeFormatter: TimeFormatter = timeFormatter(Locale.current),
   viewportSize: DpSize = DpSize(128.dp, 128.dp),
-  rowCount: Int = 3,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onSnappedTimeChanged: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Unit = { _, _ -> },
   onSnappedTime: (snappedTime: SnappedTime, timeFormat: TimeFormat) -> Int? = { _, _ -> null },
 ) {
@@ -86,8 +86,9 @@ internal fun StandardWheelTimePicker(
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     WheelSelector(
-      width = viewportSize.width,
-      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      viewportSize = viewportSize,
+      rows = rows,
+      barrelProperties = barrelProperties,
       properties = selectorProperties,
     )
     Row(modifier = Modifier.height(viewportSize.height)) {
@@ -98,7 +99,7 @@ internal fun StandardWheelTimePicker(
           height = viewportSize.height
         ),
         texts = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) hours.map { it.text } else amPmHours.map { it.text },
-        rowCount = rowCount,
+        rows = rows,
         textStyle = resolvedTextStyle,
         textColor = textColor,
         selectedTextStyle = resolvedSelectedTextStyle,
@@ -174,7 +175,7 @@ internal fun StandardWheelTimePicker(
           height = viewportSize.height
         ),
         texts = minutes.map { it.text },
-        rowCount = rowCount,
+        rows = rows,
         textStyle = resolvedTextStyle,
         textColor = textColor,
         selectedTextStyle = resolvedSelectedTextStyle,
@@ -240,7 +241,7 @@ internal fun StandardWheelTimePicker(
             height = viewportSize.height
           ),
           texts = amPms.map { it.text },
-          rowCount = rowCount,
+          rows = rows,
           textStyle = resolvedTextStyle,
           textColor = textColor,
           selectedTextStyle = resolvedSelectedTextStyle,

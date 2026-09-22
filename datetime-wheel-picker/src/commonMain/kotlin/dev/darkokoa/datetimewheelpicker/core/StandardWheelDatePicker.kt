@@ -33,13 +33,13 @@ internal fun StandardWheelDatePicker(
     cjkSuffixConfig = CjkSuffixConfig.HideAll
   ),
   viewportSize: DpSize = DpSize(256.dp, 128.dp),
-  rowCount: Int = 3,
+  rows: WheelRows = WheelRows.Count(3),
   textStyle: TextStyle = MaterialTheme.typography.titleMedium,
   textColor: Color = LocalContentColor.current,
   selectedTextStyle: TextStyle = textStyle,
   selectedTextColor: Color = textColor,
   selectorProperties: SelectorProperties = WheelPickerDefaults.selectorProperties(),
-  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rowCount),
+  barrelProperties: BarrelProperties = WheelPickerDefaults.barrelPropertiesFor(rows),
   onSnappedDateChanged: (snappedDate: SnappedDate) -> Unit = {},
   onSnappedDate: (snappedDate: SnappedDate) -> Int? = { _ -> null },
 ) {
@@ -68,8 +68,9 @@ internal fun StandardWheelDatePicker(
 
   Box(modifier = modifier, contentAlignment = Alignment.Center) {
     WheelSelector(
-      width = viewportSize.width,
-      height = barrelProperties.rowHeight(viewportSize.height, rowCount),
+      viewportSize = viewportSize,
+      rows = rows,
+      barrelProperties = barrelProperties,
       properties = selectorProperties,
     )
     Row {
@@ -82,7 +83,7 @@ internal fun StandardWheelDatePicker(
                 height = viewportSize.height
               ),
               texts = dayOfMonths.map { it.text },
-              rowCount = rowCount,
+              rows = rows,
               textStyle = textStyle,
               textColor = textColor,
               selectedTextStyle = selectedTextStyle,
@@ -131,7 +132,7 @@ internal fun StandardWheelDatePicker(
                 height = viewportSize.height
               ),
               texts = months.map { it.text },
-              rowCount = rowCount,
+              rows = rows,
               textStyle = textStyle,
               textColor = textColor,
               selectedTextStyle = selectedTextStyle,
@@ -186,7 +187,7 @@ internal fun StandardWheelDatePicker(
                   height = viewportSize.height
                 ),
                 texts = years.map { it.text },
-                rowCount = rowCount,
+                rows = rows,
                 textStyle = textStyle,
                 textColor = textColor,
                 selectedTextStyle = selectedTextStyle,

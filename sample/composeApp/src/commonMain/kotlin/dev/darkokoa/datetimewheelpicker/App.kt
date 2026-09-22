@@ -53,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.darkokoa.datetimewheelpicker.core.WheelPickerDefaults
+import dev.darkokoa.datetimewheelpicker.core.WheelRows
 import dev.darkokoa.datetimewheelpicker.core.format.TimeFormat
 import dev.darkokoa.datetimewheelpicker.core.format.timeFormatter
 import dev.darkokoa.datetimewheelpicker.theme.AppTheme
@@ -561,7 +562,7 @@ private fun DateTimeDemos(
           maxDateTime = maxDateTime,
           timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM),
           modifier = Modifier.size(200.dp, 100.dp),
-          rowCount = 5,
+          rows = WheelRows.Count(5),
           textStyle = MaterialTheme.typography.titleSmall,
           textColor = Color(0xFFFFC300),
           selectorProperties = WheelPickerDefaults.selectorProperties(
@@ -582,14 +583,14 @@ private fun DateTimeDemos(
       }
 
       DateTimeDemo.BARREL -> PickerDemoSection(
-        title = "Barrel projection",
+        title = "WheelRows.Height(32.dp), 90° drum, softer fade",
         callbackName = "onSnappedDateTime",
       ) { onSnapped, onSnappedChanged ->
         WheelDateTimePicker(
           startDateTime = initialDateTime,
           modifier = Modifier.size(280.dp, 240.dp),
-          rowCount = 11,
-          barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f),
+          rows = WheelRows.Height(32.dp),
+          barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fadeStrength = 0.8f),
           onSnappedDateTime = { dateTime ->
             logPickerCallback("Barrel date time picker", "onSnappedDateTime", dateTime)
             onSnapped(dateTime.toString())
@@ -633,14 +634,14 @@ private fun SizingDemos(modifier: Modifier = Modifier) {
         )
       }
 
-      SizingDemo.FIVE_ROWS -> DemoSection("rowCount = 5, intrinsic height") {
+      SizingDemo.FIVE_ROWS -> DemoSection("WheelRows.Count(5), intrinsic height") {
         WheelDatePicker(
-          rowCount = 5,
+          rows = WheelRows.Count(5),
           onSnappedDate = { date ->
-            logPickerCallback("Sizing rowCount = 5", "onSnappedDate", date)
+            logPickerCallback("Sizing Count(5)", "onSnappedDate", date)
           },
           onSnappedDateChanged = { date ->
-            logPickerCallback("Sizing rowCount = 5", "onSnappedDateChanged", date)
+            logPickerCallback("Sizing Count(5)", "onSnappedDateChanged", date)
           },
         )
       }
