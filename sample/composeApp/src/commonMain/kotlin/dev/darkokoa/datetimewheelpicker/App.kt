@@ -583,14 +583,14 @@ private fun DateTimeDemos(
       }
 
       DateTimeDemo.BARREL -> PickerDemoSection(
-        title = "WheelRows.Height(32.dp), 90° drum, softer fade",
+        title = "WheelRows.Height(32.dp), 90° drum",
         callbackName = "onSnappedDateTime",
       ) { onSnapped, onSnappedChanged ->
         WheelDateTimePicker(
           startDateTime = initialDateTime,
           modifier = Modifier.size(280.dp, 240.dp),
           rows = WheelRows.Height(32.dp),
-          barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f, fadeStrength = 0.8f),
+          barrelProperties = WheelPickerDefaults.barrelProperties(rimAngle = 90f),
           onSnappedDateTime = { dateTime ->
             logPickerCallback("Barrel date time picker", "onSnappedDateTime", dateTime)
             onSnapped(dateTime.toString())

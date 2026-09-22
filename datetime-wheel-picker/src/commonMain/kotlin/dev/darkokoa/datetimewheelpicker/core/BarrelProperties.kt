@@ -10,12 +10,11 @@ import kotlin.math.sin
 
 /**
  * Largest rim angle the automatic default ever picks. Past it the outermost rows stop being
- * readable: at 70° a rim row is already squeezed to a third of its height (`cos 70°`) and, at
- * full fade, drawn at an eighth of its opacity (`cos² 70°`).
+ * readable: at 70° a rim row is already squeezed to a third of its height (`cos 70°`).
  */
 internal const val MAX_AUTO_RIM_ANGLE = 70f
 
-/** Fade applied unless the caller asks otherwise: the full `cos²` falloff. */
+/** Fade applied unless the caller asks otherwise: rows are fully transparent at the edge. */
 internal const val DEFAULT_BARREL_FADE = 1f
 
 /** Degrees of drum surface the automatic default gives each row away from the center. */
@@ -64,11 +63,16 @@ private const val HALF_PI = (PI / 2).toFloat()
  * edges of the viewport. Must be in `[0, 90]`. Larger values bend the wheel more and compress the
  * outer rows harder; `90` shows the full half cylinder, matching a native iOS picker, and `0`
  * disables the projection entirely for a flat, evenly spaced wheel.
- * @property fadeStrength How strongly rows fade as they turn away from the viewer, in `[0, 1]`.
- * At `1` a row's alpha is `cos²` of its angle on the drum, so rim rows all but disappear; at `0`
- * every row stays fully opaque and only the geometry conveys depth. Values in between blend
- * linearly. The fade follows the angle, so a flat wheel (`rimAngle` of `0`) has nothing to fade
- * and shows every row opaque whatever this value.
+ * @property fadeStrength How strongly rows fade toward the top and bottom edges of the viewport.
+ * Must be non-negative and finite; there is no upper bound. A row's alpha is
+ * `1 - fadeStrength · t²`, clamped to `[0, 1]`, where `t` is its on-screen distance from the
+ * center as a fraction of half the viewport height. `0` keeps every row opaque and only the
+ * geometry conveys depth. `1` (the default) reaches full transparency exactly at the edge, `4`
+ * reaches it halfway there, and above about `10` even a tall drum leaves just the center row or
+ * two visible. Once the nearest neighboring row is already invisible, a larger value changes
+ * nothing: alpha cannot go below zero. The fade follows the projected position rather than the
+ * drum angle, so it looks the same on a gently curved wheel as on a full drum and also applies
+ * to a flat wheel; on a 90° drum at strength `1` it coincides with `cos²` of the row's angle.
  */
 @Immutable
 class BarrelProperties internal constructor(
@@ -79,8 +83,8 @@ class BarrelProperties internal constructor(
     require(rimAngle >= 0f && rimAngle <= 90f) {
       "rimAngle must be in [0, 90], was $rimAngle"
     }
-    require(fadeStrength >= 0f && fadeStrength <= 1f) {
-      "fadeStrength must be in [0, 1], was $fadeStrength"
+    require(fadeStrength >= 0f && fadeStrength.isFinite()) {
+      "fadeStrength must be non-negative and finite, was $fadeStrength"
     }
   }
 
@@ -144,6 +148,15 @@ private val IdentityTransform = BarrelTransform(alpha = 1f, rotationX = 0f, tran
 private val HiddenTransform = BarrelTransform(alpha = 0f, rotationX = 0f, translationY = 0f, scale = 1f)
 
 /**
+ * Alpha of a row whose on-screen center is [edgeFraction] of the way from the viewport center to
+ * its edge: `1 - fadeStrength · t²`, clamped to `[0, 1]`. The square keeps rows near the center
+ * crisper than a linear fade and accelerates toward the edge; once the result would go below
+ * zero the row is fully transparent.
+ */
+private fun edgeFade(edgeFraction: Float, fadeStrength: Float): Float =
+  (1f - fadeStrength * edgeFraction * edgeFraction).coerceIn(0f, 1f)
+
+/**
  * Projects a row of the flat list onto the front of a vertical cylinder.
  *
  * The flat list is treated as the unrolled surface of the drum: [distanceToCenterPx] is an arc
@@ -152,9 +165,9 @@ private val HiddenTransform = BarrelTransform(alpha = 0f, rotationX = 0f, transl
  * the cylinder's sine curve, the row plane is rotated tangent to the cylinder, and its depth is
  * conveyed by a uniform scale from a viewer [EYE_DISTANCE_MULTIPLIER] viewport heights in front of
  * the center row (the platform's own per-layer camera is left orthographic, see
- * [ORTHOGRAPHIC_CAMERA_DISTANCE]). Alpha blends between opaque and `cos²` of the angle by
- * [fadeStrength]: at full strength near rows stay crisp, rim rows dim quickly, and anything behind
- * the rim is fully transparent whatever the strength.
+ * [ORTHOGRAPHIC_CAMERA_DISTANCE]). Alpha follows the projected position, not the angle: it is
+ * `1 - fadeStrength · t²` for a row `t` of the way from the center to the viewport edge (see
+ * [edgeFade]), and anything behind the rim is fully transparent whatever the strength.
  *
  * The position is deliberately an orthographic projection while only the size is perspective:
  * the scale pivots on the row's own center and never moves it. A true perspective would also
@@ -164,11 +177,11 @@ private val HiddenTransform = BarrelTransform(alpha = 0f, rotationX = 0f, transl
  * height. Keeping the position orthographic keeps the rim on the viewport edge and the sizing
  * math in [BarrelProperties] exact; the scale is a depth cue, not a camera.
  *
- * A [rimAngle] of `0` is a flat wheel: every row is returned untouched.
+ * A [rimAngle] of `0` is a flat wheel: rows keep their geometry and only the fade applies.
  *
  * Inputs are expected to be validated by the caller: [viewportHeightPx] positive, [rimAngle] in
- * `[0, 90]` and [fadeStrength] in `[0, 1]` (see [BarrelProperties]). This function runs every
- * frame for every visible row, so it deliberately performs no validation.
+ * `[0, 90]`, and [fadeStrength] non-negative and finite (see [BarrelProperties]). This function
+ * runs every frame for every visible row, so it deliberately performs no validation.
  */
 internal fun calculateBarrelTransform(
   distanceToCenterPx: Float,
@@ -176,9 +189,18 @@ internal fun calculateBarrelTransform(
   rimAngle: Float,
   fadeStrength: Float = DEFAULT_BARREL_FADE,
 ): BarrelTransform {
-  if (rimAngle == 0f) return IdentityTransform
+  val halfViewportPx = viewportHeightPx / 2f
+  if (rimAngle == 0f) {
+    if (fadeStrength == 0f) return IdentityTransform
+    return BarrelTransform(
+      alpha = edgeFade(distanceToCenterPx / halfViewportPx, fadeStrength),
+      rotationX = 0f,
+      translationY = 0f,
+      scale = 1f,
+    )
+  }
 
-  val radius = viewportHeightPx / 2f / sin(rimAngle.toRadians())
+  val radius = halfViewportPx / sin(rimAngle.toRadians())
   val angleRadians = distanceToCenterPx / radius
 
   // Behind the rim of the drum: hide the row rather than letting it wrap back into view.
@@ -190,7 +212,7 @@ internal fun calculateBarrelTransform(
   val eyeDistance = viewportHeightPx * EYE_DISTANCE_MULTIPLIER
 
   return BarrelTransform(
-    alpha = 1f - fadeStrength * (1f - cosAngle * cosAngle),
+    alpha = edgeFade(projectedDistance / halfViewportPx, fadeStrength),
     rotationX = -angleRadians.toDegrees(),
     translationY = projectedDistance - distanceToCenterPx,
     scale = eyeDistance / (eyeDistance + depth),

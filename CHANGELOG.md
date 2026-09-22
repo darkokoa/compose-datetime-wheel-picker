@@ -27,10 +27,14 @@ All notable changes to this project will be documented in this file.
   the previous per-row tilt and fade. With `WheelRows.Count` the rows span the drum from rim to
   rim, the centered row is slightly taller than `height / count`, and picker sizes are unchanged.
   The rim angle is configurable through the new `barrelProperties` parameter, created with
-  `WheelPickerDefaults.barrelProperties(rimAngle, fadeStrength)` (angle `0` to `90`, strength `0`
-  to `1`). The default `WheelPickerDefaults.barrelPropertiesFor(rows)` keeps 3-row wheels gently
-  curved and gives 7-row or taller wheels the full drum. Pass `90f` for the iOS look or `0f` for a
-  flat wheel with no projection. This also fixes rows more than four positions from the center
+  `WheelPickerDefaults.barrelProperties(rimAngle, fadeStrength)` (angle `0` to `90`; strength any
+  non-negative finite value, default `1`). The default
+  `WheelPickerDefaults.barrelPropertiesFor(rows)` keeps 3-row wheels gently curved and gives 7-row
+  or taller wheels the full drum. Pass `90f` for the iOS look or `0f` for a flat wheel with no
+  projection. Rows fade by their on-screen distance from the center, so the fade looks the same at
+  any angle and also applies to a flat wheel. `fadeStrength` of `1` fades a row out exactly at the
+  edge, `4` halfway there, and `0` leaves every row opaque; larger values only hide more rows,
+  since alpha is clamped to `[0, 1]`. This also fixes rows more than four positions from the center
   rendering mirrored in the old implementation. Based on the contribution by
   [@bnrdk](https://github.com/bnrdk) in
   [#150](https://github.com/darkokoa/compose-datetime-wheel-picker/pull/150).

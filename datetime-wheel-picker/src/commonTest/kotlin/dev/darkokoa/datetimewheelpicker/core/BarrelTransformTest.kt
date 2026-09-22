@@ -47,12 +47,36 @@ class BarrelTransformTest {
     assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Count(5)).fadeStrength)
     assertEquals(1f, WheelPickerDefaults.barrelPropertiesFor(WheelRows.Height(32.dp)).fadeStrength)
     assertEquals(0.4f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fadeStrength = 0.4f).fadeStrength)
+    assertEquals(20f, WheelPickerDefaults.barrelProperties(rimAngle = 45f, fadeStrength = 20f).fadeStrength)
     assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = -0.1f) }
-    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = 1.1f) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = Float.NaN) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = Float.POSITIVE_INFINITY) }
+    assertFailsWith<IllegalArgumentException> { WheelPickerDefaults.barrelProperties(45f, fadeStrength = Float.NEGATIVE_INFINITY) }
+    assertFailsWith<IllegalArgumentException> {
+      WheelPickerDefaults.barrelProperties(45f).copy(fadeStrength = Float.POSITIVE_INFINITY)
+    }
   }
 
   @Test
-  fun fadeBlendsBetweenOpaqueAndCosineSquared() {
+  fun strongerFadeReachesZeroBeforeTheEdgeAndStaysClamped() {
+    // Half the viewport is 120px, so halfway to the edge is 60px.
+    fun alphaAt(distancePx: Float, fadeStrength: Float) =
+      calculateBarrelTransform(
+        distanceToCenterPx = distancePx,
+        viewportHeightPx = 240f,
+        rimAngle = 0f,
+        fadeStrength = fadeStrength,
+      ).alpha
+
+    assertEquals(0f, alphaAt(60f, fadeStrength = 4f), absoluteTolerance = 0.0001f)
+    assertEquals(0.75f, alphaAt(30f, fadeStrength = 4f), absoluteTolerance = 0.0001f)
+    assertEquals(1f, alphaAt(0f, fadeStrength = 20f))
+    assertEquals(0f, alphaAt(60f, fadeStrength = 20f))
+    assertEquals(0f, alphaAt(120f, fadeStrength = 20f))
+  }
+
+  @Test
+  fun fadeOnAFullDrumIsCosineSquaredOfTheAngle() {
     val angle = 60f
     val cos2 = cos(angle / 180f * PI).toFloat().let { it * it }
     fun alphaAt(fadeStrength: Float) = calculateBarrelTransform(
@@ -66,6 +90,46 @@ class BarrelTransformTest {
     assertEquals(cos2, alphaAt(1f), absoluteTolerance = 0.0001f)
     assertEquals(1f, alphaAt(0f), absoluteTolerance = 0.0001f)
     assertEquals(1f - 0.5f * (1f - cos2), alphaAt(0.5f), absoluteTolerance = 0.0001f)
+  }
+
+  @Test
+  fun fadeFollowsScreenPositionNotAngle() {
+    // A row projected halfway to the edge has the same alpha on every drum, and a row at the rim
+    // is fully transparent whatever the angle.
+    fun alphaAtEdgeFraction(rimAngle: Float, edgeFraction: Float, fadeStrength: Float = 1f): Float {
+      val rimRadians = (rimAngle / 180f * PI).toFloat()
+      val radius = 120f / sin(rimRadians)
+      // Arc length whose projection R·sin(angle) is edgeFraction of the half viewport.
+      val angle = kotlin.math.asin(edgeFraction * sin(rimRadians))
+      return calculateBarrelTransform(
+        distanceToCenterPx = radius * angle,
+        viewportHeightPx = 240f,
+        rimAngle = rimAngle,
+        fadeStrength = fadeStrength,
+      ).alpha
+    }
+
+    for (rimAngle in listOf(13f, 26f, 70f, 90f)) {
+      assertEquals(0.75f, alphaAtEdgeFraction(rimAngle, 0.5f), absoluteTolerance = 0.0001f, "half way at $rimAngle°")
+      assertEquals(0f, alphaAtEdgeFraction(rimAngle, 1f), absoluteTolerance = 0.0001f, "rim at $rimAngle°")
+    }
+    // On a 90° drum the rim itself is the hidden 90° row, so check the partial fade just inside it.
+    for (rimAngle in listOf(13f, 26f, 70f)) {
+      assertEquals(0.5f, alphaAtEdgeFraction(rimAngle, 1f, fadeStrength = 0.5f), absoluteTolerance = 0.0001f, "half fade at $rimAngle°")
+    }
+  }
+
+  @Test
+  fun flatWheelFadesTowardTheEdge() {
+    fun alphaAt(distancePx: Float, fadeStrength: Float = 1f) =
+      calculateBarrelTransform(distanceToCenterPx = distancePx, viewportHeightPx = 240f, rimAngle = 0f, fadeStrength = fadeStrength).alpha
+
+    assertEquals(1f, alphaAt(0f))
+    assertEquals(0.75f, alphaAt(60f), absoluteTolerance = 0.0001f)
+    assertEquals(0.75f, alphaAt(-60f), absoluteTolerance = 0.0001f)
+    assertEquals(0f, alphaAt(120f), absoluteTolerance = 0.0001f)
+    assertEquals(0f, alphaAt(200f))
+    assertEquals(1f, alphaAt(100f, fadeStrength = 0f))
   }
 
   @Test
@@ -102,7 +166,6 @@ class BarrelTransformTest {
     assertEquals(32.dp, WheelRows.Height(32.dp).resolveRowHeight(240.dp, flat))
 
     val transform = calculateBarrelTransform(distanceToCenterPx = 100f, viewportHeightPx = 240f, rimAngle = 0f)
-    assertEquals(1f, transform.alpha)
     assertEquals(0f, transform.rotationX)
     assertEquals(0f, transform.translationY)
     assertEquals(1f, transform.scale)
@@ -181,8 +244,8 @@ class BarrelTransformTest {
 
     val expectedAngle = 70f * 2 / 11
     assertEquals(-expectedAngle, transform.rotationX, absoluteTolerance = 0.001f)
-    val cosAngle = cos(expectedAngle / 180f * PI).toFloat()
-    assertEquals(cosAngle * cosAngle, transform.alpha, absoluteTolerance = 0.0001f)
+    val edgeFraction = sin(expectedAngle / 180f * PI).toFloat() / sin(rad70)
+    assertEquals(1f - edgeFraction * edgeFraction, transform.alpha, absoluteTolerance = 0.0001f)
     // The drum never spreads rows apart: the projected position is closer to the center than
     // the arc position.
     assertTrue(transform.translationY < 0f)
