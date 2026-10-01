@@ -17,14 +17,19 @@
 > [!NOTE]
 > 本文档对应 `main` 分支,即 **1.5.0(尚未发布)**。`rows` 和 `barrelProperties` 参数需要 1.5.0;当前最新发布版本是 1.4.0(该版本使用 `rowCount`)。详见 [MIGRATION.md](MIGRATION.md) 和 [CHANGELOG.md](CHANGELOG.md)(均为英文)。
 
-<!-- TODO: 用能体现 barrel 效果的录屏(浅色/深色)替换下面 2022 年的 GIF,并在 Wasm 在线 demo 发布后补上链接。 -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
+  <img alt="WheelDateTimePicker、iOS 风格的 WheelDatePicker 和带 AM/PM 的 WheelTimePicker" src="docs/images/hero-light.png" width="800">
+</picture>
 
 | 选择器 | 基本用法 |
 |--------|----------|
-| <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | `WheelDateTimePicker { snappedDateTime -> }` |
-| <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | `WheelDatePicker { snappedDate -> }` |
-| <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | `WheelTimePicker { snappedTime -> }` |
-| <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
+| 日期时间 | `WheelDateTimePicker { snappedDateTime -> }` |
+| 日期 | `WheelDatePicker { snappedDate -> }` |
+| 时间(24 小时制) | `WheelTimePicker { snappedTime -> }` |
+| 时间(AM/PM) | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
+
+<!-- TODO: Wasm 在线 demo 发布后补上链接。 -->
 
 ## 特性
 
@@ -152,6 +157,11 @@ WheelDatePicker(
 ## Barrel 与行数
 
 行被投影到一个竖直圆柱面上。`rows` 决定保持行数不变还是行高不变,`barrelProperties` 决定圆柱的弯曲和淡出程度:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/rim-angle-dark.png">
+  <img alt="同一个时间选择器在 rimAngle 为 0、45、90 度以及默认值下的效果" src="docs/images/rim-angle-light.png" width="640">
+</picture>
 
 ```kotlin
 // 三行,轻微弯曲(默认)

@@ -21,15 +21,19 @@ cylindrical barrel like a native iOS picker, and 30 languages work out of the bo
 > parameters need 1.5.0; the latest release is 1.4.0 (use `rowCount` there). See
 > [MIGRATION.md](MIGRATION.md) and [CHANGELOG.md](CHANGELOG.md).
 
-<!-- TODO: replace the 2022 GIFs below with recordings that show the barrel projection
-     (light and dark), and add a link to the live Wasm demo once it is published. -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
+  <img alt="WheelDateTimePicker, an iOS-style WheelDatePicker and a WheelTimePicker with AM/PM" src="docs/images/hero-light.png" width="800">
+</picture>
 
 | Picker | Basic usage |
 |--------|-------------|
-| <img src="https://user-images.githubusercontent.com/50905347/201921058-82c7813d-b9c4-448c-a296-62465845152d.gif" width="256" height="256"> | `WheelDateTimePicker { snappedDateTime -> }` |
-| <img src="https://user-images.githubusercontent.com/50905347/201921069-14a8410b-5952-4130-80b0-71f9ca286a93.gif" width="256" height="256"> | `WheelDatePicker { snappedDate -> }` |
-| <img src="https://user-images.githubusercontent.com/50905347/201921066-b94b9fcd-c447-4b01-833f-03600e20ed44.gif" width="256" height="256"> | `WheelTimePicker { snappedTime -> }` |
-| <img src="https://user-images.githubusercontent.com/50905347/205661315-2eac971a-2dd9-41dc-93e7-de2be0514a9e.gif" width="256" height="256"> | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
+| Date and time | `WheelDateTimePicker { snappedDateTime -> }` |
+| Date | `WheelDatePicker { snappedDate -> }` |
+| Time (24-hour) | `WheelTimePicker { snappedTime -> }` |
+| Time (AM/PM) | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
+
+<!-- TODO: add a link to the live Wasm demo once it is published. -->
 
 ## Features
 
@@ -164,6 +168,11 @@ WheelDatePicker(
 
 Rows are projected onto a vertical cylinder. `rows` chooses whether the row count or the row
 height stays constant, and `barrelProperties` sets how strongly the drum bends and fades:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/rim-angle-dark.png">
+  <img alt="The same time picker with rimAngle 0, 45 and 90 degrees and the default" src="docs/images/rim-angle-light.png" width="640">
+</picture>
 
 ```kotlin
 // Three rows with a gentle curve (the default)

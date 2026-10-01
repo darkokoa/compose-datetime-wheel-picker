@@ -34,6 +34,11 @@ WheelDatePicker(rows = WheelRows.Height(32.dp)) { }   // 32.dp rows, as many as 
 | Default rim angle | 13° per row away from the center, capped at 70° | 90° |
 | Use it when | You want a predictable number of visible values | You want the wheel to follow its container without the text changing size (iOS uses 32pt rows in a 216pt picker) |
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/rows-dark.png">
+  <img alt="Count(3), Count(5) and Height(32.dp) wheels at the same height" src="images/rows-light.png" width="480">
+</picture>
+
 For `Count`, the selector is sized to the centered row. The drum always holds an **odd** number of
 rows so that the selected row sits at the center with whole rows on both sides: an even `n` is
 laid out as the next odd number (`Count(4)` shows the same five rows as `Count(5)`, while
@@ -49,6 +54,11 @@ surface where it meets the top and bottom edges of the viewport.
 | `0` | Flat, evenly spaced wheel with no projection (the fade still applies) |
 | `1`–`89` | Partially curved drum |
 | `90` | Full half cylinder, matching iOS, at the cost of the outermost rows becoming nearly unreadable against the rim |
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/rim-angle-dark.png">
+  <img alt="The same time picker with rimAngle 0, 45 and 90 degrees and the default" src="images/rim-angle-light.png" width="640">
+</picture>
 
 When you do not pass `barrelProperties`, the picker uses
 `WheelPickerDefaults.barrelPropertiesFor(rows)`:

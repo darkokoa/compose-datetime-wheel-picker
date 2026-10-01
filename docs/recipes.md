@@ -146,8 +146,3 @@ WheelDateTimePicker(
   ),
 ) { snappedDateTime -> }
 ```
-
-<img src="https://user-images.githubusercontent.com/50905347/201922097-86422287-cbd7-40ab-bf3c-5e0475828976.gif" width="256" height="256">
-
-> The screenshot predates the barrel projection (1.5.0), so the rows look flatter than the code
-> above renders today.
