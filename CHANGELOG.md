@@ -19,7 +19,7 @@ All notable changes to this project will be documented in this file.
 
 - **`WheelRows.Height(h)`** fixes the row and selector height instead of the row count and shows
   as many rows as fit, like a native iOS picker. Its intrinsic picker height is seven rows and
-  its default rim angle is 90°. See the README "Rows" section.
+  its default rim angle is 90°. See [Rows](docs/rows-and-barrel.md#rows).
 
 ### Changed
 

@@ -37,7 +37,7 @@ import kotlinx.datetime.LocalDateTime
  * Sizing is Modifier-driven: any axis left unconstrained by [modifier] and the parent uses the
  * intrinsic default — 256.dp wide, `(128.dp / 3)` per row for `WheelRows.Count` (128.dp at the
  * default three rows) or seven rows for `WheelRows.Height`. Standard Compose constraints override
- * or clamp the default; see the README "Sizing" section for examples and migration notes.
+ * or clamp the default; see https://github.com/darkokoa/compose-datetime-wheel-picker/blob/main/docs/sizing.md for examples.
  *
  * The picker resolves its size via subcomposition and therefore does not support
  * intrinsic-measurement parents (`IntrinsicSize.Min`/`Max`); pass an explicit `width`/`height`
