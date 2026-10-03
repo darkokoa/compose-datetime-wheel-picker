@@ -2,6 +2,7 @@ package dev.darkokoa.datetimewheelpicker
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -19,14 +20,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Straighten
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -35,6 +40,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +51,6 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -132,23 +137,34 @@ private val SizingDemoSaver = Saver<SizingDemo, String>(
 )
 
 @Composable
-fun App() = AppTheme {
+fun App() {
+  // Follow the system theme until the user picks one with the toggle in the top bar.
+  val systemIsDark = isSystemInDarkTheme()
+  var darkThemeOverride by rememberSaveable { mutableStateOf<Boolean?>(null) }
+  val isDarkTheme = darkThemeOverride ?: systemIsDark
+
   var selectedTab by rememberSaveable(stateSaver = DemoTabSaver) {
     mutableStateOf(DemoTab.TIME)
   }
 
-  AppContent(
-    selectedTab = selectedTab,
-    onTabSelected = { selectedTab = it },
-    nowProvider = ::currentDateTime,
-    modifier = Modifier.fillMaxSize(),
-  )
+  AppTheme(darkTheme = isDarkTheme) {
+    AppContent(
+      selectedTab = selectedTab,
+      onTabSelected = { selectedTab = it },
+      isDarkTheme = isDarkTheme,
+      onToggleDarkTheme = { darkThemeOverride = !isDarkTheme },
+      nowProvider = ::currentDateTime,
+      modifier = Modifier.fillMaxSize(),
+    )
+  }
 }
 
 @Composable
 internal fun AppContent(
   selectedTab: DemoTab,
   onTabSelected: (DemoTab) -> Unit,
+  isDarkTheme: Boolean,
+  onToggleDarkTheme: () -> Unit,
   nowProvider: () -> LocalDateTime,
   modifier: Modifier = Modifier,
 ) {
@@ -157,6 +173,12 @@ internal fun AppContent(
   Scaffold(
     modifier = modifier,
     contentWindowInsets = WindowInsets.safeDrawing,
+    topBar = {
+      DemoTopBar(
+        isDarkTheme = isDarkTheme,
+        onToggleDarkTheme = onToggleDarkTheme,
+      )
+    },
     bottomBar = {
       NavigationBar {
         DemoTab.entries.forEach { tab ->
@@ -203,6 +225,29 @@ internal fun AppContent(
       }
     }
   }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DemoTopBar(
+  isDarkTheme: Boolean,
+  onToggleDarkTheme: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  TopAppBar(
+    title = { Text("datetime-wheel-picker") },
+    modifier = modifier,
+    actions = {
+      IconButton(onClick = onToggleDarkTheme) {
+        // The label names the action (where a click leads), not the current state.
+        if (isDarkTheme) {
+          Icon(Icons.Outlined.LightMode, contentDescription = "Switch to light theme")
+        } else {
+          Icon(Icons.Outlined.DarkMode, contentDescription = "Switch to dark theme")
+        }
+      }
+    },
+  )
 }
 
 @Composable
@@ -564,12 +609,12 @@ private fun DateTimeDemos(
           modifier = Modifier.size(200.dp, 100.dp),
           rows = WheelRows.Count(5),
           textStyle = MaterialTheme.typography.titleSmall,
-          textColor = Color(0xFFFFC300),
+          textColor = MaterialTheme.colorScheme.tertiary,
           selectorProperties = WheelPickerDefaults.selectorProperties(
             enabled = true,
             shape = RoundedCornerShape(0.dp),
-            color = Color(0xFFF1FAEE).copy(alpha = 0.2f),
-            border = BorderStroke(2.dp, Color(0xFFF1FAEE)),
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.12f),
+            border = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
           ),
           onSnappedDateTime = { dateTime ->
             logPickerCallback("Custom date time picker", "onSnappedDateTime", dateTime)
