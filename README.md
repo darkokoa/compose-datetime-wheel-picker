@@ -1,7 +1,7 @@
 # Datetime Wheel Picker
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?style=flat)](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker)
-[![Build](https://img.shields.io/github/actions/workflow/status/darkokoa/datetime-wheel-picker/build.yml?branch=main&style=flat)](https://github.com/darkokoa/datetime-wheel-picker/actions/workflows/build.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/darkokoa/compose-datetime-wheel-picker/build.yml?branch=main&style=flat)](https://github.com/darkokoa/compose-datetime-wheel-picker/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat)](LICENSE)
 
 ![badge-android][badge-android]
@@ -33,7 +33,7 @@ cylindrical barrel like a native iOS picker, and 30 languages work out of the bo
 | Time (24-hour) | `WheelTimePicker { snappedTime -> }` |
 | Time (AM/PM) | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
 
-**[Try it in your browser](https://darkokoa.github.io/datetime-wheel-picker/)**: the sample app compiled to Wasm, with every picker and the barrel variants.
+**[Try it in your browser](https://darkokoa.github.io/compose-datetime-wheel-picker/)**: the sample app compiled to Wasm, with every picker and the barrel variants.
 
 ## Features
 
@@ -229,7 +229,7 @@ English, French, German, Hindi, Japanese, Korean, Portuguese, Russian, Spanish a
 total. See [Localization](docs/localization.md) for the full list and how locales are matched.
 
 Spotted a translation error or want another language? Please
-[open an issue](https://github.com/darkokoa/datetime-wheel-picker/issues) or send a pull request.
+[open an issue](https://github.com/darkokoa/compose-datetime-wheel-picker/issues) or send a pull request.
 
 ## Documentation
 
@@ -248,7 +248,7 @@ The `docs/` pages are written in English.
 ## Sample app
 
 The `sample/` module is a Compose Multiplatform app with demos for every picker, including the
-barrel variants. A Wasm build is hosted at https://darkokoa.github.io/datetime-wheel-picker/ and
+barrel variants. A Wasm build is hosted at https://darkokoa.github.io/compose-datetime-wheel-picker/ and
 redeployed on every push to `main` (see [`pages.yml`](.github/workflows/pages.yml)).
 
 To run it yourself, open the project in Android Studio or IntelliJ IDEA and run `sample:androidApp`,
@@ -271,7 +271,7 @@ Released under the [Apache License, Version 2.0](LICENSE).
 
 Inspired by [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose).
 The barrel projection builds on a contribution by [@bnrdk](https://github.com/bnrdk)
-([#150](https://github.com/darkokoa/datetime-wheel-picker/pull/150)).
+([#150](https://github.com/darkokoa/compose-datetime-wheel-picker/pull/150)).
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 [badge-jvm]: https://img.shields.io/badge/platform-jvm-DB413D.svg?style=flat

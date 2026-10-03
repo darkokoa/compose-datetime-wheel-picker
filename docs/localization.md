@@ -14,7 +14,7 @@ Turkish (Türkçe), Ukrainian (Українська), Uzbek (Oʻzbekcha / Ўзб
 `uz-Arab`), Vietnamese (Tiếng Việt)
 
 Found a translation error, or want another language? Please
-[open an issue](https://github.com/darkokoa/datetime-wheel-picker/issues) or send a pull request.
+[open an issue](https://github.com/darkokoa/compose-datetime-wheel-picker/issues) or send a pull request.
 
 ## How a locale is matched
 

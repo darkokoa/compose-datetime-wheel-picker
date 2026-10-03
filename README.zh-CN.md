@@ -1,7 +1,7 @@
 # Datetime Wheel Picker
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.darkokoa/datetime-wheel-picker?style=flat)](https://central.sonatype.com/artifact/io.github.darkokoa/datetime-wheel-picker)
-[![Build](https://img.shields.io/github/actions/workflow/status/darkokoa/datetime-wheel-picker/build.yml?branch=main&style=flat)](https://github.com/darkokoa/datetime-wheel-picker/actions/workflows/build.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/darkokoa/compose-datetime-wheel-picker/build.yml?branch=main&style=flat)](https://github.com/darkokoa/compose-datetime-wheel-picker/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat)](LICENSE)
 
 ![badge-android][badge-android]
@@ -29,7 +29,7 @@
 | 时间(24 小时制) | `WheelTimePicker { snappedTime -> }` |
 | 时间(AM/PM) | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
 
-**[在浏览器中体验](https://darkokoa.github.io/datetime-wheel-picker/)**:示例应用的 Wasm 版本,包含所有选择器和 barrel 的各种变体。
+**[在浏览器中体验](https://darkokoa.github.io/compose-datetime-wheel-picker/)**:示例应用的 Wasm 版本,包含所有选择器和 barrel 的各种变体。
 
 ## 特性
 
@@ -213,7 +213,7 @@ WheelDateTimePicker(
 
 选择器跟随 `Locale.current`:月份名称、AM/PM 文本、日期顺序(例如 `en-US` 为月-日-年,中日韩为年-月-日)、12/24 小时制以及数字。共支持 30 种语言,包括阿拉伯语、中文、英语、法语、德语、印地语、日语、韩语、葡萄牙语、俄语、西班牙语等。完整列表和区域匹配规则见 [Localization](docs/localization.md)(英文)。
 
-发现翻译错误,或希望增加新语言?欢迎[提交 issue](https://github.com/darkokoa/datetime-wheel-picker/issues) 或 pull request。
+发现翻译错误,或希望增加新语言?欢迎[提交 issue](https://github.com/darkokoa/compose-datetime-wheel-picker/issues) 或 pull request。
 
 ## 文档
 
@@ -231,7 +231,7 @@ WheelDateTimePicker(
 
 ## 示例应用
 
-`sample/` 模块是一个 Compose Multiplatform 应用,包含所有选择器的演示(含 barrel 的各种变体)。Wasm 版本托管在 https://darkokoa.github.io/datetime-wheel-picker/ ,每次推送到 `main` 都会自动重新部署(见 [`pages.yml`](.github/workflows/pages.yml))。
+`sample/` 模块是一个 Compose Multiplatform 应用,包含所有选择器的演示(含 barrel 的各种变体)。Wasm 版本托管在 https://darkokoa.github.io/compose-datetime-wheel-picker/ ,每次推送到 `main` 都会自动重新部署(见 [`pages.yml`](.github/workflows/pages.yml))。
 
 想自己运行的话,用 Android Studio 或 IntelliJ IDEA 打开项目后,可以运行 `sample:androidApp`、`sample/iosApp` 中的 iOS 应用,或桌面入口(`sample/composeApp/src/jvmMain` 下的 `main.kt`)。本地运行 Web 版本:
 
@@ -250,7 +250,7 @@ WheelDateTimePicker(
 ## 致谢
 
 灵感来自 [WheelPickerCompose](https://github.com/commandiron/WheelPickerCompose)。
-Barrel 投影基于 [@bnrdk](https://github.com/bnrdk) 的贡献([#150](https://github.com/darkokoa/datetime-wheel-picker/pull/150))。
+Barrel 投影基于 [@bnrdk](https://github.com/bnrdk) 的贡献([#150](https://github.com/darkokoa/compose-datetime-wheel-picker/pull/150))。
 
 [badge-android]: https://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat
 [badge-jvm]: https://img.shields.io/badge/platform-jvm-DB413D.svg?style=flat
