@@ -29,7 +29,7 @@
 | 时间(24 小时制) | `WheelTimePicker { snappedTime -> }` |
 | 时间(AM/PM) | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
 
-<!-- TODO: Wasm 在线 demo 发布后补上链接。 -->
+**[在浏览器中体验](https://darkokoa.github.io/datetime-wheel-picker/)**:示例应用的 Wasm 版本,包含所有选择器和 barrel 的各种变体。
 
 ## 特性
 
@@ -231,7 +231,9 @@ WheelDateTimePicker(
 
 ## 示例应用
 
-`sample/` 模块是一个 Compose Multiplatform 应用,包含所有选择器的演示(含 barrel 的各种变体)。用 Android Studio 或 IntelliJ IDEA 打开项目后,可以运行 `sample:androidApp`、`sample/iosApp` 中的 iOS 应用,或桌面入口(`sample/composeApp/src/jvmMain` 下的 `main.kt`)。在浏览器中体验:
+`sample/` 模块是一个 Compose Multiplatform 应用,包含所有选择器的演示(含 barrel 的各种变体)。Wasm 版本托管在 https://darkokoa.github.io/datetime-wheel-picker/ ,每次推送到 `main` 都会自动重新部署(见 [`pages.yml`](.github/workflows/pages.yml))。
+
+想自己运行的话,用 Android Studio 或 IntelliJ IDEA 打开项目后,可以运行 `sample:androidApp`、`sample/iosApp` 中的 iOS 应用,或桌面入口(`sample/composeApp/src/jvmMain` 下的 `main.kt`)。本地运行 Web 版本:
 
 ```shell
 ./gradlew :sample:composeApp:wasmJsBrowserDevelopmentRun

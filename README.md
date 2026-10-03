@@ -33,7 +33,7 @@ cylindrical barrel like a native iOS picker, and 30 languages work out of the bo
 | Time (24-hour) | `WheelTimePicker { snappedTime -> }` |
 | Time (AM/PM) | `WheelTimePicker(timeFormatter = timeFormatter(timeFormat = TimeFormat.AM_PM)) { snappedTime -> }` |
 
-<!-- TODO: add a link to the live Wasm demo once it is published. -->
+**[Try it in your browser](https://darkokoa.github.io/datetime-wheel-picker/)**: the sample app compiled to Wasm, with every picker and the barrel variants.
 
 ## Features
 
@@ -248,9 +248,12 @@ The `docs/` pages are written in English.
 ## Sample app
 
 The `sample/` module is a Compose Multiplatform app with demos for every picker, including the
-barrel variants. Open the project in Android Studio or IntelliJ IDEA and run `sample:androidApp`,
+barrel variants. A Wasm build is hosted at https://darkokoa.github.io/datetime-wheel-picker/ and
+redeployed on every push to `main` (see [`pages.yml`](.github/workflows/pages.yml)).
+
+To run it yourself, open the project in Android Studio or IntelliJ IDEA and run `sample:androidApp`,
 the iOS app in `sample/iosApp`, or the Desktop entry point (`main.kt` in
-`sample/composeApp/src/jvmMain`). To try it in a browser:
+`sample/composeApp/src/jvmMain`). To run the web version locally:
 
 ```shell
 ./gradlew :sample:composeApp:wasmJsBrowserDevelopmentRun
