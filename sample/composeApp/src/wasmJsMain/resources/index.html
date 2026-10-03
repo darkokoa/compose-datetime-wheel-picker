@@ -2,10 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>datetime-wheel-picker</title>
+    <style>
+        html, body { margin: 0; height: 100%; }
+        /* Shown while the (~12 MB) Wasm bundle downloads; main.kt removes it on first composition. */
+        #loading {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font: 16px system-ui, sans-serif;
+            color: #49454f;
+            background: #fef7ff;
+        }
+        @media (prefers-color-scheme: dark) {
+            #loading { color: #cac4d0; background: #141218; }
+        }
+    </style>
     <script type="application/javascript" src="composeApp.js"></script>
 </head>
 <body>
-<canvas id="ComposeTarget" width="800" height="600"></canvas>
+<div id="loading">Loading…</div>
 </body>
 </html>
