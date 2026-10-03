@@ -1,8 +1,15 @@
 # Migration guide
 
-Both steps below are **source-breaking** only. Binaries compiled against 1.3.x keep linking through
-hidden compatibility overloads that restore the exact 1.3.x signatures; those overloads will be
-removed in the next major release. See [CHANGELOG.md](CHANGELOG.md) for the full list of changes.
+- **1.3.x → 1.4.0** is **source-breaking** only. Binaries compiled against 1.3.x keep linking
+  through hidden compatibility overloads that restore the exact 1.3.x signatures; those overloads
+  will be removed in the next major release.
+- **1.4.x → 1.5.0** is source-breaking **and binary-breaking**: the 1.4.x signatures of
+  `WheelDatePicker`, `WheelTimePicker`, `WheelDateTimePicker` and `WheelTextPicker` (the ones with
+  `rowCount`) no longer exist in the binary. Anything compiled against 1.4.x, including a library
+  that depends on this one, must be recompiled against 1.5.0. Binaries compiled against 1.3.x
+  still link.
+
+See [CHANGELOG.md](CHANGELOG.md) for the full list of changes.
 
 ## 1.4.x → 1.5.0
 
@@ -28,9 +35,10 @@ Behavior changes that come with it:
 
 ### Barrel projection replaces the per-row tilt and fade
 
-Rows are now laid out on a cylinder in all pickers. Picker sizes are unchanged, but the look is
-different: rows span the drum from rim to rim and the centered row is slightly taller than
-`height / count`. Rows more than four positions from the center no longer render mirrored.
+Rows are now laid out on a cylinder in all pickers. For odd row counts (including the default 3)
+picker sizes are unchanged, but the look is different: rows span the drum from rim to rim and the
+centered row is slightly taller than `height / count`. Rows more than four positions from the
+center no longer render mirrored.
 
 - Configure it with the new `barrelProperties` parameter. See
   [Barrel projection](docs/rows-and-barrel.md#barrel-projection).
