@@ -143,6 +143,22 @@ class AppContentTest {
   }
 
   @Test
+  fun appReportsTheThemeInEffectToItsHost() = runComposeUiTest {
+    val reported = mutableListOf<Boolean>()
+
+    setContent { App(onDarkThemeChange = { reported += it }) }
+
+    val startsLight = onAllNodesWithContentDescription(SwitchToDark).fetchSemanticsNodes().isNotEmpty()
+    runOnIdle { assertEquals(listOf(!startsLight), reported) }
+
+    onNodeWithContentDescription(if (startsLight) SwitchToDark else SwitchToLight).performClick()
+    runOnIdle { assertEquals(listOf(!startsLight, startsLight), reported) }
+
+    onNodeWithContentDescription(if (startsLight) SwitchToLight else SwitchToDark).performClick()
+    runOnIdle { assertEquals(listOf(!startsLight, startsLight, !startsLight), reported) }
+  }
+
+  @Test
   fun appToggleOverridesSystemThemeAndRepaints() = runComposeUiTest {
     setContent { App() }
 

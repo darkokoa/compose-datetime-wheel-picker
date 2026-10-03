@@ -42,9 +42,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
@@ -136,12 +138,19 @@ private val SizingDemoSaver = Saver<SizingDemo, String>(
   restore = { savedName -> SizingDemo.entries.firstOrNull { it.name == savedName } ?: SizingDemo.FILL_WIDTH },
 )
 
+/**
+ * @param onDarkThemeChange called with the theme in effect on first composition and whenever it
+ * changes, so a host can sync what Compose cannot reach (e.g. the Android status bar icon tint).
+ */
 @Composable
-fun App() {
+fun App(onDarkThemeChange: (isDark: Boolean) -> Unit = {}) {
   // Follow the system theme until the user picks one with the toggle in the top bar.
   val systemIsDark = isSystemInDarkTheme()
   var darkThemeOverride by rememberSaveable { mutableStateOf<Boolean?>(null) }
   val isDarkTheme = darkThemeOverride ?: systemIsDark
+
+  val latestOnDarkThemeChange by rememberUpdatedState(onDarkThemeChange)
+  LaunchedEffect(isDarkTheme) { latestOnDarkThemeChange(isDarkTheme) }
 
   var selectedTab by rememberSaveable(stateSaver = DemoTabSaver) {
     mutableStateOf(DemoTab.TIME)

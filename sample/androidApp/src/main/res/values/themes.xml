@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        The window background is what shows before Compose draws its first frame (and, on Android 12+,
+        behind the system splash icon). It follows the system light/dark setting through the values-night
+        counterpart of this file, and matches the app's own background color so launch does not flash.
+
+        Keep the color in sync with LightCanvas in sample/composeApp/.../theme/Color.kt.
+    -->
+    <style name="Theme.Sample" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#FFFFFF</item>
+    </style>
+</resources>

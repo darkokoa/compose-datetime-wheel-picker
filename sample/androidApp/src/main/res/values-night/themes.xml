@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark counterpart of values/themes.xml. Keep the color in sync with DarkCanvas in theme/Color.kt. -->
+    <style name="Theme.Sample" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#0D1117</item>
+    </style>
+</resources>
