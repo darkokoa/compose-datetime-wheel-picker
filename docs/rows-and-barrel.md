@@ -28,10 +28,10 @@ WheelDatePicker(rows = WheelRows.Height(32.dp)) { }   // 32.dp rows, as many as 
 | | `WheelRows.Count(n)` (default `Count(3)`) | `WheelRows.Height(h)` |
 |---|---|---|
 | Fixed quantity | Number of rows | Row and selector height |
-| Rows shown | Exactly `n` from rim to rim | As many as fit, usually fractional; the outermost are cut off at the rim like a native iOS picker |
+| Rows shown | `n` from rim to rim (an even `n` is rounded up to the next odd number) | As many as fit, usually fractional; the outermost are cut off at the rim like a native iOS picker |
 | Taller picker means | Taller rows | More rows, text size unchanged |
 | Intrinsic height | ~42.7.dp per row (3 rows = 128.dp) | Seven rows |
-| Default rim angle | 13° per row away from the center, capped at 70° | 90° |
+| Default rim angle | 13° × (rows − 1), capped at 70° | 90° |
 | Use it when | You want a predictable number of visible values | You want the wheel to follow its container without the text changing size (iOS uses 32pt rows in a 216pt picker) |
 
 <picture>
@@ -63,8 +63,8 @@ surface where it meets the top and bottom edges of the viewport.
 When you do not pass `barrelProperties`, the picker uses
 `WheelPickerDefaults.barrelPropertiesFor(rows)`:
 
-- `WheelRows.Count`: 13° per row away from the center, capped at 70°. A 3-row wheel stays gently
-  curved (26°), while a 7-row or taller wheel gets the full drum with every row still readable.
+- `WheelRows.Count`: 13° × (rows − 1), capped at 70°. A 3-row wheel stays gently curved (26°),
+  while a wheel of 7 or more rows gets the 70° cap, where every row is still readable.
 - `WheelRows.Height`: the full 90°, since no row count is promised.
 
 To set it yourself, use `WheelPickerDefaults.barrelProperties(rimAngle, fadeStrength)`:

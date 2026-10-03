@@ -35,9 +35,10 @@ Behavior changes that come with it:
 
 ### Barrel projection replaces the per-row tilt and fade
 
-Rows are now laid out on a cylinder in all pickers. Picker sizes are unchanged, but the look is
-different: rows span the drum from rim to rim and the centered row is slightly taller than
-`height / count`. Rows more than four positions from the center no longer render mirrored.
+Rows are now laid out on a cylinder in all pickers. For odd row counts (including the default 3)
+picker sizes are unchanged, but the look is different: rows span the drum from rim to rim and the
+centered row is slightly taller than `height / count`. Rows more than four positions from the
+center no longer render mirrored.
 
 - Configure it with the new `barrelProperties` parameter. See
   [Barrel projection](docs/rows-and-barrel.md#barrel-projection).
