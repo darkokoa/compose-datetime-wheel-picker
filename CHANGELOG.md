@@ -14,6 +14,10 @@ All notable changes to this project will be documented in this file.
   rows as `Count(5)`; `Count(4).count` stays `4`). Previously an even `rowCount` rendered half a
   row cut off at each rim. `WheelTextPicker.rows` now defaults to `Count(3)` like the other
   pickers.
+- **Not binary compatible with 1.4.x.** The 1.4.x signatures of the four pickers (the ones with
+  `rowCount`) no longer exist in the binary, so code compiled against 1.4.x, including libraries
+  that depend on this one, must be recompiled against 1.5.0. Binaries compiled against 1.3.x still
+  link through the hidden compatibility overloads.
 
 ### Added
 
