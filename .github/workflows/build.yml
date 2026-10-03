@@ -46,6 +46,11 @@ jobs:
       - name: Run checks and build
         run: ./gradlew check :datetime-wheel-picker:assembleAndroidMain :sample:composeApp:assembleAndroidMain :sample:androidApp:assembleDebug --stacktrace
 
+      # The Wasm demo is deployed to GitHub Pages (see pages.yml); build it on every PR so a
+      # broken web toolchain is caught before it reaches main.
+      - name: Build Wasm sample
+        run: ./gradlew :sample:composeApp:wasmJsBrowserDistribution --no-configuration-cache --stacktrace
+
       - name: Upload test reports
         if: failure()
         uses: actions/upload-artifact@v7

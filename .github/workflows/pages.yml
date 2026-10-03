@@ -1,0 +1,66 @@
+name: Deploy demo to GitHub Pages
+
+# Publishes the Wasm build of the sample app to
+# https://<owner>.github.io/<repo>/ . One-time setup in the repository:
+# Settings > Pages > Build and deployment > Source: GitHub Actions.
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - 'renovate.json'
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Forks have no Pages site to deploy to; skip instead of failing on every push to their main.
+    if: github.repository == 'darkokoa/compose-datetime-wheel-picker'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build Wasm distribution
+        run: ./gradlew :sample:composeApp:wasmJsBrowserDistribution --no-configuration-cache --stacktrace
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: sample/composeApp/build/dist/wasmJs/productionExecutable
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
