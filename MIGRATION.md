@@ -6,8 +6,6 @@ removed in the next major release. See [CHANGELOG.md](CHANGELOG.md) for the full
 
 ## 1.4.x → 1.5.0
 
-> 1.5.0 is not released yet; this describes `main`.
-
 ### `rowCount: Int` is replaced by `rows: WheelRows`
 
 Applies to `WheelDatePicker`, `WheelTimePicker`, `WheelDateTimePicker` and `WheelTextPicker`.

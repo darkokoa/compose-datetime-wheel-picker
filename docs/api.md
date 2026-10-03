@@ -1,6 +1,6 @@
 # API reference
 
-> Applies to **1.5.0** (current `main`). `rows` and `barrelProperties` do not exist in 1.4.x.
+> Applies to **1.5.0**. `rows` and `barrelProperties` do not exist in 1.4.x.
 
 All pickers are `@Composable` functions in `dev.darkokoa.datetimewheelpicker`
 (`WheelTextPicker` lives in `dev.darkokoa.datetimewheelpicker.core`). `modifier` is the first
