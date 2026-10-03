@@ -15,7 +15,7 @@
 基于 [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) 的**日期**、**时间**和**日期时间**滚轮选择器,高度可定制。滚轮的行排布在圆柱面("barrel")上,效果接近 iOS 原生选择器,并内置 30 种语言。
 
 > [!NOTE]
-> 本文档对应 `main` 分支,即 **1.5.0(尚未发布)**。`rows` 和 `barrelProperties` 参数需要 1.5.0;当前最新发布版本是 1.4.0(该版本使用 `rowCount`)。详见 [MIGRATION.md](MIGRATION.md) 和 [CHANGELOG.md](CHANGELOG.md)(均为英文)。
+> 从 1.4.x 升级?`rowCount` 已被 `rows` 取代。详见 [MIGRATION.md](MIGRATION.md) 和 [CHANGELOG.md](CHANGELOG.md)(均为英文)。
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
@@ -49,7 +49,7 @@
 
 ```toml
 [versions]
-datetime-wheel-picker = "1.4.0" # 1.5.0 发布后改为 1.5.0,见上方说明
+datetime-wheel-picker = "1.5.0"
 kotlinx-datetime = "0.8.0"
 
 [libraries]
@@ -114,7 +114,7 @@ dependencies {
 
 | 库版本 | Kotlin | Compose Multiplatform | kotlinx-datetime | Android minSdk |
 |--------|--------|-----------------------|------------------|----------------|
-| 1.5.0(`main`) | 2.4.20 | 1.12.1 | 0.8.0 | 21 |
+| 1.5.0 | 2.4.20 | 1.12.1 | 0.8.0 | 21 |
 | 1.4.0 | 2.4.0 | 1.11.1 | 0.8.0 | 21 |
 
 表中是各版本的构建所用版本。支持的 target:`android`、`jvm`、`iosArm64`、`iosSimulatorArm64`、`js` 和 `wasmJs`。

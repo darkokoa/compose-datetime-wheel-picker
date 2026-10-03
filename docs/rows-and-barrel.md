@@ -1,6 +1,6 @@
 # Rows and barrel projection
 
-> Applies to **1.5.0** (current `main`). Earlier releases only have `rowCount`; see
+> Applies to **1.5.0**. Earlier releases only have `rowCount`; see
 > [MIGRATION.md](../MIGRATION.md#14x--150).
 
 Wheel rows are laid out on the front of a vertical cylinder, which gives the wheel the curved,

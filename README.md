@@ -17,9 +17,8 @@ Highly customizable wheel pickers for **date**, **time** and **date-time** selec
 cylindrical barrel like a native iOS picker, and 30 languages work out of the box.
 
 > [!NOTE]
-> This README documents `main`, which is **1.5.0 (unreleased)**. The `rows` and `barrelProperties`
-> parameters need 1.5.0; the latest release is 1.4.0 (use `rowCount` there). See
-> [MIGRATION.md](MIGRATION.md) and [CHANGELOG.md](CHANGELOG.md).
+> Upgrading from 1.4.x? `rowCount` is replaced by `rows`. See [MIGRATION.md](MIGRATION.md) and
+> [CHANGELOG.md](CHANGELOG.md).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/hero-dark.png">
@@ -58,7 +57,7 @@ Add the dependencies to your version catalog (`gradle/libs.versions.toml`):
 
 ```toml
 [versions]
-datetime-wheel-picker = "1.4.0" # 1.5.0 once released; see the note above
+datetime-wheel-picker = "1.5.0"
 kotlinx-datetime = "0.8.0"
 
 [libraries]
@@ -123,7 +122,7 @@ dependencies {
 
 | Library | Kotlin | Compose Multiplatform | kotlinx-datetime | Android minSdk |
 |---------|--------|-----------------------|------------------|----------------|
-| 1.5.0 (`main`) | 2.4.20 | 1.12.1 | 0.8.0 | 21 |
+| 1.5.0 | 2.4.20 | 1.12.1 | 0.8.0 | 21 |
 | 1.4.0 | 2.4.0 | 1.11.1 | 0.8.0 | 21 |
 
 These are the versions each release is built with. Targets: `android`, `jvm`, `iosArm64`,
